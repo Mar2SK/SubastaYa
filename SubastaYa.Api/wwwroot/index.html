@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>SubastaYa</title>
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="/">SubastaYa</a>
+
+        <nav class="navigation">
+            <a href="/">Explorar</a>
+            <a href="#wallet">Billetera</a>
+            <a href="#my-auctions">Mis actividades</a>
+        </nav>
+    </header>
+
+    <main class="page-container" data-sys-render="auto">
+        <section class="hero">
+            <p class="eyebrow">SUBASTAS EN TIEMPO REAL</p>
+            <h1>Encontrá algo único.</h1>
+            <p>
+                Explorá publicaciones, seguí las pujas y ofertá
+                con saldo garantizado.
+            </p>
+        </section>
+
+        <section class="toolbar">
+            <label>
+                Estado
+                <select id="status-filter">
+                    <option value="">Todas</option>
+                    <option value="ACTIVA">Activas</option>
+                    <option value="PROGRAMADA">Próximas</option>
+                    <option value="FINALIZADA">Finalizadas</option>
+                    <option value="DESIERTA">Desiertas</option>
+                </select>
+            </label>
+
+            <label>
+                Ordenar por
+                <select id="order-filter">
+                    <option value="menor-tiempo">Menor tiempo restante</option>
+                    <option value="mayor-puja">Mayor puja</option>
+                </select>
+            </label>
+
+            <button id="apply-filters-button" type="button">
+                Aplicar filtros
+            </button>
+        </section>
+
+        <section>
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">CATÁLOGO</p>
+                    <h2>Subastas disponibles</h2>
+                </div>
+
+                <span id="auction-count" class="auction-count"></span>
+            </div>
+
+            <div id="loading-message" class="message">
+                Cargando subastas...
+            </div>
+
+            <div id="error-message" class="message error hidden">
+            </div>
+
+            <div id="auction-grid" class="auction-grid"></div>
+        </section>
+    </main>
+
+    <script src="js/catalog.js"></script>
+</body>
+</html>

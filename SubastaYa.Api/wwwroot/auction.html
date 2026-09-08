@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Detalle de subasta - SubastaYa</title>
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="/">SubastaYa</a>
+
+        <nav class="navigation">
+            <a href="/">Explorar</a>
+            <a href="#wallet">Billetera</a>
+        </nav>
+    </header>
+
+    <main class="page-container" data-sys-render="auto">
+        <a class="back-link" href="/">← Volver al catálogo</a>
+
+        <div id="loading-message" class="message">
+            Cargando subasta...
+        </div>
+
+        <div id="error-message" class="message error hidden"></div>
+
+        <section id="auction-detail" class="auction-detail hidden"></section>
+
+        <section class="bid-section">
+            <div>
+                <p class="eyebrow">REALIZAR OFERTA</p>
+                <h2>Participar en esta subasta</h2>
+            </div>
+
+            <form id="bid-form" class="bid-form">
+                <label>
+                    Usuario comprador
+                    <input id="buyer-id" type="number" value="3" min="1">
+                </label>
+
+                <label>
+                    Monto de la puja
+                    <input id="bid-amount" type="number" min="1">
+                </label>
+
+                <button type="submit">Confirmar puja</button>
+            </form>
+
+            <p id="bid-message" class="message hidden"></p>
+        </section>
+
+        <section class="history-section">
+            <p class="eyebrow">HISTORIAL</p>
+            <h2>Últimas pujas</h2>
+            <div id="bid-history"></div>
+        </section>
+    </main>
+
+    <script src="js/auction-detail.js"></script>
+</body>
+</html>

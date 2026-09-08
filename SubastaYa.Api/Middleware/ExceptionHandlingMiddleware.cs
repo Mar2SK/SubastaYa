@@ -1,4 +1,5 @@
 ﻿using SubastaYa.Api.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace SubastaYa.Api.Middleware;
 
@@ -31,6 +32,16 @@ public class ExceptionHandlingMiddleware
                 context,
                 exception.StatusCode,
                 exception.Message);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            _logger.LogWarning(
+                "[CODE-ERROR] - conflicto de concurrencia detectado.");
+
+            await WriteErrorAsync(
+                context,
+                StatusCodes.Status409Conflict,
+                "la subasta fue modificada por otra puja. Actualizá los datos e intentá nuevamente.");
         }
         catch (Exception exception)
         {
