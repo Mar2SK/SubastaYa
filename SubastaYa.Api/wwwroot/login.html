@@ -1,0 +1,55 @@
+    <div id="loginOverlay" class="login-overlay active">
+        <div class="login-modal">
+            <button id="closeLoginBtn" class="close-login" type="button" aria-label="Volver al inicio">×</button>
+            <div class="login-header">
+                <div class="login-brand">
+                    <span class="login-brand-icon">S</span>
+                    <span>SubastaYa</span>
+                </div>
+
+                <h1>Ingresá a tu cuenta</h1>
+
+                <p>
+                    Accedé para participar en subastas,
+                    gestionar tus publicaciones y consultar
+                    tu billetera.
+                </p>
+
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" autocomplete="email" required>
+                    <span id="emailError" class="field-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" placeholder="Ingresá tu contraseña" autocomplete="current-password" required>
+                        <button type="button" id="togglePassword" class="toggle-password" aria-label="Mostrar contraseña">👁</button>
+                    </div>
+
+                    <span id="passwordError" class="field-error"></span>
+                </div>
+
+                <div class="login-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <span>Recordarme</span>
+                    </label>
+                    <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                </div>
+                <div id="loginMessage" class="login-message" role="alert"></div>
+
+                <button type="submit" id="loginButton" class="login-button">Ingresar</button>
+                <button type="button" id="registerButton" class="register-button">Registrarme</button>
+
+                <div class="terms">Al ingresar aceptás los<a href="#">Términos y Condiciones</a></div>
+            </form>
+
+            <div class="back-container"><a href="/" class="back-home">← Volver al inicio</a></div>
+        </div>
+    </div>
+    
+    <script src="/js/login.js"></script>

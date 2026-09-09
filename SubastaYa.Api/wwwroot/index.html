@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubastaYa</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="navbar">
+        <a href="index.html" class="brand">
+            <span class="brand-icon">S</span>
+            <span>SubastaYa</span>
+        </a>
+
+        <nav class="nav">
+            <a href="#" class="active">Inicio</a>
+            <a href="#">Subastas</a>
+            <a href="#">Mis pujas</a>
+            <a href="#">Mis publicaciones</a>
+            <a href="#">Publicar</a>
+        </nav>
+
+        <div class="user-actions">
+            <a href="#" class="wallet">Billetera</a>
+            <button id="openLoginBtn" class="open-login-btn">Iniciar sesión</button>
+        </div>
+    </div>
+</header>
+
+
+<main>
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-label">SUBASTAS EN TIEMPO REAL</span>
+
+            <h1>Encontrá tu próxima oportunidad</h1>
+            <p>
+                Explorá productos y participá de subastas
+                seguras en tiempo real.
+            </p>
+
+            <div class="search-container">
+                <input type="text" id="search" placeholder="Buscar productos...">
+                <button id="btnSearch">Buscar</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="filters-section">
+        <div class="filters">
+            <select id="categoryFilter">
+                <option value="">Todas las categorías</option>
+                <option>Tecnología</option>
+                <option>Coleccionables</option>
+                <option>Indumentaria</option>
+                <option>Vehículos</option>
+            </select>
+
+            <select id="statusFilter">
+                <option value="">Todos los estados</option>
+                <option>Activas</option>
+                <option>Próximas</option>
+                <option>Finalizadas</option>
+            </select>
+
+            <select id="priceFilter">
+                <option value="">Todos los precios</option>
+                <option>Hasta $50.000</option>
+                <option>$50.000 - $100.000</option>
+                <option>Más de $100.000</option>
+            </select>
+
+            <select id="orderFilter">
+                <option value="">Ordenar por</option>
+                <option>Menor tiempo restante</option>
+                <option>Mayor puja</option>
+            </select>
+        </div>
+    </section>
+
+    <section class="auctions-section">
+        <div class="section-header">
+            <div>
+                <span class="section-label">EN VIVO</span>
+                <h2>Subastas activas</h2>
+            </div>
+
+            <a href="#" class="view-all">Ver todas →</a>
+        </div>
+
+        <div class="auction-grid" id="auctionGrid">
+            <article class="auction-card">
+                <div class="image-container">
+                    <img src="https://placehold.co/600x400" alt="Producto">
+                    <span class="status active-status">EN VIVO</span>
+
+                </div>
+
+                <div class="card-content">
+                    <span class="category">Tecnología</span>
+                    <h3>Notebook Gamer</h3>
+
+                    <div class="auction-info">
+                        <div>
+                            <span class="info-label">Puja actual</span>
+                            <strong>$45.000</strong>
+                        </div>
+                        <div>
+                            <span class="info-label">Ofertas</span>
+                            <strong>12</strong>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="timer">⏱ 00:24:32</div>
+                        <button class="bid-button">Ver subasta</button>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+
+<div id="loginContainer"></div>
+<script src="/js/login.js"></script>
+<script src="js/index.js"></script>
+
+</body>
+</html>
