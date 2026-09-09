@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Mi cuenta - SubastaYa</title>
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="/">SubastaYa</a>
+
+        <nav class="navigation">
+            <a href="/">Explorar</a>
+            <a href="profile.html?userId=2">Mi cuenta</a>
+        </nav>
+    </header>
+
+    <main class="page-container" data-sys-render="auto">
+        <p class="eyebrow">MI CUENTA</p>
+        <h1>Billetera y actividades</h1>
+
+        <section id="balance-cards" class="balance-grid"></section>
+
+        <section class="deposit-panel">
+            <div>
+                <p class="eyebrow">CARGAR SALDO</p>
+                <h2>Acreditación simulada</h2>
+            </div>
+
+            <form id="deposit-form" class="inline-form">
+                <input id="deposit-amount"
+                       type="number"
+                       min="1"
+                       placeholder="Monto a acreditar">
+                <button type="submit">Acreditar</button>
+            </form>
+
+            <p id="deposit-message" class="message hidden"></p>
+        </section>
+
+        <section class="activity-panel">
+            <div class="tabs">
+                <button class="tab-button active"
+                        data-target="bids-panel">
+                    Mis pujas
+                </button>
+
+                <button class="tab-button"
+                        data-target="auctions-panel">
+                    Mis publicaciones
+                </button>
+
+                <button class="tab-button"
+                        data-target="transactions-panel">
+                    Movimientos
+                </button>
+            </div>
+
+            <div id="bids-panel" class="tab-panel"></div>
+            <div id="auctions-panel" class="tab-panel hidden"></div>
+            <div id="transactions-panel" class="tab-panel hidden"></div>
+        </section>
+    </main>
+
+    <script src="js/profile.js"></script>
+</body>
+</html>

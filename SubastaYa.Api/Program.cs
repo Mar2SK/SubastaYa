@@ -33,6 +33,15 @@ builder.Services.AddScoped<
 
 builder.Services.AddHostedService<AuctionClosingWorker>();
 builder.Services.AddSignalR();
+builder.Services.AddScoped<
+    IUserActivityRepository,
+    UserActivityRepository>();
+
+builder.Services.AddScoped<
+    IUserActivityService,
+    UserActivityService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 var app = builder.Build();
 

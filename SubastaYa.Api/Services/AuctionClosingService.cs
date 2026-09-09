@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using SubastaYa.Api.Data;
+using SubastaYa.Api.Hubs;
 using SubastaYa.Api.Models;
 
 namespace SubastaYa.Api.Services;
@@ -8,13 +11,16 @@ public class AuctionClosingService : IAuctionClosingService
 {
     private readonly AppDbContext _context;
     private readonly ILogger<AuctionClosingService> _logger;
+    private readonly IHubContext<AuctionHub> _auctionHub;
 
     public AuctionClosingService(
         AppDbContext context,
-        ILogger<AuctionClosingService> logger)
+        ILogger<AuctionClosingService> logger,
+        IHubContext<AuctionHub> auctionHub)
     {
         _context = context;
         _logger = logger;
+        _auctionHub = auctionHub;
     }
 
     public async Task ProcessExpiredAuctionsAsync()
@@ -90,6 +96,7 @@ public class AuctionClosingService : IAuctionClosingService
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+            await NotifyAuctionClosedAsync(auction.Id, auction.Status);
 
             return;
         }
@@ -155,7 +162,31 @@ public class AuctionClosingService : IAuctionClosingService
         });
 
         await _context.SaveChangesAsync();
-
         await transaction.CommitAsync();
+
+        // Notificación agregada para el caso de subasta finalizada con éxito
+        await NotifyAuctionClosedAsync(auction.Id, auction.Status);
+    }
+
+    private async Task NotifyAuctionClosedAsync(
+        int auctionId,
+        string status)
+    {
+        try
+        {
+            await _auctionHub.Clients
+                .Group($"auction-{auctionId}")
+                .SendAsync("AuctionClosed", new
+                {
+                    auctionId,
+                    status
+                });
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(
+                exception,
+                "[CODE-ERROR] - no se pudo notificar el cierre de subasta.");
+        }
     }
 }

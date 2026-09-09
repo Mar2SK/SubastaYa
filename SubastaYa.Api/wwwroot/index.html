@@ -13,7 +13,7 @@
 
         <nav class="navigation">
             <a href="/">Explorar</a>
-            <a href="#wallet">Billetera</a>
+            <a href="profile.html?userId=2">Mi cuenta</a>
             <a href="#my-auctions">Mis actividades</a>
         </nav>
     </header>
@@ -38,6 +38,23 @@
                     <option value="FINALIZADA">Finalizadas</option>
                     <option value="DESIERTA">Desiertas</option>
                 </select>
+            </label>
+
+            <label>
+                Categoría
+                <select id="category-filter">
+                    <option value="">Todas</option>
+                </select>
+            </label>
+
+            <label>
+                Precio mínimo
+                <input id="minimum-price-filter" type="number" min="0">
+            </label>
+
+            <label>
+                Precio máximo
+                <input id="maximum-price-filter" type="number" min="0">
             </label>
 
             <label>

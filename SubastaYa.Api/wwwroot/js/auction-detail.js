@@ -217,3 +217,6 @@ bidForm.addEventListener("submit", async (event) => {
 setInterval(updateTimer, 1000);
 
 loadAuction();
+window.reloadAuctionFromRealtime = async () => {
+    await loadAuction();
+};

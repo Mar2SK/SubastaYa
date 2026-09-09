@@ -3,6 +3,11 @@ const loadingMessage = document.getElementById("loading-message");
 const errorMessage = document.getElementById("error-message");
 const auctionCount = document.getElementById("auction-count");
 const statusFilter = document.getElementById("status-filter");
+const categoryFilter = document.getElementById("category-filter");
+const minimumPriceFilter = document.getElementById(
+    "minimum-price-filter");
+const maximumPriceFilter = document.getElementById(
+    "maximum-price-filter");
 const orderFilter = document.getElementById("order-filter");
 const applyFiltersButton = document.getElementById(
     "apply-filters-button");
@@ -102,6 +107,22 @@ async function loadAuctions() {
         parameters.set("status", statusFilter.value);
     }
 
+    if (categoryFilter.value) {
+        parameters.set("categoryId", categoryFilter.value);
+    }
+
+    if (minimumPriceFilter.value) {
+        parameters.set(
+            "minimumPrice",
+            minimumPriceFilter.value);
+    }
+
+    if (maximumPriceFilter.value) {
+        parameters.set(
+            "maximumPrice",
+            maximumPriceFilter.value);
+    }
+
     try {
         const response = await fetch(
             `/api/v1/auctions?${parameters.toString()}`);
@@ -128,8 +149,31 @@ async function loadAuctions() {
     }
 }
 
-applyFiltersButton.addEventListener("click", loadAuctions);
+async function loadCategories() {
+    try {
+        const response = await fetch("/api/v1/categories");
 
+        if (!response.ok) {
+            throw new Error("No se pudieron cargar las categorías.");
+        }
+
+        const categories = await response.json();
+
+        for (const idx_tk of categories) {
+            const option = document.createElement("option");
+
+            option.value = idx_tk.id;
+            option.textContent = idx_tk.name;
+
+            categoryFilter.appendChild(option);
+        }
+    } catch (error) {
+        console.error("[CODE-ERROR] -", error);
+    }
+}
+
+applyFiltersButton.addEventListener("click", loadAuctions);
 setInterval(updateTimers, 1000);
 
+loadCategories();
 loadAuctions();
