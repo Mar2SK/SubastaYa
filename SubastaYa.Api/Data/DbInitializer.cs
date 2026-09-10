@@ -91,8 +91,8 @@ public static class DbInitializer
         Wallet buyer2Wallet = new()
         {
             User = buyer2,
-            TotalBalance = 200000,
-            HeldBalance = 0,
+            TotalBalance = 260000,
+            HeldBalance = 60000,
             AvailableBalance = 200000,
             Version = 1
         };
@@ -259,15 +259,23 @@ public static class DbInitializer
             {
                 Wallet = buyer2Wallet,
                 Type = "DEPOSITO",
-                Amount = 200000,
+                Amount = 260000,
                 CreatedAtUtc = nowUtc.AddDays(-1)
             },
             new TransactionLedger
             {
                 Wallet = noFundsWallet,
                 Type = "DEPOSITO",
-                Amount = 500,
+                Amount = 200000,
                 CreatedAtUtc = nowUtc.AddDays(-1)
+            },
+            new TransactionLedger
+            {
+                Wallet = buyer2Wallet,
+                Auction = expiredWithWinnerAuction,
+                Type = "RETENCION",
+                Amount = 60000,
+                CreatedAtUtc = nowUtc.AddHours(-1)
             });
 
         context.AuditLogs.AddRange(
