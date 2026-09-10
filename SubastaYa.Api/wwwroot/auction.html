@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subasta | SubastaYa</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/auction.css">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="navbar">
+        <a href="/" class="brand">
+            <span class="brand-icon">S</span>
+            <span>SubastaYa</span>
+        </a>
+
+        <nav class="nav">
+            <a href="/">Inicio</a>
+            <a href="#">Subastas</a>
+            <a href="#">Mis pujas</a>
+            <a href="#">Mis publicaciones</a>
+            <a href="#">Publicar</a>
+        </nav>
+
+        <div class="user-actions">
+
+            <a href="#" class="wallet">
+                Billetera
+            </a>
+
+            <button id="openLoginBtn" class="open-login-btn" type="button">Iniciar sesión</button>
+        </div>
+    </div>
+</header>
+
+
+<main class="auction-page">
+    <section class="auction-top">
+        <div>
+            <span class="auction-views">👁 9.694 visualizaciones</span>
+
+            <h1>Subasta #3945
+            <span>| Notebook Gamer ASUS</span>
+            </h1>
+        </div>
+
+        <button id="shareAuctionBtn" class="share-button" type="button">⤴ Compartir</button>
+    </section>
+
+    <section class="auction-summary">
+        <div class="summary-header">
+            <div>
+                <span class="auction-category">Tecnología</span>
+                <h2>Notebook Gamer ASUS ROG</h2>
+            </div>
+
+            <span class="auction-status">ACTIVA</span>
+        </div>
+
+        <div class="summary-content">
+            <div class="auction-dates">
+                <div class="date-item">
+                    <span class="date-icon">📅</span>
+
+                    <div>
+                        <span class="date-label">Desde</span>
+                        <strong id="startDate">15/09/2026 11:00</strong>
+                    </div>
+                </div>
+
+                <div class="date-item">
+                    <span class="date-icon">📅</span>
+
+                    <div>
+                        <span class="date-label">Hasta</span>
+                        <strong id="endDate">15/09/2026 11:20</strong>
+                    </div>
+                </div>
+
+                <p class="timezone-message">
+                    Todas las fechas y horarios están
+                    expresados en hora oficial de Argentina
+                    (GMT-3).
+                </p>
+            </div>
+
+            <div class="auction-action">
+                <span class="approval-label">Subasta habilitada</span>
+                <button id="mainBidButton" class="main-bid-button" type="button">Participar de la subasta</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="auction-description">
+        <h3>Información de la subasta</h3>
+        <p>
+            Producto publicado para subasta online.
+            Las ofertas deben respetar el incremento
+            mínimo establecido y contar con saldo
+            disponible suficiente.
+        </p>
+    </section>
+
+    <section class="live-auction-section">
+        <div class="live-header">
+            <div>
+                <span class="live-label">EN VIVO</span>
+                <h2>Sala de subasta</h2>
+            </div>
+
+            <div class="live-timer">
+                <span>Tiempo restante</span>
+                <strong id="auctionTimer">00:18:42</strong>
+            </div>
+        </div>
+
+        <div class="live-grid">
+            <article class="product-panel">
+                <div class="product-image">
+                    <img src="https://placehold.co/800x600" alt="Notebook Gamer ASUS">
+                </div>
+
+                <div class="product-details">
+                    <span class="product-category">Tecnología</span>
+                    <h3>Notebook Gamer ASUS ROG</h3>
+
+                    <p>
+                        Notebook de alto rendimiento,
+                        ideal para gaming y aplicaciones
+                        exigentes.
+                    </p>
+                </div>
+            </article>
+
+            <aside class="bid-panel">
+                <div class="current-bid">
+                    <span>Puja actual</span>
+                    <strong id="currentBid">$45.000</strong>
+                </div>
+
+                <div class="minimum-bid">
+                    <span>Próxima oferta mínima</span>
+                    <strong id="minimumBid">$50.000</strong>
+                </div>
+
+                <div class="bid-status">
+                    <span class="status-indicator">Estado</span>
+                    <strong id="bidStatus">Sin participar</strong>
+                </div>
+
+                <div class="bid-form">
+                    <label for="bidAmount">Tu oferta</label>
+                    <input type="number" id="bidAmount" placeholder="50000"min="0">
+                    <button id="placeBidButton" type="button">Realizar oferta</button>
+                </div>
+
+                <div id="bidMessage" class="bid-message"></div>
+            </aside>
+        </div>
+    </section>
+
+    <section class="bid-history-section">
+        <div class="history-header">
+            <h2>Historial de ofertas</h2>
+            <span>Últimas pujas registradas</span>
+        </div>
+
+        <div class="bid-history">
+            <div class="history-row">
+                <div>
+                    <strong>Usuario ***23</strong>
+                    <span>15/09/2026 11:05:32</span>
+                </div>
+
+                <strong>$45.000</strong>
+            </div>
+
+            <div class="history-row">
+                <div>
+                    <strong>Usuario ***91</strong>
+                    <span>15/09/2026 11:04:15</span>
+                </div>
+
+                <strong>$40.000</strong>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+<div id="loginContainer"></div>
+
+<script src="/js/login.js"></script>
+<script src="/js/auction.js"></script>
+
+</body>
+</html>

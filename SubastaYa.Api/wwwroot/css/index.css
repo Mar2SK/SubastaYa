@@ -289,6 +289,8 @@ body {
     border-radius: 5px;
     padding: 10px 14px;
     cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .bid-button:hover {

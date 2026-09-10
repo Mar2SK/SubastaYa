@@ -65,3 +65,51 @@ document.addEventListener(
         }
     }
 );
+
+function configureSignupCloseEvents() {
+    const overlay = document.getElementById("signupOverlay");
+    const closeButton = document.getElementById("closeSignupBtn");
+
+
+    if (closeButton) {
+        closeButton.addEventListener("click", closeSignup);
+    }
+
+
+    if (overlay) {
+        overlay.addEventListener(
+            "click",
+            (event) => {
+                if (event.target === overlay) {
+                    closeSignup();
+                }
+            }
+        );
+    }
+}
+
+
+function configureLoginCloseEvents() {
+    const overlay = document.getElementById("loginOverlay");
+    const closeButton = document.getElementById("closeLoginBtn");
+
+
+    if (closeButton) {
+        closeButton.addEventListener("click", closeLogin);
+    }
+
+
+    if (overlay) {
+        overlay.addEventListener(
+            "click",
+            (event) => {
+                if (event.target === overlay) {
+                    closeLogin();
+                }
+            }
+        );
+    }
+}
+
+initializeLogin();
+configureLoginCloseEvents();
