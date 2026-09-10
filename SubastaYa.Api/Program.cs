@@ -65,6 +65,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
 app.MapHub<AuctionHub>("/hubs/auctions");
 

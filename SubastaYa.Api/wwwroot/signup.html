@@ -1,0 +1,65 @@
+<div id="signupOverlay" class="signup-overlay">
+    <div class="signup-modal">
+        <button id="closeSignupBtn" class="close-signup" type="button">×</button>
+        <div class="signup-header">
+            <h2>Creá tu cuenta</h2>
+            <p>
+                Registrate para participar en subastas,
+                publicar productos y administrar tu billetera.
+            </p>
+        </div>
+
+        <form id="signupForm">
+            <div class="signup-form-row">
+                <div class="signup-form-group">
+                    <label for="firstName">Nombre</label>
+                    <input type="text" id="firstName" name="firstName" placeholder="Nombre" autocomplete="given-name" required>
+                    <span id="firstNameError" class="signup-field-error"></span>
+                </div>
+
+                <div class="signup-form-group">
+                    <label for="lastName">Apellido</label>
+                    <input type="text" id="lastName" name="lastName" placeholder="Apellido" autocomplete="family-name" required>
+                    <span id="lastNameError" class="signup-field-error"></span>
+                </div>
+            </div>
+
+            <div class="signup-form-group">
+                <label for="signupEmail">Correo electrónico</label>
+                <input type="email" id="signupEmail" name="email" placeholder="ejemplo@correo.com" autocomplete="email" required>
+                <span id="signupEmailError" class="signup-field-error"></span>
+            </div>
+
+            <div class="signup-form-group">
+                <label for="signupPassword">Contraseña</label>
+                <div class="signup-password-container">
+                    <input type="password" id="signupPassword" name="password" placeholder="Ingresá una contraseña" autocomplete="new-password" required>
+                    <button type="button" id="toggleSignupPassword" class="signup-toggle-password">👁</button>
+                </div>
+                <span id="signupPasswordError" class="signup-field-error"></span>
+            </div>
+
+            <div class="signup-form-group">
+                <label for="confirmPassword">Confirmar contraseña</label>
+                <div class="signup-password-container">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repetí la contraseña" autocomplete="new-password" required>
+                    <button type="button" id="toggleConfirmPassword" class="signup-toggle-password">👁</button>
+                </div>
+                <span id="confirmPasswordError" class="signup-field-error"></span>
+            </div>
+
+            <div class="signup-terms">
+                <label>
+                    <input type="checkbox" id="acceptTerms">
+                    <span>Acepto los <a href="#">Términos y Condiciones</a></span>
+                </label>
+                <span id="termsError" class="signup-field-error"></span>
+            </div>
+
+            <div id="signupMessage" class="signup-message"></div>
+
+            <button type="submit" id="signupButton" class="signup-button">Crear cuenta</button>
+            <button type="button" id="goToLoginBtn" class="signup-login-button">Ya tengo una cuenta</button>
+        </form>
+    </div>
+</div>
