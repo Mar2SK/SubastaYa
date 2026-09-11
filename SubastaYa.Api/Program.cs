@@ -26,6 +26,7 @@ builder.Services.AddScoped<IWalletService, WalletService>();
 
 builder.Services.AddScoped<IBidRepository, BidRepository>();
 builder.Services.AddScoped<IBidService, BidService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<
     IAuctionClosingService,
@@ -42,6 +43,7 @@ builder.Services.AddScoped<
     UserActivityService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 

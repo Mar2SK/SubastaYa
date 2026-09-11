@@ -110,9 +110,8 @@ public class AuctionRepository : IAuctionRepository
                     .Select(bid => new BidHistoryItemDto
                     {
                         Id = bid.Id,
-                        BuyerAlias = "Usuario #" + bid.BuyerId,
-                        Amount = bid.Amount,
-                        BidAtUtc = bid.BidAtUtc
+                        BuyerAlias = "Comprador #" + bid.BuyerId,
+                        Amount = bid.Amount,                        BidAtUtc = bid.BidAtUtc
                     })
                     .ToList()
             })

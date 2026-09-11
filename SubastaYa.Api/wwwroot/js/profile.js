@@ -1,6 +1,14 @@
-﻿const profileParameters = new URLSearchParams(window.location.search);
-const currentUserId = profileParameters.get("userId") ?? "2";
+﻿const storedUser = localStorage.getItem("subastaYaUser");
 
+if (!storedUser) {
+    window.location.href = "/login.html";
+    throw new Error(
+        "[CODE-ERROR] - No hay un usuario autenticado."
+    );
+}
+
+const currentUser = JSON.parse(storedUser);
+const currentUserId = currentUser.userId;
 const balanceCards = document.getElementById("balance-cards");
 const depositForm = document.getElementById("deposit-form");
 const depositAmount = document.getElementById("deposit-amount");

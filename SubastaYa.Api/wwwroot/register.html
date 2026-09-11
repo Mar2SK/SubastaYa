@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SubastaYa - Registrarse</title>
+
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+    <main data-sys-render="auto" class="login-container">
+        <section class="login-card">
+            <h1>SubastaYa</h1>
+
+            <p>Creá tu cuenta.</p>
+
+            <form id="registerForm">
+
+                <label for="email">Email</label>
+
+                <input id="email"
+                       type="email"
+                       required>
+
+                <label for="name">Nombre</label>
+
+                <input id="name"
+                       type="text"
+                       maxlength="100"
+                       required>
+
+                <label for="password">Contraseña</label>
+
+                <input id="password"
+                       type="password"
+                       minlength="3"
+                       required>
+
+                <button type="submit" id="registerButton">
+                    Crear cuenta
+                </button>
+
+                <p id="registerMessage"></p>
+            </form>
+
+            <p>
+                ¿Ya tenés cuenta?
+                <a href="/login.html">Iniciar sesión</a>
+            </p>
+        </section>
+    </main>
+
+    <script src="/js/register.js"></script>
+</body>
+</html>

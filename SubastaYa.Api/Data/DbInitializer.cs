@@ -9,6 +9,7 @@ public static class DbInitializer
     {
         if (await context.Users.AnyAsync())
         {
+            await RefreshDemoAuctionsAsync(context);
             return;
         }
 
@@ -42,7 +43,7 @@ public static class DbInitializer
         {
             Email = "vendedor@test.com",
             Name = "Vendedor",
-            PasswordHash = "HASH_DEMO_VENDEDOR",
+            PasswordHash = "123",
             RegisteredAtUtc = nowUtc
         };
 
@@ -50,7 +51,7 @@ public static class DbInitializer
         {
             Email = "comprador1@test.com",
             Name = "Comprador Uno",
-            PasswordHash = "HASH_DEMO_COMPRADOR_1",
+            PasswordHash = "123",
             RegisteredAtUtc = nowUtc
         };
 
@@ -58,7 +59,7 @@ public static class DbInitializer
         {
             Email = "comprador2@test.com",
             Name = "Comprador Dos",
-            PasswordHash = "HASH_DEMO_COMPRADOR_2",
+            PasswordHash = "123",
             RegisteredAtUtc = nowUtc
         };
 
@@ -66,7 +67,7 @@ public static class DbInitializer
         {
             Email = "sinfondos@test.com",
             Name = "Comprador Sin Fondos",
-            PasswordHash = "HASH_DEMO_SIN_FONDOS",
+            PasswordHash = "123",
             RegisteredAtUtc = nowUtc
         };
 
@@ -91,8 +92,8 @@ public static class DbInitializer
         Wallet buyer2Wallet = new()
         {
             User = buyer2,
-            TotalBalance = 260000,
-            HeldBalance = 60000,
+            TotalBalance = 200000,
+            HeldBalance = 0,
             AvailableBalance = 200000,
             Version = 1
         };
@@ -297,6 +298,39 @@ public static class DbInitializer
                 DetailJson = "{\"titulo\":\"Notebook Gamer\"}",
                 CreatedAtUtc = nowUtc.AddMinutes(-30)
             });
+
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task RefreshDemoAuctionsAsync(AppDbContext context)
+    {
+        DateTime nowUtc = DateTime.UtcNow;
+
+        Auction? standardAuction =
+            await context.Auctions
+                .FirstOrDefaultAsync(auction =>
+                    auction.Title == "Notebook Gamer");
+
+        if (standardAuction is not null &&
+            standardAuction.Status == "FINALIZADA")
+        {
+            standardAuction.Status = "ACTIVA";
+            standardAuction.EndAtUtc = nowUtc.AddMinutes(25);
+            standardAuction.Version += 1;
+        }
+
+        Auction? criticalAuction =
+            await context.Auctions
+                .FirstOrDefaultAsync(auction =>
+                    auction.Title == "Figura de colección");
+
+        if (criticalAuction is not null &&
+            criticalAuction.Status == "FINALIZADA")
+        {
+            criticalAuction.Status = "ACTIVA";
+            criticalAuction.EndAtUtc = nowUtc.AddMinutes(2);
+            criticalAuction.Version += 1;
+        }
 
         await context.SaveChangesAsync();
     }

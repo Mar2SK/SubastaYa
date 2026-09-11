@@ -1,4 +1,15 @@
-﻿const parameters = new URLSearchParams(window.location.search);
+﻿const storedUser = localStorage.getItem("subastaYaUser");
+
+if (!storedUser) {
+    window.location.href = "/login.html";
+    throw new Error(
+        "[CODE-ERROR] - No hay un usuario autenticado."
+    );
+}
+
+const currentUser = JSON.parse(storedUser);
+
+const parameters = new URLSearchParams(window.location.search);
 const auctionId = parameters.get("auctionId");
 
 const loadingMessage = document.getElementById("loading-message");
@@ -7,7 +18,6 @@ const auctionDetail = document.getElementById("auction-detail");
 const bidHistory = document.getElementById("bid-history");
 const bidForm = document.getElementById("bid-form");
 const bidMessage = document.getElementById("bid-message");
-const buyerIdInput = document.getElementById("buyer-id");
 const bidAmountInput = document.getElementById("bid-amount");
 
 let currentAuction = null;
@@ -30,15 +40,21 @@ function escapeHtml(value) {
 }
 
 function getRemainingTime(endAtUtc) {
-    const remainingMilliseconds = new Date(endAtUtc).getTime() - Date.now();
+    const remainingMilliseconds =
+        new Date(endAtUtc).getTime() - Date.now();
 
     if (remainingMilliseconds <= 0) {
         return "Finalizada";
     }
 
-    const totalSeconds = Math.floor(remainingMilliseconds / 1000);
+    const totalSeconds =
+        Math.floor(remainingMilliseconds / 1000);
+
     const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    const minutes =
+        Math.floor((totalSeconds % 3600) / 60);
+
     const seconds = totalSeconds % 60;
 
     return `${hours}h ${minutes}m ${seconds}s`;
@@ -46,11 +62,14 @@ function getRemainingTime(endAtUtc) {
 
 function renderAuction() {
     const visiblePrice =
-        currentAuction.highestBid ?? currentAuction.basePrice;
+        currentAuction.highestBid ??
+        currentAuction.basePrice;
 
-    const minimumAmount = currentAuction.highestBid
-        ? currentAuction.highestBid + currentAuction.minimumIncrement
-        : currentAuction.basePrice;
+    const minimumAmount =
+        currentAuction.highestBid
+            ? currentAuction.highestBid +
+            currentAuction.minimumIncrement
+            : currentAuction.basePrice;
 
     auctionDetail.innerHTML = `
         <article class="detail-card">
@@ -63,22 +82,31 @@ function renderAuction() {
                     ${escapeHtml(currentAuction.categoryName)}
                 </span>
 
-                <h1>${escapeHtml(currentAuction.title)}</h1>
+                <h1>
+                    ${escapeHtml(currentAuction.title)}
+                </h1>
 
                 <p class="description">
                     ${escapeHtml(currentAuction.description)}
                 </p>
 
                 <p class="details">
-                    Publicada por ${escapeHtml(currentAuction.sellerName)}
+                    Publicada por
+                    ${escapeHtml(currentAuction.sellerName)}
                 </p>
 
                 <div class="price-panel">
                     <span>Puja actual</span>
-                    <strong>${formatCurrency(visiblePrice)}</strong>
+
+                    <strong>
+                        ${formatCurrency(visiblePrice)}
+                    </strong>
+
                     <small>
                         Incremento mínimo:
-                        ${formatCurrency(currentAuction.minimumIncrement)}
+                        ${formatCurrency(
+        currentAuction.minimumIncrement
+    )}
                     </small>
                 </div>
 
@@ -88,13 +116,15 @@ function renderAuction() {
                 </p>
 
                 <p class="details">
-                    Estado: ${escapeHtml(currentAuction.status)}
+                    Estado:
+                    ${escapeHtml(currentAuction.status)}
                 </p>
             </div>
         </article>
     `;
 
     bidAmountInput.value = minimumAmount;
+
     updateTimer();
 }
 
@@ -103,7 +133,9 @@ function renderBidHistory() {
 
     if (currentAuction.bids.length === 0) {
         bidHistory.innerHTML =
-            `<p class="message">Todavía no hay pujas.</p>`;
+            `<p class="message">
+                Todavía no hay pujas.
+            </p>`;
 
         return;
     }
@@ -114,12 +146,23 @@ function renderBidHistory() {
             `
                 <article class="history-item">
                     <div>
-                        <strong>${escapeHtml(idx_tk.buyerAlias)}</strong>
-                        <p>${new Date(idx_tk.bidAtUtc).toLocaleString("es-AR")}</p>
+                        <strong>
+                            ${escapeHtml(idx_tk.buyerAlias)}
+                        </strong>
+
+                        <p>
+                            ${new Date(
+                idx_tk.bidAtUtc
+            ).toLocaleString("es-AR")}
+                        </p>
                     </div>
-                    <strong>${formatCurrency(idx_tk.amount)}</strong>
+
+                    <strong>
+                        ${formatCurrency(idx_tk.amount)}
+                    </strong>
                 </article>
-            `);
+            `
+        );
     }
 }
 
@@ -128,16 +171,21 @@ function updateTimer() {
         return;
     }
 
-    const timer = document.getElementById("detail-timer");
+    const timer =
+        document.getElementById("detail-timer");
 
     if (timer) {
-        timer.textContent = getRemainingTime(currentAuction.endAtUtc);
+        timer.textContent =
+            getRemainingTime(
+                currentAuction.endAtUtc
+            );
     }
 }
 
 async function loadAuction() {
     if (!auctionId) {
-        errorMessage.textContent = "No se indicó una subasta.";
+        errorMessage.textContent =
+            "[CODE-ERROR] - No se indicó una subasta.";
 
         errorMessage.classList.remove("hidden");
         loadingMessage.classList.add("hidden");
@@ -146,10 +194,14 @@ async function loadAuction() {
     }
 
     try {
-        const response = await fetch(`/api/v1/auctions/${auctionId}`);
+        const response = await fetch(
+            `/api/v1/auctions/${auctionId}`
+        );
 
         if (!response.ok) {
-            throw new Error("No se pudo cargar la subasta.");
+            throw new Error(
+                "[CODE-ERROR] - No se pudo cargar la subasta."
+            );
         }
 
         currentAuction = await response.json();
@@ -159,10 +211,13 @@ async function loadAuction() {
 
         auctionDetail.classList.remove("hidden");
     } catch (error) {
-        console.error("[CODE-ERROR] -", error);
+        console.error(
+            "[CODE-ERROR] -",
+            error
+        );
 
         errorMessage.textContent =
-            "No se pudo cargar la subasta solicitada.";
+            "[CODE-ERROR] - No se pudo cargar la subasta solicitada.";
 
         errorMessage.classList.remove("hidden");
     } finally {
@@ -173,7 +228,7 @@ async function loadAuction() {
 bidForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const buyerId = Number(buyerIdInput.value);
+    const buyerId = currentUser.userId;
     const amount = Number(bidAmountInput.value);
 
     bidMessage.classList.add("hidden");
@@ -190,13 +245,16 @@ bidForm.addEventListener("submit", async (event) => {
                     buyerId,
                     amount
                 })
-            });
+            }
+        );
 
         const data = await response.json();
 
         if (!response.ok) {
             throw new Error(
-                data.message ?? "No se pudo registrar la puja.");
+                data.message ??
+                "[CODE-ERROR] - No se pudo registrar la puja."
+            );
         }
 
         bidMessage.textContent =
@@ -206,9 +264,14 @@ bidForm.addEventListener("submit", async (event) => {
 
         await loadAuction();
     } catch (error) {
-        console.error("[CODE-ERROR] -", error);
+        console.error(
+            "[CODE-ERROR] -",
+            error
+        );
 
-        bidMessage.textContent = error.message;
+        bidMessage.textContent =
+            error.message;
+
         bidMessage.classList.add("error");
         bidMessage.classList.remove("hidden");
     }
@@ -217,6 +280,7 @@ bidForm.addEventListener("submit", async (event) => {
 setInterval(updateTimer, 1000);
 
 loadAuction();
+
 window.reloadAuctionFromRealtime = async () => {
     await loadAuction();
 };
