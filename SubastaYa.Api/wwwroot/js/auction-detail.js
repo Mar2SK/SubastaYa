@@ -39,7 +39,14 @@ function escapeHtml(value) {
         .replaceAll("'", "&#039;");
 }
 
-function getRemainingTime(endAtUtc) {
+function getRemainingTime(endAtUtc, status) {
+    if (
+        status === "FINALIZADA" ||
+        status === "DESIERTA"
+    ) {
+        return "Finalizada";
+    }
+
     const remainingMilliseconds =
         new Date(endAtUtc).getTime() - Date.now();
 
@@ -123,7 +130,24 @@ function renderAuction() {
         </article>
     `;
 
-    bidAmountInput.value = minimumAmount;
+    if (bidAmountInput) {
+        bidAmountInput.value = minimumAmount;
+    }
+
+    const isAvailable =
+        currentAuction.status === "ACTIVA" &&
+        new Date(currentAuction.endAtUtc).getTime() > Date.now();
+
+    if (bidForm) {
+        bidForm.classList.toggle("hidden", !isAvailable);
+    }
+
+    if (!isAvailable && bidMessage) {
+        bidMessage.textContent =
+            "[CODE-ERROR] - Esta subasta no está disponible para pujar.";
+
+        bidMessage.classList.remove("hidden");
+    }
 
     updateTimer();
 }
@@ -131,7 +155,10 @@ function renderAuction() {
 function renderBidHistory() {
     bidHistory.innerHTML = "";
 
-    if (currentAuction.bids.length === 0) {
+    if (
+        !currentAuction.bids ||
+        currentAuction.bids.length === 0
+    ) {
         bidHistory.innerHTML =
             `<p class="message">
                 Todavía no hay pujas.
@@ -177,7 +204,8 @@ function updateTimer() {
     if (timer) {
         timer.textContent =
             getRemainingTime(
-                currentAuction.endAtUtc
+                currentAuction.endAtUtc,
+                currentAuction.status
             );
     }
 }
@@ -225,57 +253,74 @@ async function loadAuction() {
     }
 }
 
-bidForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+if (bidForm) {
+    bidForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-    const buyerId = currentUser.userId;
-    const amount = Number(bidAmountInput.value);
+        if (
+            !currentAuction ||
+            currentAuction.status !== "ACTIVA" ||
+            new Date(currentAuction.endAtUtc).getTime() <= Date.now()
+        ) {
+            bidMessage.textContent =
+                "[CODE-ERROR] - Esta subasta no está disponible para pujar.";
 
-    bidMessage.classList.add("hidden");
+            bidMessage.classList.remove("hidden");
+            bidMessage.classList.add("error");
 
-    try {
-        const response = await fetch(
-            `/api/v1/auctions/${auctionId}/bids`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    buyerId,
-                    amount
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(
-                data.message ??
-                "[CODE-ERROR] - No se pudo registrar la puja."
-            );
+            return;
         }
 
-        bidMessage.textContent =
-            "¡Puja registrada correctamente!";
+        const buyerId = currentUser.userId;
+        const amount = Number(bidAmountInput.value);
 
-        bidMessage.classList.remove("hidden");
+        bidMessage.classList.add("hidden");
 
-        await loadAuction();
-    } catch (error) {
-        console.error(
-            "[CODE-ERROR] -",
-            error
-        );
+        try {
+            const response = await fetch(
+                `/api/v1/auctions/${auctionId}/bids`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        buyerId,
+                        amount
+                    })
+                }
+            );
 
-        bidMessage.textContent =
-            error.message;
+            const data = await response.json();
 
-        bidMessage.classList.add("error");
-        bidMessage.classList.remove("hidden");
-    }
-});
+            if (!response.ok) {
+                throw new Error(
+                    data.message ??
+                    "[CODE-ERROR] - No se pudo registrar la puja."
+                );
+            }
+
+            bidMessage.textContent =
+                "¡Puja registrada correctamente!";
+
+            bidMessage.classList.remove("hidden");
+            bidMessage.classList.remove("error");
+
+            await loadAuction();
+        } catch (error) {
+            console.error(
+                "[CODE-ERROR] -",
+                error
+            );
+
+            bidMessage.textContent =
+                error.message;
+
+            bidMessage.classList.add("error");
+            bidMessage.classList.remove("hidden");
+        }
+    });
+}
 
 setInterval(updateTimer, 1000);
 

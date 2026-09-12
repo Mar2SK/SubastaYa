@@ -1,0 +1,4520 @@
+[1mdiff --git a/SubastaYa.Api/Controllers/BidsController.cs b/SubastaYa.Api/Controllers/BidsController.cs[m
+[1mdeleted file mode 100644[m
+[1mindex e5e86ef..0000000[m
+[1m--- a/SubastaYa.Api/Controllers/BidsController.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,33 +0,0 @@[m
+[31m-﻿using Microsoft.AspNetCore.Mvc;[m
+[31m-using SubastaYa.Api.Dtos.Bids;[m
+[31m-using SubastaYa.Api.Services;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Controllers;[m
+[31m-[m
+[31m-[ApiController][m
+[31m-[Route("api/v1/auctions/{auctionId:int}/bids")][m
+[31m-public class BidsController : ControllerBase[m
+[31m-{[m
+[31m-    private readonly IBidService _bidService;[m
+[31m-[m
+[31m-    public BidsController(IBidService bidService)[m
+[31m-    {[m
+[31m-        _bidService = bidService;[m
+[31m-    }[m
+[31m-[m
+[31m-    [HttpPost][m
+[31m-    [ProducesResponseType(typeof(BidResultDto), StatusCodes.Status201Created)][m
+[31m-    [ProducesResponseType(StatusCodes.Status400BadRequest)][m
+[31m-    [ProducesResponseType(StatusCodes.Status404NotFound)][m
+[31m-    [ProducesResponseType(StatusCodes.Status409Conflict)][m
+[31m-    public async Task<ActionResult<BidResultDto>> Create([m
+[31m-        int auctionId,[m
+[31m-        [FromBody] CreateBidRequestDto request)[m
+[31m-    {[m
+[31m-        BidResultDto result = await _bidService.CreateAsync([m
+[31m-            auctionId,[m
+[31m-            request);[m
+[31m-[m
+[31m-        return StatusCode(StatusCodes.Status201Created, result);[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Controllers/CategoriesController.cs b/SubastaYa.Api/Controllers/CategoriesController.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 6b7d41a..0000000[m
+[1m--- a/SubastaYa.Api/Controllers/CategoriesController.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,26 +0,0 @@[m
+[31m-﻿using Microsoft.AspNetCore.Mvc;[m
+[31m-using SubastaYa.Api.Dtos.Categories;[m
+[31m-using SubastaYa.Api.Services;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Controllers;[m
+[31m-[m
+[31m-[ApiController][m
+[31m-[Route("api/v1/categories")][m
+[31m-public class CategoriesController : ControllerBase[m
+[31m-{[m
+[31m-    private readonly ICategoryService _categoryService;[m
+[31m-[m
+[31m-    public CategoriesController(ICategoryService categoryService)[m
+[31m-    {[m
+[31m-        _categoryService = categoryService;[m
+[31m-    }[m
+[31m-[m
+[31m-    [HttpGet][m
+[31m-    public async Task<ActionResult<List<CategoryDto>>> GetAll()[m
+[31m-    {[m
+[31m-        List<CategoryDto> categories =[m
+[31m-            await _categoryService.GetAllAsync();[m
+[31m-[m
+[31m-        return Ok(categories);[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Controllers/UsersController.cs b/SubastaYa.Api/Controllers/UsersController.cs[m
+[1mdeleted file mode 100644[m
+[1mindex cd5aeab..0000000[m
+[1m--- a/SubastaYa.Api/Controllers/UsersController.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,38 +0,0 @@[m
+[31m-﻿using Microsoft.AspNetCore.Mvc;[m
+[31m-using SubastaYa.Api.Dtos.Users;[m
+[31m-using SubastaYa.Api.Services;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Controllers;[m
+[31m-[m
+[31m-[ApiController][m
+[31m-[Route("api/v1/users")][m
+[31m-public class UsersController : ControllerBase[m
+[31m-{[m
+[31m-    private readonly IUserActivityService _userActivityService;[m
+[31m-[m
+[31m-    public UsersController(IUserActivityService userActivityService)[m
+[31m-    {[m
+[31m-        _userActivityService = userActivityService;[m
+[31m-    }[m
+[31m-[m
+[31m-    [HttpGet("{userId:int}/bids")][m
+[31m-    public async Task<ActionResult<List<UserBidActivityDto>>> GetBids([m
+[31m-        int userId)[m
+[31m-    {[m
+[31m-        List<UserBidActivityDto> activities =[m
+[31m-            await _userActivityService.GetBidActivitiesAsync(userId);[m
+[31m-[m
+[31m-        return Ok(activities);[m
+[31m-    }[m
+[31m-[m
+[31m-    [HttpGet("{userId:int}/auctions")][m
+[31m-    public async Task<ActionResult<List<UserPublicationActivityDto>>>[m
+[31m-        GetAuctions(int userId)[m
+[31m-    {[m
+[31m-        List<UserPublicationActivityDto> activities =[m
+[31m-            await _userActivityService[m
+[31m-                .GetPublicationActivitiesAsync(userId);[m
+[31m-[m
+[31m-        return Ok(activities);[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Controllers/WalletsController.cs b/SubastaYa.Api/Controllers/WalletsController.cs[m
+[1mdeleted file mode 100644[m
+[1mindex e04004d..0000000[m
+[1m--- a/SubastaYa.Api/Controllers/WalletsController.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,55 +0,0 @@[m
+[31m-﻿using Microsoft.AspNetCore.Mvc;[m
+[31m-using SubastaYa.Api.Dtos.Wallets;[m
+[31m-using SubastaYa.Api.Services;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Controllers;[m
+[31m-[m
+[31m-[ApiController][m
+[31m-[Route("api/v1/wallets")][m
+[31m-public class WalletsController : ControllerBase[m
+[31m-{[m
+[31m-    private readonly IWalletService _walletService;[m
+[31m-[m
+[31m-    public WalletsController(IWalletService walletService)[m
+[31m-    {[m
+[31m-        _walletService = walletService;[m
+[31m-    }[m
+[31m-[m
+[31m-    [HttpGet("{userId:int}")][m
+[31m-    [ProducesResponseType(typeof(WalletBalanceDto), StatusCodes.Status200OK)][m
+[31m-    [ProducesResponseType(StatusCodes.Status404NotFound)][m
+[31m-    public async Task<ActionResult<WalletBalanceDto>> GetBalance(int userId)[m
+[31m-    {[m
+[31m-        WalletBalanceDto balance =[m
+[31m-            await _walletService.GetBalanceAsync(userId);[m
+[31m-[m
+[31m-        return Ok(balance);[m
+[31m-    }[m
+[31m-[m
+[31m-    [HttpPost("{userId:int}/transactions")][m
+[31m-    [ProducesResponseType(typeof(WalletBalanceDto), StatusCodes.Status200OK)][m
+[31m-    [ProducesResponseType(StatusCodes.Status400BadRequest)][m
+[31m-    [ProducesResponseType(StatusCodes.Status404NotFound)][m
+[31m-    public async Task<ActionResult<WalletBalanceDto>> Deposit([m
+[31m-        int userId,[m
+[31m-        [FromBody] DepositRequestDto request)[m
+[31m-    {[m
+[31m-        WalletBalanceDto balance =[m
+[31m-            await _walletService.DepositAsync(userId, request);[m
+[31m-[m
+[31m-        return Ok(balance);[m
+[31m-    }[m
+[31m-    [HttpGet("{userId:int}/transactions")][m
+[31m-    [ProducesResponseType([m
+[31m-    typeof(List<WalletTransactionItemDto>),[m
+[31m-    StatusCodes.Status200OK)][m
+[31m-    [ProducesResponseType(StatusCodes.Status404NotFound)][m
+[31m-    public async Task<ActionResult<List<WalletTransactionItemDto>>> GetTransactions([m
+[31m-    int userId)[m
+[31m-    {[m
+[31m-        List<WalletTransactionItemDto> transactions =[m
+[31m-            await _walletService.GetTransactionsAsync(userId);[m
+[31m-[m
+[31m-        return Ok(transactions);[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Data/DbInitializer.cs b/SubastaYa.Api/Data/DbInitializer.cs[m
+[1mindex cc0a68e..056b9dd 100644[m
+[1m--- a/SubastaYa.Api/Data/DbInitializer.cs[m
+[1m+++ b/SubastaYa.Api/Data/DbInitializer.cs[m
+[36m@@ -91,8 +91,8 @@[m [mpublic static class DbInitializer[m
+         Wallet buyer2Wallet = new()[m
+         {[m
+             User = buyer2,[m
+[31m-            TotalBalance = 260000,[m
+[31m-            HeldBalance = 60000,[m
+[32m+[m[32m            TotalBalance = 200000,[m
+[32m+[m[32m            HeldBalance = 0,[m
+             AvailableBalance = 200000,[m
+             Version = 1[m
+         };[m
+[36m@@ -259,23 +259,15 @@[m [mpublic static class DbInitializer[m
+             {[m
+                 Wallet = buyer2Wallet,[m
+                 Type = "DEPOSITO",[m
+[31m-                Amount = 260000,[m
+[32m+[m[32m                Amount = 200000,[m
+                 CreatedAtUtc = nowUtc.AddDays(-1)[m
+             },[m
+             new TransactionLedger[m
+             {[m
+                 Wallet = noFundsWallet,[m
+                 Type = "DEPOSITO",[m
+[31m-                Amount = 200000,[m
+[32m+[m[32m                Amount = 500,[m
+                 CreatedAtUtc = nowUtc.AddDays(-1)[m
+[31m-            },[m
+[31m-            new TransactionLedger[m
+[31m-            {[m
+[31m-                Wallet = buyer2Wallet,[m
+[31m-                Auction = expiredWithWinnerAuction,[m
+[31m-                Type = "RETENCION",[m
+[31m-                Amount = 60000,[m
+[31m-                CreatedAtUtc = nowUtc.AddHours(-1)[m
+             });[m
+ [m
+         context.AuditLogs.AddRange([m
+[1mdiff --git a/SubastaYa.Api/Dtos/Bids/BidResultDto.cs b/SubastaYa.Api/Dtos/Bids/BidResultDto.cs[m
+[1mdeleted file mode 100644[m
+[1mindex fbc19ab..0000000[m
+[1m--- a/SubastaYa.Api/Dtos/Bids/BidResultDto.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,18 +0,0 @@[m
+[31m-﻿namespace SubastaYa.Api.Dtos.Bids;[m
+[31m-[m
+[31m-public class BidResultDto[m
+[31m-{[m
+[31m-    public int BidId { get; set; }[m
+[31m-[m
+[31m-    public int AuctionId { get; set; }[m
+[31m-[m
+[31m-    public int BuyerId { get; set; }[m
+[31m-[m
+[31m-    public decimal Amount { get; set; }[m
+[31m-[m
+[31m-    public DateTime BidAtUtc { get; set; }[m
+[31m-[m
+[31m-    public DateTime EndAtUtc { get; set; }[m
+[31m-[m
+[31m-    public bool AntiSnipingApplied { get; set; }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Dtos/Bids/CreateBidRequestDto.cs b/SubastaYa.Api/Dtos/Bids/CreateBidRequestDto.cs[m
+[1mdeleted file mode 100644[m
+[1mindex e865d1a..0000000[m
+[1m--- a/SubastaYa.Api/Dtos/Bids/CreateBidRequestDto.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,8 +0,0 @@[m
+[31m-﻿namespace SubastaYa.Api.Dtos.Bids;[m
+[31m-[m
+[31m-public class CreateBidRequestDto[m
+[31m-{[m
+[31m-    public int BuyerId { get; set; }[m
+[31m-[m
+[31m-    public decimal Amount { get; set; }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Dtos/Categories/CategoryDto.cs b/SubastaYa.Api/Dtos/Categories/CategoryDto.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 7eebb9e..0000000[m
+[1m--- a/SubastaYa.Api/Dtos/Categories/CategoryDto.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,10 +0,0 @@[m
+[31m-﻿namespace SubastaYa.Api.Dtos.Categories;[m
+[31m-[m
+[31m-public class CategoryDto[m
+[31m-{[m
+[31m-    public int Id { get; set; }[m
+[31m-[m
+[31m-    public string Name { get; set; } = string.Empty;[m
+[31m-[m
+[31m-    public string IconUrl { get; set; } = string.Empty;[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Dtos/Users/UserBidActivityDto.cs b/SubastaYa.Api/Dtos/Users/UserBidActivityDto.cs[m
+[1mdeleted file mode 100644[m
+[1mindex f2384ca..0000000[m
+[1m--- a/SubastaYa.Api/Dtos/Users/UserBidActivityDto.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,22 +0,0 @@[m
+[31m-﻿namespace SubastaYa.Api.Dtos.Users;[m
+[31m-[m
+[31m-public class UserBidActivityDto[m
+[31m-{[m
+[31m-    public int AuctionId { get; set; }[m
+[31m-[m
+[31m-    public string Title { get; set; } = string.Empty;[m
+[31m-[m
+[31m-    public string ImageUrl { get; set; } = string.Empty;[m
+[31m-[m
+[31m-    public string Status { get; set; } = string.Empty;[m
+[31m-[m
+[31m-    public decimal MyHighestBid { get; set; }[m
+[31m-[m
+[31m-    public decimal? CurrentHighestBid { get; set; }[m
+[31m-[m
+[31m-    public bool IsLeading { get; set; }[m
+[31m-[m
+[31m-    public bool HasWon { get; set; }[m
+[31m-[m
+[31m-    public DateTime EndAtUtc { get; set; }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Dtos/Users/UserPublicationActivityDto.cs b/SubastaYa.Api/Dtos/Users/UserPublicationActivityDto.cs[m
+[1mdeleted file mode 100644[m
+[1mindex aceab0a..0000000[m
+[1m--- a/SubastaYa.Api/Dtos/Users/UserPublicationActivityDto.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,18 +0,0 @@[m
+[31m-﻿namespace SubastaYa.Api.Dtos.Users;[m
+[31m-[m
+[31m-public class UserPublicationActivityDto[m
+[31m-{[m
+[31m-    public int AuctionId { get; set; }[m
+[31m-[m
+[31m-    public string Title { get; set; } = string.Empty;[m
+[31m-[m
+[31m-    public string ImageUrl { get; set; } = string.Empty;[m
+[31m-[m
+[31m-    public string Status { get; set; } = string.Empty;[m
+[31m-[m
+[31m-    public int BidCount { get; set; }[m
+[31m-[m
+[31m-    public decimal? HighestBid { get; set; }[m
+[31m-[m
+[31m-    public DateTime EndAtUtc { get; set; }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Dtos/Wallets/DepositRequestDto.cs b/SubastaYa.Api/Dtos/Wallets/DepositRequestDto.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 5412300..0000000[m
+[1m--- a/SubastaYa.Api/Dtos/Wallets/DepositRequestDto.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,6 +0,0 @@[m
+[31m-﻿namespace SubastaYa.Api.Dtos.Wallets;[m
+[31m-[m
+[31m-public class DepositRequestDto[m
+[31m-{[m
+[31m-    public decimal Amount { get; set; }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Dtos/Wallets/WalletBalanceDto.cs b/SubastaYa.Api/Dtos/Wallets/WalletBalanceDto.cs[m
+[1mdeleted file mode 100644[m
+[1mindex e315733..0000000[m
+[1m--- a/SubastaYa.Api/Dtos/Wallets/WalletBalanceDto.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,14 +0,0 @@[m
+[31m-﻿namespace SubastaYa.Api.Dtos.Wallets;[m
+[31m-[m
+[31m-public class WalletBalanceDto[m
+[31m-{[m
+[31m-    public int WalletId { get; set; }[m
+[31m-[m
+[31m-    public int UserId { get; set; }[m
+[31m-[m
+[31m-    public decimal TotalBalance { get; set; }[m
+[31m-[m
+[31m-    public decimal HeldBalance { get; set; }[m
+[31m-[m
+[31m-    public decimal AvailableBalance { get; set; }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Dtos/Wallets/WalletTransactionItemDto.cs b/SubastaYa.Api/Dtos/Wallets/WalletTransactionItemDto.cs[m
+[1mdeleted file mode 100644[m
+[1mindex adc639c..0000000[m
+[1m--- a/SubastaYa.Api/Dtos/Wallets/WalletTransactionItemDto.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,14 +0,0 @@[m
+[31m-﻿namespace SubastaYa.Api.Dtos.Wallets;[m
+[31m-[m
+[31m-public class WalletTransactionItemDto[m
+[31m-{[m
+[31m-    public int Id { get; set; }[m
+[31m-[m
+[31m-    public string Type { get; set; } = string.Empty;[m
+[31m-[m
+[31m-    public decimal Amount { get; set; }[m
+[31m-[m
+[31m-    public DateTime CreatedAtUtc { get; set; }[m
+[31m-[m
+[31m-    public int? AuctionId { get; set; }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Hubs/AuctionHub.cs b/SubastaYa.Api/Hubs/AuctionHub.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 6aa52b9..0000000[m
+[1m--- a/SubastaYa.Api/Hubs/AuctionHub.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,20 +0,0 @@[m
+[31m-﻿using Microsoft.AspNetCore.SignalR;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Hubs;[m
+[31m-[m
+[31m-public class AuctionHub : Hub[m
+[31m-{[m
+[31m-    public Task JoinAuction(int auctionId)[m
+[31m-    {[m
+[31m-        return Groups.AddToGroupAsync([m
+[31m-            Context.ConnectionId,[m
+[31m-            $"auction-{auctionId}");[m
+[31m-    }[m
+[31m-[m
+[31m-    public Task LeaveAuction(int auctionId)[m
+[31m-    {[m
+[31m-        return Groups.RemoveFromGroupAsync([m
+[31m-            Context.ConnectionId,[m
+[31m-            $"auction-{auctionId}");[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Middleware/ExceptionHandlingMiddleware.cs b/SubastaYa.Api/Middleware/ExceptionHandlingMiddleware.cs[m
+[1mindex f6da027..ae47479 100644[m
+[1m--- a/SubastaYa.Api/Middleware/ExceptionHandlingMiddleware.cs[m
+[1m+++ b/SubastaYa.Api/Middleware/ExceptionHandlingMiddleware.cs[m
+[36m@@ -1,5 +1,4 @@[m
+ ﻿using SubastaYa.Api.Helpers;[m
+[31m-using Microsoft.EntityFrameworkCore;[m
+ [m
+ namespace SubastaYa.Api.Middleware;[m
+ [m
+[36m@@ -33,16 +32,6 @@[m [mpublic class ExceptionHandlingMiddleware[m
+                 exception.StatusCode,[m
+                 exception.Message);[m
+         }[m
+[31m-        catch (DbUpdateConcurrencyException)[m
+[31m-        {[m
+[31m-            _logger.LogWarning([m
+[31m-                "[CODE-ERROR] - conflicto de concurrencia detectado.");[m
+[31m-[m
+[31m-            await WriteErrorAsync([m
+[31m-                context,[m
+[31m-                StatusCodes.Status409Conflict,[m
+[31m-                "la subasta fue modificada por otra puja. Actualizá los datos e intentá nuevamente.");[m
+[31m-        }[m
+         catch (Exception exception)[m
+         {[m
+             _logger.LogError([m
+[1mdiff --git a/SubastaYa.Api/Program.cs b/SubastaYa.Api/Program.cs[m
+[1mindex e4fdd1f..d340606 100644[m
+[1m--- a/SubastaYa.Api/Program.cs[m
+[1m+++ b/SubastaYa.Api/Program.cs[m
+[36m@@ -3,8 +3,6 @@[m [musing SubastaYa.Api.Data;[m
+ using SubastaYa.Api.Middleware;[m
+ using SubastaYa.Api.Repositories;[m
+ using SubastaYa.Api.Services;[m
+[31m-using SubastaYa.Api.Workers;[m
+[31m-using SubastaYa.Api.Hubs;[m
+ [m
+ var builder = WebApplication.CreateBuilder(args);[m
+ [m
+[36m@@ -14,6 +12,8 @@[m [mbuilder.Services.AddEndpointsApiExplorer();[m
+ [m
+ builder.Services.AddSwaggerGen();[m
+ [m
+[32m+[m[32mbuilder.Services.AddOpenApi();[m
+[32m+[m
+ builder.Services.AddDbContext<AppDbContext>(options =>[m
+     options.UseSqlServer([m
+         builder.Configuration.GetConnectionString("DefaultConnection")));[m
+[36m@@ -21,28 +21,6 @@[m [mbuilder.Services.AddDbContext<AppDbContext>(options =>[m
+ builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();[m
+ builder.Services.AddScoped<IAuctionService, AuctionService>();[m
+ [m
+[31m-builder.Services.AddScoped<IWalletRepository, WalletRepository>();[m
+[31m-builder.Services.AddScoped<IWalletService, WalletService>();[m
+[31m-[m
+[31m-builder.Services.AddScoped<IBidRepository, BidRepository>();[m
+[31m-builder.Services.AddScoped<IBidService, BidService>();[m
+[31m-[m
+[31m-builder.Services.AddScoped<[m
+[31m-    IAuctionClosingService,[m
+[31m-    AuctionClosingService>();[m
+[31m-[m
+[31m-builder.Services.AddHostedService<AuctionClosingWorker>();[m
+[31m-builder.Services.AddSignalR();[m
+[31m-builder.Services.AddScoped<[m
+[31m-    IUserActivityRepository,[m
+[31m-    UserActivityRepository>();[m
+[31m-[m
+[31m-builder.Services.AddScoped<[m
+[31m-    IUserActivityService,[m
+[31m-    UserActivityService>();[m
+[31m-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();[m
+[31m-builder.Services.AddScoped<ICategoryService, CategoryService>();[m
+[31m-[m
+ var app = builder.Build();[m
+ [m
+ app.UseSwagger();[m
+[36m@@ -50,22 +28,28 @@[m [mapp.UseSwaggerUI();[m
+ [m
+ using (IServiceScope scope = app.Services.CreateScope())[m
+ {[m
+[31m-    AppDbContext context =[m
+[31m-        scope.ServiceProvider.GetRequiredService<AppDbContext>();[m
+[32m+[m[32m    AppDbContext context = scope.ServiceProvider.GetRequiredService<AppDbContext>();[m
+ [m
+     await DbInitializer.InitializeAsync(context);[m
+ }[m
+ [m
+[32m+[m[32m// Configure the HTTP request pipeline.[m
+[32m+[m[32mif (app.Environment.IsDevelopment())[m
+[32m+[m[32m{[m
+[32m+[m[32m    app.MapOpenApi();[m
+[32m+[m[32m}[m
+[32m+[m
+ app.UseMiddleware<ApiVersionMiddleware>();[m
+[32m+[m
+ app.UseMiddleware<ExceptionHandlingMiddleware>();[m
+[31m-app.UseDefaultFiles();[m
+[31m-app.UseStaticFiles();[m
+ [m
+ app.UseHttpsRedirection();[m
+ [m
+ app.UseAuthorization();[m
+ [m
+[32m+[m[32mapp.UseDefaultFiles();[m
+[32m+[m[32mapp.UseStaticFiles();[m
+[32m+[m
+ app.MapControllers();[m
+[31m-app.MapHub<AuctionHub>("/hubs/auctions");[m
+ [m
+[31m-app.Run();[m
+\ No newline at end of file[m
+[32m+[m[32mapp.Run();[m
+[1mdiff --git a/SubastaYa.Api/Repositories/BidRepository.cs b/SubastaYa.Api/Repositories/BidRepository.cs[m
+[1mdeleted file mode 100644[m
+[1mindex a6c8317..0000000[m
+[1m--- a/SubastaYa.Api/Repositories/BidRepository.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,231 +0,0 @@[m
+[31m-﻿using System.Text.Json;[m
+[31m-using Microsoft.AspNetCore.Http;[m
+[31m-using Microsoft.EntityFrameworkCore;[m
+[31m-using SubastaYa.Api.Data;[m
+[31m-using SubastaYa.Api.Dtos.Bids;[m
+[31m-using SubastaYa.Api.Helpers;[m
+[31m-using SubastaYa.Api.Models;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-public class BidRepository : IBidRepository[m
+[31m-{[m
+[31m-    private readonly AppDbContext _context;[m
+[31m-[m
+[31m-    public BidRepository(AppDbContext context)[m
+[31m-    {[m
+[31m-        _context = context;[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<BidResultDto> PlaceBidAsync([m
+[31m-        int auctionId,[m
+[31m-        CreateBidRequestDto request)[m
+[31m-    {[m
+[31m-        await using var transaction =[m
+[31m-            await _context.Database.BeginTransactionAsync();[m
+[31m-[m
+[31m-        Auction? auction = await _context.Auctions[m
+[31m-            .FirstOrDefaultAsync(currentAuction =>[m
+[31m-                currentAuction.Id == auctionId);[m
+[31m-[m
+[31m-        if (auction is null)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status404NotFound,[m
+[31m-                "la subasta indicada no existe.");[m
+[31m-        }[m
+[31m-[m
+[31m-        if (auction.SellerId == request.BuyerId)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status400BadRequest,[m
+[31m-                "el vendedor no puede pujar en su propia subasta.");[m
+[31m-        }[m
+[31m-[m
+[31m-        DateTime nowUtc = DateTime.UtcNow;[m
+[31m-[m
+[31m-        if (auction.Status != "ACTIVA" ||[m
+[31m-            auction.StartAtUtc > nowUtc ||[m
+[31m-            auction.EndAtUtc <= nowUtc)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status409Conflict,[m
+[31m-                "la subasta no se encuentra disponible para pujar.");[m
+[31m-        }[m
+[31m-[m
+[31m-        Wallet? buyerWallet = await _context.Wallets[m
+[31m-            .FirstOrDefaultAsync(wallet =>[m
+[31m-                wallet.UserId == request.BuyerId);[m
+[31m-[m
+[31m-        if (buyerWallet is null)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status404NotFound,[m
+[31m-                "la billetera del comprador no existe.");[m
+[31m-        }[m
+[31m-[m
+[31m-        Bid? previousLeadingBid = await _context.Bids[m
+[31m-            .Where(bid => bid.AuctionId == auctionId)[m
+[31m-            .OrderByDescending(bid => bid.Amount)[m
+[31m-            .ThenByDescending(bid => bid.BidAtUtc)[m
+[31m-            .FirstOrDefaultAsync();[m
+[31m-[m
+[31m-        decimal minimumRequiredAmount = previousLeadingBid is null[m
+[31m-            ? auction.BasePrice[m
+[31m-            : previousLeadingBid.Amount + auction.MinimumIncrement;[m
+[31m-[m
+[31m-        if (request.Amount < minimumRequiredAmount)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status409Conflict,[m
+[31m-                $"la puja mínima permitida es {minimumRequiredAmount}.");[m
+[31m-        }[m
+[31m-[m
+[31m-        decimal reusableHeldAmount =[m
+[31m-            previousLeadingBid?.BuyerId == request.BuyerId[m
+[31m-                ? previousLeadingBid.Amount[m
+[31m-                : 0;[m
+[31m-[m
+[31m-        if (buyerWallet.AvailableBalance + reusableHeldAmount < request.Amount)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status400BadRequest,[m
+[31m-                "el comprador no posee saldo disponible suficiente.");[m
+[31m-        }[m
+[31m-[m
+[31m-        if (previousLeadingBid is not null)[m
+[31m-        {[m
+[31m-            Wallet? previousBuyerWallet =[m
+[31m-                previousLeadingBid.BuyerId == request.BuyerId[m
+[31m-                    ? buyerWallet[m
+[31m-                    : await _context.Wallets.FirstOrDefaultAsync(wallet =>[m
+[31m-                        wallet.UserId == previousLeadingBid.BuyerId);[m
+[31m-[m
+[31m-            if (previousBuyerWallet is null)[m
+[31m-            {[m
+[31m-                throw new ApiException([m
+[31m-                    StatusCodes.Status500InternalServerError,[m
+[31m-                    "no se encontró la billetera del líder anterior.");[m
+[31m-            }[m
+[31m-[m
+[31m-            previousBuyerWallet.HeldBalance -= previousLeadingBid.Amount;[m
+[31m-            previousBuyerWallet.AvailableBalance += previousLeadingBid.Amount;[m
+[31m-            previousBuyerWallet.Version += 1;[m
+[31m-[m
+[31m-            _context.TransactionLedgers.Add(new TransactionLedger[m
+[31m-            {[m
+[31m-                WalletId = previousBuyerWallet.Id,[m
+[31m-                AuctionId = auction.Id,[m
+[31m-                Type = "LIBERACION",[m
+[31m-                Amount = previousLeadingBid.Amount,[m
+[31m-                CreatedAtUtc = nowUtc[m
+[31m-            });[m
+[31m-        }[m
+[31m-[m
+[31m-        buyerWallet.HeldBalance += request.Amount;[m
+[31m-        buyerWallet.AvailableBalance -= request.Amount;[m
+[31m-        buyerWallet.Version += 1;[m
+[31m-[m
+[31m-        Bid newBid = new()[m
+[31m-        {[m
+[31m-            AuctionId = auction.Id,[m
+[31m-            BuyerId = request.BuyerId,[m
+[31m-            Amount = request.Amount,[m
+[31m-            BidAtUtc = nowUtc[m
+[31m-        };[m
+[31m-[m
+[31m-        _context.Bids.Add(newBid);[m
+[31m-[m
+[31m-        _context.TransactionLedgers.Add(new TransactionLedger[m
+[31m-        {[m
+[31m-            WalletId = buyerWallet.Id,[m
+[31m-            AuctionId = auction.Id,[m
+[31m-            Type = "RETENCION",[m
+[31m-            Amount = request.Amount,[m
+[31m-            CreatedAtUtc = nowUtc[m
+[31m-        });[m
+[31m-[m
+[31m-        bool antiSnipingApplied =[m
+[31m-            auction.EndAtUtc - nowUtc <= TimeSpan.FromSeconds(60);[m
+[31m-[m
+[31m-        if (antiSnipingApplied)[m
+[31m-        {[m
+[31m-            DateTime previousEndAtUtc = auction.EndAtUtc;[m
+[31m-[m
+[31m-            auction.EndAtUtc = auction.EndAtUtc.AddMinutes(2);[m
+[31m-[m
+[31m-            _context.AuditLogs.Add(new AuditLog[m
+[31m-            {[m
+[31m-                Entity = "SUBASTA",[m
+[31m-                EntityId = auction.Id,[m
+[31m-                Action = "EXTENSION_TIEMPO",[m
+[31m-                UserId = request.BuyerId,[m
+[31m-                DetailJson = JsonSerializer.Serialize(new[m
+[31m-                {[m
+[31m-                    previousEndAtUtc,[m
+[31m-                    newEndAtUtc = auction.EndAtUtc[m
+[31m-                }),[m
+[31m-                CreatedAtUtc = nowUtc[m
+[31m-            });[m
+[31m-        }[m
+[31m-[m
+[31m-        auction.Version += 1;[m
+[31m-[m
+[31m-        _context.AuditLogs.Add(new AuditLog[m
+[31m-        {[m
+[31m-            Entity = "SUBASTA",[m
+[31m-            EntityId = auction.Id,[m
+[31m-            Action = "PUJA_REGISTRADA",[m
+[31m-            UserId = request.BuyerId,[m
+[31m-            DetailJson = JsonSerializer.Serialize(new[m
+[31m-            {[m
+[31m-                amount = request.Amount,[m
+[31m-                bidAtUtc = nowUtc[m
+[31m-            }),[m
+[31m-            CreatedAtUtc = nowUtc[m
+[31m-        });[m
+[31m-[m
+[31m-        await _context.SaveChangesAsync();[m
+[31m-[m
+[31m-        await transaction.CommitAsync();[m
+[31m-[m
+[31m-        return new BidResultDto[m
+[31m-        {[m
+[31m-            BidId = newBid.Id,[m
+[31m-            AuctionId = auction.Id,[m
+[31m-            BuyerId = request.BuyerId,[m
+[31m-            Amount = request.Amount,[m
+[31m-            BidAtUtc = newBid.BidAtUtc,[m
+[31m-            EndAtUtc = auction.EndAtUtc,[m
+[31m-            AntiSnipingApplied = antiSnipingApplied[m
+[31m-        };[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task RegisterRejectedBidAsync([m
+[31m-        int auctionId,[m
+[31m-        int buyerId,[m
+[31m-        decimal amount,[m
+[31m-        string reason)[m
+[31m-    {[m
+[31m-        _context.ChangeTracker.Clear();[m
+[31m-[m
+[31m-        bool buyerExists = await _context.Users[m
+[31m-            .AnyAsync(user => user.Id == buyerId);[m
+[31m-[m
+[31m-        _context.AuditLogs.Add(new AuditLog[m
+[31m-        {[m
+[31m-            Entity = "SUBASTA",[m
+[31m-            EntityId = auctionId,[m
+[31m-            Action = "PUJA_RECHAZADA",[m
+[31m-            UserId = buyerExists ? buyerId : null,[m
+[31m-            DetailJson = JsonSerializer.Serialize(new[m
+[31m-            {[m
+[31m-                amount,[m
+[31m-                reason[m
+[31m-            }),[m
+[31m-            CreatedAtUtc = DateTime.UtcNow[m
+[31m-        });[m
+[31m-[m
+[31m-        await _context.SaveChangesAsync();[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Repositories/CategoryRepository.cs b/SubastaYa.Api/Repositories/CategoryRepository.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 5e10dbc..0000000[m
+[1m--- a/SubastaYa.Api/Repositories/CategoryRepository.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,29 +0,0 @@[m
+[31m-﻿using Microsoft.EntityFrameworkCore;[m
+[31m-using SubastaYa.Api.Data;[m
+[31m-using SubastaYa.Api.Dtos.Categories;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-public class CategoryRepository : ICategoryRepository[m
+[31m-{[m
+[31m-    private readonly AppDbContext _context;[m
+[31m-[m
+[31m-    public CategoryRepository(AppDbContext context)[m
+[31m-    {[m
+[31m-        _context = context;[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<List<CategoryDto>> GetAllAsync()[m
+[31m-    {[m
+[31m-        return await _context.Categories[m
+[31m-            .AsNoTracking()[m
+[31m-            .OrderBy(category => category.Name)[m
+[31m-            .Select(category => new CategoryDto[m
+[31m-            {[m
+[31m-                Id = category.Id,[m
+[31m-                Name = category.Name,[m
+[31m-                IconUrl = category.IconUrl[m
+[31m-            })[m
+[31m-            .ToListAsync();[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Repositories/IBidRepository.cs b/SubastaYa.Api/Repositories/IBidRepository.cs[m
+[1mdeleted file mode 100644[m
+[1mindex e294e40..0000000[m
+[1m--- a/SubastaYa.Api/Repositories/IBidRepository.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,16 +0,0 @@[m
+[31m-﻿using SubastaYa.Api.Dtos.Bids;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-public interface IBidRepository[m
+[31m-{[m
+[31m-    Task<BidResultDto> PlaceBidAsync([m
+[31m-        int auctionId,[m
+[31m-        CreateBidRequestDto request);[m
+[31m-[m
+[31m-    Task RegisterRejectedBidAsync([m
+[31m-        int auctionId,[m
+[31m-        int buyerId,[m
+[31m-        decimal amount,[m
+[31m-        string reason);[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Repositories/ICategoryRepository.cs b/SubastaYa.Api/Repositories/ICategoryRepository.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 231a322..0000000[m
+[1m--- a/SubastaYa.Api/Repositories/ICategoryRepository.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,8 +0,0 @@[m
+[31m-﻿using SubastaYa.Api.Dtos.Categories;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-public interface ICategoryRepository[m
+[31m-{[m
+[31m-    Task<List<CategoryDto>> GetAllAsync();[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Repositories/IUserActivityRepository.cs b/SubastaYa.Api/Repositories/IUserActivityRepository.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 3390996..0000000[m
+[1m--- a/SubastaYa.Api/Repositories/IUserActivityRepository.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,13 +0,0 @@[m
+[31m-﻿using SubastaYa.Api.Dtos.Users;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-public interface IUserActivityRepository[m
+[31m-{[m
+[31m-    Task<bool> UserExistsAsync(int userId);[m
+[31m-[m
+[31m-    Task<List<UserBidActivityDto>> GetBidActivitiesAsync(int userId);[m
+[31m-[m
+[31m-    Task<List<UserPublicationActivityDto>> GetPublicationActivitiesAsync([m
+[31m-        int userId);[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Repositories/IWalletRepository.cs b/SubastaYa.Api/Repositories/IWalletRepository.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 4bcbcea..0000000[m
+[1m--- a/SubastaYa.Api/Repositories/IWalletRepository.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,14 +0,0 @@[m
+[31m-﻿using SubastaYa.Api.Dtos.Wallets;[m
+[31m-using SubastaYa.Api.Models;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-public interface IWalletRepository[m
+[31m-{[m
+[31m-    Task<Wallet?> GetByUserIdAsync(int userId);[m
+[31m-[m
+[31m-    Task<Wallet?> DepositAsync(int userId, decimal amount);[m
+[31m-[m
+[31m-    Task<List<WalletTransactionItemDto>> GetTransactionsByUserIdAsync([m
+[31m-        int userId);[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Repositories/UserActivityRepository.cs b/SubastaYa.Api/Repositories/UserActivityRepository.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 6e00a8b..0000000[m
+[1m--- a/SubastaYa.Api/Repositories/UserActivityRepository.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,76 +0,0 @@[m
+[31m-﻿using Microsoft.EntityFrameworkCore;[m
+[31m-using SubastaYa.Api.Data;[m
+[31m-using SubastaYa.Api.Dtos.Users;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-public class UserActivityRepository : IUserActivityRepository[m
+[31m-{[m
+[31m-    private readonly AppDbContext _context;[m
+[31m-[m
+[31m-    public UserActivityRepository(AppDbContext context)[m
+[31m-    {[m
+[31m-        _context = context;[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<bool> UserExistsAsync(int userId)[m
+[31m-    {[m
+[31m-        return await _context.Users.AnyAsync(user => user.Id == userId);[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<List<UserBidActivityDto>> GetBidActivitiesAsync([m
+[31m-        int userId)[m
+[31m-    {[m
+[31m-        return await _context.Auctions[m
+[31m-            .AsNoTracking()[m
+[31m-            .Where(auction => auction.Bids.Any(bid =>[m
+[31m-                bid.BuyerId == userId))[m
+[31m-            .OrderByDescending(auction => auction.EndAtUtc)[m
+[31m-            .Select(auction => new UserBidActivityDto[m
+[31m-            {[m
+[31m-                AuctionId = auction.Id,[m
+[31m-                Title = auction.Title,[m
+[31m-                ImageUrl = auction.ImageUrl,[m
+[31m-                Status = auction.Status,[m
+[31m-                MyHighestBid = auction.Bids[m
+[31m-                    .Where(bid => bid.BuyerId == userId)[m
+[31m-                    .Max(bid => bid.Amount),[m
+[31m-                CurrentHighestBid = auction.Bids[m
+[31m-                    .Max(bid => (decimal?)bid.Amount),[m
+[31m-                IsLeading = auction.Bids[m
+[31m-                    .OrderByDescending(bid => bid.Amount)[m
+[31m-                    .ThenByDescending(bid => bid.BidAtUtc)[m
+[31m-                    .Select(bid => bid.BuyerId)[m
+[31m-                    .FirstOrDefault() == userId,[m
+[31m-                HasWon = auction.Status == "FINALIZADA" &&[m
+[31m-                    auction.Bids[m
+[31m-                        .OrderByDescending(bid => bid.Amount)[m
+[31m-                        .ThenByDescending(bid => bid.BidAtUtc)[m
+[31m-                        .Select(bid => bid.BuyerId)[m
+[31m-                        .FirstOrDefault() == userId,[m
+[31m-                EndAtUtc = auction.EndAtUtc[m
+[31m-            })[m
+[31m-            .ToListAsync();[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<List<UserPublicationActivityDto>>[m
+[31m-        GetPublicationActivitiesAsync(int userId)[m
+[31m-    {[m
+[31m-        return await _context.Auctions[m
+[31m-            .AsNoTracking()[m
+[31m-            .Where(auction => auction.SellerId == userId)[m
+[31m-            .OrderByDescending(auction => auction.EndAtUtc)[m
+[31m-            .Select(auction => new UserPublicationActivityDto[m
+[31m-            {[m
+[31m-                AuctionId = auction.Id,[m
+[31m-                Title = auction.Title,[m
+[31m-                ImageUrl = auction.ImageUrl,[m
+[31m-                Status = auction.Status,[m
+[31m-                BidCount = auction.Bids.Count,[m
+[31m-                HighestBid = auction.Bids[m
+[31m-                    .Max(bid => (decimal?)bid.Amount),[m
+[31m-                EndAtUtc = auction.EndAtUtc[m
+[31m-            })[m
+[31m-            .ToListAsync();[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Repositories/WalletRepository.cs b/SubastaYa.Api/Repositories/WalletRepository.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 01bb40e..0000000[m
+[1m--- a/SubastaYa.Api/Repositories/WalletRepository.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,91 +0,0 @@[m
+[31m-﻿using Microsoft.EntityFrameworkCore;[m
+[31m-using SubastaYa.Api.Data;[m
+[31m-using SubastaYa.Api.Models;[m
+[31m-using SubastaYa.Api.Dtos.Wallets;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-public class WalletRepository : IWalletRepository[m
+[31m-{[m
+[31m-    private readonly AppDbContext _context;[m
+[31m-[m
+[31m-    public WalletRepository(AppDbContext context)[m
+[31m-    {[m
+[31m-        _context = context;[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<Wallet?> GetByUserIdAsync(int userId)[m
+[31m-    {[m
+[31m-        return await _context.Wallets[m
+[31m-            .AsNoTracking()[m
+[31m-            .FirstOrDefaultAsync(wallet => wallet.UserId == userId);[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<Wallet?> DepositAsync(int userId, decimal amount)[m
+[31m-    {[m
+[31m-        Wallet? wallet = await _context.Wallets[m
+[31m-            .FirstOrDefaultAsync(wallet => wallet.UserId == userId);[m
+[31m-[m
+[31m-        if (wallet is null)[m
+[31m-        {[m
+[31m-            return null;[m
+[31m-        }[m
+[31m-[m
+[31m-        await using var transaction =[m
+[31m-            await _context.Database.BeginTransactionAsync();[m
+[31m-[m
+[31m-        try[m
+[31m-        {[m
+[31m-            wallet.TotalBalance += amount;[m
+[31m-            wallet.AvailableBalance += amount;[m
+[31m-            wallet.Version += 1;[m
+[31m-[m
+[31m-            _context.TransactionLedgers.Add(new TransactionLedger[m
+[31m-            {[m
+[31m-                WalletId = wallet.Id,[m
+[31m-                Type = "DEPOSITO",[m
+[31m-                Amount = amount,[m
+[31m-                CreatedAtUtc = DateTime.UtcNow[m
+[31m-            });[m
+[31m-[m
+[31m-            _context.AuditLogs.Add(new AuditLog[m
+[31m-            {[m
+[31m-                Entity = "BILLETERA",[m
+[31m-                EntityId = wallet.Id,[m
+[31m-                Action = "ACREDITACION_MANUAL",[m
+[31m-                UserId = wallet.UserId,[m
+[31m-                DetailJson = $"{{\"monto\":{amount}}}",[m
+[31m-                CreatedAtUtc = DateTime.UtcNow[m
+[31m-            });[m
+[31m-[m
+[31m-            await _context.SaveChangesAsync();[m
+[31m-[m
+[31m-            await transaction.CommitAsync();[m
+[31m-[m
+[31m-            return wallet;[m
+[31m-        }[m
+[31m-        catch[m
+[31m-        {[m
+[31m-            await transaction.RollbackAsync();[m
+[31m-[m
+[31m-            throw;[m
+[31m-        }[m
+[31m-    }[m
+[31m-    public async Task<List<WalletTransactionItemDto>>[m
+[31m-    GetTransactionsByUserIdAsync(int userId)[m
+[31m-    {[m
+[31m-        return await _context.TransactionLedgers[m
+[31m-            .AsNoTracking()[m
+[31m-            .Where(transaction => transaction.Wallet.UserId == userId)[m
+[31m-            .OrderByDescending(transaction => transaction.CreatedAtUtc)[m
+[31m-            .Select(transaction => new WalletTransactionItemDto[m
+[31m-            {[m
+[31m-                Id = transaction.Id,[m
+[31m-                Type = transaction.Type,[m
+[31m-                Amount = transaction.Amount,[m
+[31m-                CreatedAtUtc = transaction.CreatedAtUtc,[m
+[31m-                AuctionId = transaction.AuctionId[m
+[31m-            })[m
+[31m-            .ToListAsync();[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Services/AuctionClosingService.cs b/SubastaYa.Api/Services/AuctionClosingService.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 173c459..0000000[m
+[1m--- a/SubastaYa.Api/Services/AuctionClosingService.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,192 +0,0 @@[m
+[31m-﻿using Microsoft.AspNetCore.Http;[m
+[31m-using Microsoft.AspNetCore.SignalR;[m
+[31m-using Microsoft.EntityFrameworkCore;[m
+[31m-using SubastaYa.Api.Data;[m
+[31m-using SubastaYa.Api.Hubs;[m
+[31m-using SubastaYa.Api.Models;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Services;[m
+[31m-[m
+[31m-public class AuctionClosingService : IAuctionClosingService[m
+[31m-{[m
+[31m-    private readonly AppDbContext _context;[m
+[31m-    private readonly ILogger<AuctionClosingService> _logger;[m
+[31m-    private readonly IHubContext<AuctionHub> _auctionHub;[m
+[31m-[m
+[31m-    public AuctionClosingService([m
+[31m-        AppDbContext context,[m
+[31m-        ILogger<AuctionClosingService> logger,[m
+[31m-        IHubContext<AuctionHub> auctionHub)[m
+[31m-    {[m
+[31m-        _context = context;[m
+[31m-        _logger = logger;[m
+[31m-        _auctionHub = auctionHub;[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task ProcessExpiredAuctionsAsync()[m
+[31m-    {[m
+[31m-        DateTime nowUtc = DateTime.UtcNow;[m
+[31m-[m
+[31m-        List<int> expiredAuctionIds = await _context.Auctions[m
+[31m-            .AsNoTracking()[m
+[31m-            .Where(auction =>[m
+[31m-                auction.Status == "ACTIVA" &&[m
+[31m-                auction.EndAtUtc <= nowUtc)[m
+[31m-            .Select(auction => auction.Id)[m
+[31m-            .ToListAsync();[m
+[31m-[m
+[31m-        foreach (int idx_tk in expiredAuctionIds)[m
+[31m-        {[m
+[31m-            try[m
+[31m-            {[m
+[31m-                await CloseAuctionAsync(idx_tk, nowUtc);[m
+[31m-            }[m
+[31m-            catch (DbUpdateConcurrencyException exception)[m
+[31m-            {[m
+[31m-                _logger.LogWarning([m
+[31m-                    exception,[m
+[31m-                    "[CODE-ERROR] - conflicto de concurrencia al cerrar una subasta.");[m
+[31m-            }[m
+[31m-            catch (Exception exception)[m
+[31m-            {[m
+[31m-                _logger.LogError([m
+[31m-                    exception,[m
+[31m-                    "[CODE-ERROR] - error al procesar una subasta vencida.");[m
+[31m-            }[m
+[31m-        }[m
+[31m-    }[m
+[31m-[m
+[31m-    private async Task CloseAuctionAsync([m
+[31m-        int auctionId,[m
+[31m-        DateTime nowUtc)[m
+[31m-    {[m
+[31m-        await using var transaction =[m
+[31m-            await _context.Database.BeginTransactionAsync();[m
+[31m-[m
+[31m-        Auction? auction = await _context.Auctions[m
+[31m-            .FirstOrDefaultAsync(currentAuction =>[m
+[31m-                currentAuction.Id == auctionId &&[m
+[31m-                currentAuction.Status == "ACTIVA");[m
+[31m-[m
+[31m-        if (auction is null)[m
+[31m-        {[m
+[31m-            return;[m
+[31m-        }[m
+[31m-[m
+[31m-        Bid? winnerBid = await _context.Bids[m
+[31m-            .Where(bid => bid.AuctionId == auction.Id)[m
+[31m-            .OrderByDescending(bid => bid.Amount)[m
+[31m-            .ThenByDescending(bid => bid.BidAtUtc)[m
+[31m-            .FirstOrDefaultAsync();[m
+[31m-[m
+[31m-        if (winnerBid is null)[m
+[31m-        {[m
+[31m-            auction.Status = "DESIERTA";[m
+[31m-            auction.Version += 1;[m
+[31m-[m
+[31m-            _context.AuditLogs.Add(new AuditLog[m
+[31m-            {[m
+[31m-                Entity = "SUBASTA",[m
+[31m-                EntityId = auction.Id,[m
+[31m-                Action = "SUBASTA_DESIERTA",[m
+[31m-                UserId = null,[m
+[31m-                DetailJson = "{\"motivo\":\"sin_pujas\"}",[m
+[31m-                CreatedAtUtc = nowUtc[m
+[31m-            });[m
+[31m-[m
+[31m-            await _context.SaveChangesAsync();[m
+[31m-            await transaction.CommitAsync();[m
+[31m-            await NotifyAuctionClosedAsync(auction.Id, auction.Status);[m
+[31m-[m
+[31m-            return;[m
+[31m-        }[m
+[31m-[m
+[31m-        Wallet? buyerWallet = await _context.Wallets[m
+[31m-            .FirstOrDefaultAsync(wallet =>[m
+[31m-                wallet.UserId == winnerBid.BuyerId);[m
+[31m-[m
+[31m-        Wallet? sellerWallet = await _context.Wallets[m
+[31m-            .FirstOrDefaultAsync(wallet =>[m
+[31m-                wallet.UserId == auction.SellerId);[m
+[31m-[m
+[31m-        if (buyerWallet is null || sellerWallet is null)[m
+[31m-        {[m
+[31m-            throw new InvalidOperationException([m
+[31m-                "No se encontraron las billeteras necesarias para liquidar la subasta.");[m
+[31m-        }[m
+[31m-[m
+[31m-        if (buyerWallet.HeldBalance < winnerBid.Amount)[m
+[31m-        {[m
+[31m-            throw new InvalidOperationException([m
+[31m-                "El saldo retenido no alcanza para liquidar la subasta.");[m
+[31m-        }[m
+[31m-[m
+[31m-        buyerWallet.HeldBalance -= winnerBid.Amount;[m
+[31m-        buyerWallet.TotalBalance -= winnerBid.Amount;[m
+[31m-        buyerWallet.Version += 1;[m
+[31m-[m
+[31m-        sellerWallet.TotalBalance += winnerBid.Amount;[m
+[31m-        sellerWallet.AvailableBalance += winnerBid.Amount;[m
+[31m-        sellerWallet.Version += 1;[m
+[31m-[m
+[31m-        _context.TransactionLedgers.Add(new TransactionLedger[m
+[31m-        {[m
+[31m-            WalletId = buyerWallet.Id,[m
+[31m-            AuctionId = auction.Id,[m
+[31m-            Type = "PAGO",[m
+[31m-            Amount = winnerBid.Amount,[m
+[31m-            CreatedAtUtc = nowUtc[m
+[31m-        });[m
+[31m-[m
+[31m-        _context.TransactionLedgers.Add(new TransactionLedger[m
+[31m-        {[m
+[31m-            WalletId = sellerWallet.Id,[m
+[31m-            AuctionId = auction.Id,[m
+[31m-            Type = "COBRO",[m
+[31m-            Amount = winnerBid.Amount,[m
+[31m-            CreatedAtUtc = nowUtc[m
+[31m-        });[m
+[31m-[m
+[31m-        auction.Status = "FINALIZADA";[m
+[31m-        auction.Version += 1;[m
+[31m-[m
+[31m-        _context.AuditLogs.Add(new AuditLog[m
+[31m-        {[m
+[31m-            Entity = "SUBASTA",[m
+[31m-            EntityId = auction.Id,[m
+[31m-            Action = "CIERRE_WORKER",[m
+[31m-            UserId = null,[m
+[31m-            DetailJson =[m
+[31m-                $"{{\"compradorId\":{winnerBid.BuyerId},\"monto\":{winnerBid.Amount}}}",[m
+[31m-            CreatedAtUtc = nowUtc[m
+[31m-        });[m
+[31m-[m
+[31m-        await _context.SaveChangesAsync();[m
+[31m-        await transaction.CommitAsync();[m
+[31m-[m
+[31m-        // Notificación agregada para el caso de subasta finalizada con éxito[m
+[31m-        await NotifyAuctionClosedAsync(auction.Id, auction.Status);[m
+[31m-    }[m
+[31m-[m
+[31m-    private async Task NotifyAuctionClosedAsync([m
+[31m-        int auctionId,[m
+[31m-        string status)[m
+[31m-    {[m
+[31m-        try[m
+[31m-        {[m
+[31m-            await _auctionHub.Clients[m
+[31m-                .Group($"auction-{auctionId}")[m
+[31m-                .SendAsync("AuctionClosed", new[m
+[31m-                {[m
+[31m-                    auctionId,[m
+[31m-                    status[m
+[31m-                });[m
+[31m-        }[m
+[31m-        catch (Exception exception)[m
+[31m-        {[m
+[31m-            _logger.LogError([m
+[31m-                exception,[m
+[31m-                "[CODE-ERROR] - no se pudo notificar el cierre de subasta.");[m
+[31m-        }[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Services/BidService.cs b/SubastaYa.Api/Services/BidService.cs[m
+[1mdeleted file mode 100644[m
+[1mindex ef3ac98..0000000[m
+[1m--- a/SubastaYa.Api/Services/BidService.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,96 +0,0 @@[m
+[31m-﻿using Microsoft.AspNetCore.Http;[m
+[31m-using Microsoft.AspNetCore.SignalR;[m
+[31m-using Microsoft.EntityFrameworkCore;[m
+[31m-using SubastaYa.Api.Dtos.Bids;[m
+[31m-using SubastaYa.Api.Helpers;[m
+[31m-using SubastaYa.Api.Hubs;[m
+[31m-using SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Services;[m
+[31m-[m
+[31m-public class BidService : IBidService[m
+[31m-{[m
+[31m-    private readonly IBidRepository _bidRepository;[m
+[31m-    private readonly IHubContext<AuctionHub> _auctionHub;[m
+[31m-    private readonly ILogger<BidService> _logger;[m
+[31m-[m
+[31m-    public BidService([m
+[31m-        IBidRepository bidRepository,[m
+[31m-        IHubContext<AuctionHub> auctionHub,[m
+[31m-        ILogger<BidService> logger)[m
+[31m-    {[m
+[31m-        _bidRepository = bidRepository;[m
+[31m-        _auctionHub = auctionHub;[m
+[31m-        _logger = logger;[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<BidResultDto> CreateAsync([m
+[31m-        int auctionId,[m
+[31m-        CreateBidRequestDto request)[m
+[31m-    {[m
+[31m-        try[m
+[31m-        {[m
+[31m-            if (request.Amount <= 0)[m
+[31m-            {[m
+[31m-                throw new ApiException([m
+[31m-                    StatusCodes.Status400BadRequest,[m
+[31m-                    "el monto de la puja debe ser mayor a cero.");[m
+[31m-            }[m
+[31m-[m
+[31m-            BidResultDto result = await _bidRepository.PlaceBidAsync([m
+[31m-                auctionId,[m
+[31m-                request);[m
+[31m-[m
+[31m-            await NotifyBidAsync(result);[m
+[31m-[m
+[31m-            return result;[m
+[31m-        }[m
+[31m-        catch (ApiException exception)[m
+[31m-        {[m
+[31m-            await _bidRepository.RegisterRejectedBidAsync([m
+[31m-                auctionId,[m
+[31m-                request.BuyerId,[m
+[31m-                request.Amount,[m
+[31m-                exception.Message);[m
+[31m-[m
+[31m-            throw;[m
+[31m-        }[m
+[31m-        catch (DbUpdateConcurrencyException)[m
+[31m-        {[m
+[31m-            await _bidRepository.RegisterRejectedBidAsync([m
+[31m-                auctionId,[m
+[31m-                request.BuyerId,[m
+[31m-                request.Amount,[m
+[31m-                "CONFLICTO_CONCURRENCIA");[m
+[31m-[m
+[31m-            throw;[m
+[31m-        }[m
+[31m-    }[m
+[31m-[m
+[31m-    private async Task NotifyBidAsync(BidResultDto result)[m
+[31m-    {[m
+[31m-        try[m
+[31m-        {[m
+[31m-            await _auctionHub.Clients[m
+[31m-                .Group($"auction-{result.AuctionId}")[m
+[31m-                .SendAsync("BidPlaced", result);[m
+[31m-[m
+[31m-            if (result.AntiSnipingApplied)[m
+[31m-            {[m
+[31m-                await _auctionHub.Clients[m
+[31m-                    .Group($"auction-{result.AuctionId}")[m
+[31m-                    .SendAsync("AuctionExtended", new[m
+[31m-                    {[m
+[31m-                        auctionId = result.AuctionId,[m
+[31m-                        endAtUtc = result.EndAtUtc[m
+[31m-                    });[m
+[31m-            }[m
+[31m-        }[m
+[31m-        catch (Exception exception)[m
+[31m-        {[m
+[31m-            _logger.LogError([m
+[31m-                exception,[m
+[31m-                "[CODE-ERROR] - no se pudo enviar la notificación de SignalR.");[m
+[31m-        }[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Services/CategoryService.cs b/SubastaYa.Api/Services/CategoryService.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 3dec215..0000000[m
+[1m--- a/SubastaYa.Api/Services/CategoryService.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,19 +0,0 @@[m
+[31m-﻿using SubastaYa.Api.Dtos.Categories;[m
+[31m-using SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Services;[m
+[31m-[m
+[31m-public class CategoryService : ICategoryService[m
+[31m-{[m
+[31m-    private readonly ICategoryRepository _categoryRepository;[m
+[31m-[m
+[31m-    public CategoryService(ICategoryRepository categoryRepository)[m
+[31m-    {[m
+[31m-        _categoryRepository = categoryRepository;[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<List<CategoryDto>> GetAllAsync()[m
+[31m-    {[m
+[31m-        return await _categoryRepository.GetAllAsync();[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Services/IAuctionClosingService.cs b/SubastaYa.Api/Services/IAuctionClosingService.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 53d6469..0000000[m
+[1m--- a/SubastaYa.Api/Services/IAuctionClosingService.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,6 +0,0 @@[m
+[31m-﻿namespace SubastaYa.Api.Services;[m
+[31m-[m
+[31m-public interface IAuctionClosingService[m
+[31m-{[m
+[31m-    Task ProcessExpiredAuctionsAsync();[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Services/IBidService.cs b/SubastaYa.Api/Services/IBidService.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 8d53fa2..0000000[m
+[1m--- a/SubastaYa.Api/Services/IBidService.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,10 +0,0 @@[m
+[31m-﻿using SubastaYa.Api.Dtos.Bids;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Services;[m
+[31m-[m
+[31m-public interface IBidService[m
+[31m-{[m
+[31m-    Task<BidResultDto> CreateAsync([m
+[31m-        int auctionId,[m
+[31m-        CreateBidRequestDto request);[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Services/ICategoryService.cs b/SubastaYa.Api/Services/ICategoryService.cs[m
+[1mdeleted file mode 100644[m
+[1mindex bd0fb8f..0000000[m
+[1m--- a/SubastaYa.Api/Services/ICategoryService.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,8 +0,0 @@[m
+[31m-﻿using SubastaYa.Api.Dtos.Categories;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Services;[m
+[31m-[m
+[31m-public interface ICategoryService[m
+[31m-{[m
+[31m-    Task<List<CategoryDto>> GetAllAsync();[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Services/IUserActivityService.cs b/SubastaYa.Api/Services/IUserActivityService.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 35657fe..0000000[m
+[1m--- a/SubastaYa.Api/Services/IUserActivityService.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,11 +0,0 @@[m
+[31m-﻿using SubastaYa.Api.Dtos.Users;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Services;[m
+[31m-[m
+[31m-public interface IUserActivityService[m
+[31m-{[m
+[31m-    Task<List<UserBidActivityDto>> GetBidActivitiesAsync(int userId);[m
+[31m-[m
+[31m-    Task<List<UserPublicationActivityDto>> GetPublicationActivitiesAsync([m
+[31m-        int userId);[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Services/IWalletService.cs b/SubastaYa.Api/Services/IWalletService.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 0de34b4..0000000[m
+[1m--- a/SubastaYa.Api/Services/IWalletService.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,15 +0,0 @@[m
+[31m-﻿using SubastaYa.Api.Dtos.Wallets;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Services;[m
+[31m-[m
+[31m-public interface IWalletService[m
+[31m-{[m
+[31m-    Task<WalletBalanceDto> GetBalanceAsync(int userId);[m
+[31m-[m
+[31m-    Task<WalletBalanceDto> DepositAsync([m
+[31m-        int userId,[m
+[31m-        DepositRequestDto request);[m
+[31m-[m
+[31m-    Task<List<WalletTransactionItemDto>> GetTransactionsAsync([m
+[31m-    int userId);[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Services/UserActivityService.cs b/SubastaYa.Api/Services/UserActivityService.cs[m
+[1mdeleted file mode 100644[m
+[1mindex 077cda1..0000000[m
+[1m--- a/SubastaYa.Api/Services/UserActivityService.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,47 +0,0 @@[m
+[31m-﻿using Microsoft.AspNetCore.Http;[m
+[31m-using SubastaYa.Api.Dtos.Users;[m
+[31m-using SubastaYa.Api.Helpers;[m
+[31m-using SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Services;[m
+[31m-[m
+[31m-public class UserActivityService : IUserActivityService[m
+[31m-{[m
+[31m-    private readonly IUserActivityRepository _userActivityRepository;[m
+[31m-[m
+[31m-    public UserActivityService([m
+[31m-        IUserActivityRepository userActivityRepository)[m
+[31m-    {[m
+[31m-        _userActivityRepository = userActivityRepository;[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<List<UserBidActivityDto>> GetBidActivitiesAsync([m
+[31m-        int userId)[m
+[31m-    {[m
+[31m-        await EnsureUserExistsAsync(userId);[m
+[31m-[m
+[31m-        return await _userActivityRepository.GetBidActivitiesAsync(userId);[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<List<UserPublicationActivityDto>>[m
+[31m-        GetPublicationActivitiesAsync(int userId)[m
+[31m-    {[m
+[31m-        await EnsureUserExistsAsync(userId);[m
+[31m-[m
+[31m-        return await _userActivityRepository[m
+[31m-            .GetPublicationActivitiesAsync(userId);[m
+[31m-    }[m
+[31m-[m
+[31m-    private async Task EnsureUserExistsAsync(int userId)[m
+[31m-    {[m
+[31m-        bool userExists =[m
+[31m-            await _userActivityRepository.UserExistsAsync(userId);[m
+[31m-[m
+[31m-        if (!userExists)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status404NotFound,[m
+[31m-                "el usuario indicado no existe.");[m
+[31m-        }[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/Services/WalletService.cs b/SubastaYa.Api/Services/WalletService.cs[m
+[1mdeleted file mode 100644[m
+[1mindex dd6baef..0000000[m
+[1m--- a/SubastaYa.Api/Services/WalletService.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,82 +0,0 @@[m
+[31m-﻿using Microsoft.AspNetCore.Http;[m
+[31m-using SubastaYa.Api.Dtos.Wallets;[m
+[31m-using SubastaYa.Api.Helpers;[m
+[31m-using SubastaYa.Api.Models;[m
+[31m-using SubastaYa.Api.Repositories;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Services;[m
+[31m-[m
+[31m-public class WalletService : IWalletService[m
+[31m-{[m
+[31m-    private readonly IWalletRepository _walletRepository;[m
+[31m-[m
+[31m-    public WalletService(IWalletRepository walletRepository)[m
+[31m-    {[m
+[31m-        _walletRepository = walletRepository;[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<WalletBalanceDto> GetBalanceAsync(int userId)[m
+[31m-    {[m
+[31m-        Wallet? wallet = await _walletRepository.GetByUserIdAsync(userId);[m
+[31m-[m
+[31m-        if (wallet is null)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status404NotFound,[m
+[31m-                "la billetera del usuario no existe.");[m
+[31m-        }[m
+[31m-[m
+[31m-        return MapBalance(wallet);[m
+[31m-    }[m
+[31m-[m
+[31m-    public async Task<WalletBalanceDto> DepositAsync([m
+[31m-        int userId,[m
+[31m-        DepositRequestDto request)[m
+[31m-    {[m
+[31m-        if (request.Amount <= 0)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status400BadRequest,[m
+[31m-                "el monto a acreditar debe ser mayor a cero.");[m
+[31m-        }[m
+[31m-[m
+[31m-        Wallet? wallet = await _walletRepository.DepositAsync([m
+[31m-            userId,[m
+[31m-            request.Amount);[m
+[31m-[m
+[31m-        if (wallet is null)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status404NotFound,[m
+[31m-                "la billetera del usuario no existe.");[m
+[31m-        }[m
+[31m-[m
+[31m-        return MapBalance(wallet);[m
+[31m-    }[m
+[31m-[m
+[31m-    private static WalletBalanceDto MapBalance(Wallet wallet)[m
+[31m-    {[m
+[31m-        return new WalletBalanceDto[m
+[31m-        {[m
+[31m-            WalletId = wallet.Id,[m
+[31m-            UserId = wallet.UserId,[m
+[31m-            TotalBalance = wallet.TotalBalance,[m
+[31m-            HeldBalance = wallet.HeldBalance,[m
+[31m-            AvailableBalance = wallet.AvailableBalance[m
+[31m-        };[m
+[31m-    }[m
+[31m-    public async Task<List<WalletTransactionItemDto>> GetTransactionsAsync([m
+[31m-    int userId)[m
+[31m-    {[m
+[31m-        Wallet? wallet = await _walletRepository.GetByUserIdAsync(userId);[m
+[31m-[m
+[31m-        if (wallet is null)[m
+[31m-        {[m
+[31m-            throw new ApiException([m
+[31m-                StatusCodes.Status404NotFound,[m
+[31m-                "la billetera del usuario no existe.");[m
+[31m-        }[m
+[31m-[m
+[31m-        return await _walletRepository.GetTransactionsByUserIdAsync(userId);[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/SubastaYa.Api.csproj b/SubastaYa.Api/SubastaYa.Api.csproj[m
+[1mindex ea28564..69341ab 100644[m
+[1m--- a/SubastaYa.Api/SubastaYa.Api.csproj[m
+[1m+++ b/SubastaYa.Api/SubastaYa.Api.csproj[m
+[36m@@ -1,9 +1,10 @@[m
+[31m-<Project Sdk="Microsoft.NET.Sdk.Web">[m
+[32m+[m[32m﻿<Project Sdk="Microsoft.NET.Sdk.Web">[m
+ [m
+   <PropertyGroup>[m
+     <TargetFramework>net10.0</TargetFramework>[m
+     <Nullable>enable</Nullable>[m
+     <ImplicitUsings>enable</ImplicitUsings>[m
+[32m+[m[32m    <UserSecretsId>f6d3fe97-cc0a-49bd-8afe-f912b5b8a03b</UserSecretsId>[m
+   </PropertyGroup>[m
+ [m
+   <ItemGroup>[m
+[36m@@ -20,4 +21,10 @@[m
+     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />[m
+   </ItemGroup>[m
+ [m
+[32m+[m[32m  <ItemGroup>[m
+[32m+[m[32m    <Folder Include="Hubs\" />[m
+[32m+[m[32m    <Folder Include="wwwroot\" />[m
+[32m+[m[32m    <Folder Include="Workers\" />[m
+[32m+[m[32m  </ItemGroup>[m
+[32m+[m
+ </Project>[m
+[1mdiff --git a/SubastaYa.Api/SubastaYa.Api.sln b/SubastaYa.Api/SubastaYa.Api.sln[m
+[1mnew file mode 100644[m
+[1mindex 0000000..a05badf[m
+[1m--- /dev/null[m
+[1m+++ b/SubastaYa.Api/SubastaYa.Api.sln[m
+[36m@@ -0,0 +1,24 @@[m
+[32m+[m[32mMicrosoft Visual Studio Solution File, Format Version 12.00[m
+[32m+[m[32m# Visual Studio Version 17[m
+[32m+[m[32mVisualStudioVersion = 17.5.2.0[m
+[32m+[m[32mMinimumVisualStudioVersion = 10.0.40219.1[m
+[32m+[m[32mProject("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubastaYa.Api", "SubastaYa.Api.csproj", "{4165E87F-C525-02EF-8475-C04D97DC0072}"[m
+[32m+[m[32mEndProject[m
+[32m+[m[32mGlobal[m
+[32m+[m	[32mGlobalSection(SolutionConfigurationPlatforms) = preSolution[m
+[32m+[m		[32mDebug|Any CPU = Debug|Any CPU[m
+[32m+[m		[32mRelease|Any CPU = Release|Any CPU[m
+[32m+[m	[32mEndGlobalSection[m
+[32m+[m	[32mGlobalSection(ProjectConfigurationPlatforms) = postSolution[m
+[32m+[m		[32m{4165E87F-C525-02EF-8475-C04D97DC0072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU[m
+[32m+[m		[32m{4165E87F-C525-02EF-8475-C04D97DC0072}.Debug|Any CPU.Build.0 = Debug|Any CPU[m
+[32m+[m		[32m{4165E87F-C525-02EF-8475-C04D97DC0072}.Release|Any CPU.ActiveCfg = Release|Any CPU[m
+[32m+[m		[32m{4165E87F-C525-02EF-8475-C04D97DC0072}.Release|Any CPU.Build.0 = Release|Any CPU[m
+[32m+[m	[32mEndGlobalSection[m
+[32m+[m	[32mGlobalSection(SolutionProperties) = preSolution[m
+[32m+[m		[32mHideSolutionNode = FALSE[m
+[32m+[m	[32mEndGlobalSection[m
+[32m+[m	[32mGlobalSection(ExtensibilityGlobals) = postSolution[m
+[32m+[m		[32mSolutionGuid = {6D0B3BBB-3FD7-4528-AD68-3AFA7092A211}[m
+[32m+[m	[32mEndGlobalSection[m
+[32m+[m[32mEndGlobal[m
+[1mdiff --git a/SubastaYa.Api/Workers/AuctionClosingWorker.cs b/SubastaYa.Api/Workers/AuctionClosingWorker.cs[m
+[1mdeleted file mode 100644[m
+[1mindex a9efc92..0000000[m
+[1m--- a/SubastaYa.Api/Workers/AuctionClosingWorker.cs[m
+[1m+++ /dev/null[m
+[36m@@ -1,50 +0,0 @@[m
+[31m-﻿using SubastaYa.Api.Services;[m
+[31m-[m
+[31m-namespace SubastaYa.Api.Workers;[m
+[31m-[m
+[31m-public class AuctionClosingWorker : BackgroundService[m
+[31m-{[m
+[31m-    private readonly IServiceScopeFactory _scopeFactory;[m
+[31m-    private readonly ILogger<AuctionClosingWorker> _logger;[m
+[31m-[m
+[31m-    public AuctionClosingWorker([m
+[31m-        IServiceScopeFactory scopeFactory,[m
+[31m-        ILogger<AuctionClosingWorker> logger)[m
+[31m-    {[m
+[31m-        _scopeFactory = scopeFactory;[m
+[31m-        _logger = logger;[m
+[31m-    }[m
+[31m-[m
+[31m-    protected override async Task ExecuteAsync([m
+[31m-        CancellationToken stoppingToken)[m
+[31m-    {[m
+[31m-        while (!stoppingToken.IsCancellationRequested)[m
+[31m-        {[m
+[31m-            try[m
+[31m-            {[m
+[31m-                using IServiceScope scope = _scopeFactory.CreateScope();[m
+[31m-[m
+[31m-                IAuctionClosingService auctionClosingService =[m
+[31m-                    scope.ServiceProvider.GetRequiredService<[m
+[31m-                        IAuctionClosingService>();[m
+[31m-[m
+[31m-                await auctionClosingService.ProcessExpiredAuctionsAsync();[m
+[31m-            }[m
+[31m-            catch (OperationCanceledException)[m
+[31m-                when (stoppingToken.IsCancellationRequested)[m
+[31m-            {[m
+[31m-                break;[m
+[31m-            }[m
+[31m-            catch (Exception exception)[m
+[31m-            {[m
+[31m-                _logger.LogError([m
+[31m-                    exception,[m
+[31m-                    "[CODE-ERROR] - error en el Worker de cierre de subastas.");[m
+[31m-            }[m
+[31m-[m
+[31m-            await Task.Delay([m
+[31m-                TimeSpan.FromSeconds(15),[m
+[31m-                stoppingToken);[m
+[31m-        }[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/tests/stress-test.ps1 b/SubastaYa.Api/tests/stress-test.ps1[m
+[1mdeleted file mode 100644[m
+[1mindex 27d933e..0000000[m
+[1m--- a/SubastaYa.Api/tests/stress-test.ps1[m
+[1m+++ /dev/null[m
+[36m@@ -1,87 +0,0 @@[m
+[31m-param([m
+[31m-    [Parameter(Mandatory = $true)][m
+[31m-    [int]$AuctionId,[m
+[31m-[m
+[31m-    [Parameter(Mandatory = $true)][m
+[31m-    [int]$BuyerId,[m
+[31m-[m
+[31m-    [Parameter(Mandatory = $true)][m
+[31m-    [decimal]$Amount,[m
+[31m-[m
+[31m-    [string]$BaseUrl = "https://localhost:7090"[m
+[31m-)[m
+[31m-[m
+[31m-$endpoint = "$BaseUrl/api/v1/auctions/$AuctionId/bids"[m
+[31m-[m
+[31m-$payload = @{[m
+[31m-    buyerId = $BuyerId[m
+[31m-    amount = $Amount[m
+[31m-} | ConvertTo-Json -Compress[m
+[31m-[m
+[31m-$gateName = "SubastaYaStressGate-$([Guid]::NewGuid())"[m
+[31m-[m
+[31m-$gate = New-Object System.Threading.EventWaitHandle([m
+[31m-    $false,[m
+[31m-    [System.Threading.EventResetMode]::ManualReset,[m
+[31m-    $gateName)[m
+[31m-[m
+[31m-$jobScript = {[m
+[31m-    param([m
+[31m-        $gateName,[m
+[31m-        $endpoint,[m
+[31m-        $payload)[m
+[31m-[m
+[31m-    $localGate =[m
+[31m-        [System.Threading.EventWaitHandle]::OpenExisting($gateName)[m
+[31m-[m
+[31m-    $localGate.WaitOne()[m
+[31m-[m
+[31m-    $rawResponse = ([m
+[31m-        & curl.exe `[m
+[31m-            -k `[m
+[31m-            -sS `[m
+[31m-            -X POST `[m
+[31m-            $endpoint `[m
+[31m-            -H "Content-Type: application/json" `[m
+[31m-            --data $payload `[m
+[31m-            -w "`n%{http_code}"[m
+[31m-    ) -join "`n"[m
+[31m-[m
+[31m-    $lastBreak = $rawResponse.LastIndexOf("`n")[m
+[31m-[m
+[31m-    [pscustomobject]@{[m
+[31m-        StatusCode = [int]$rawResponse.Substring($lastBreak + 1)[m
+[31m-        Body = $rawResponse.Substring(0, $lastBreak)[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-$firstJob = Start-Job `[m
+[31m-    -ScriptBlock $jobScript `[m
+[31m-    -ArgumentList $gateName, $endpoint, $payload[m
+[31m-[m
+[31m-$secondJob = Start-Job `[m
+[31m-    -ScriptBlock $jobScript `[m
+[31m-    -ArgumentList $gateName, $endpoint, $payload[m
+[31m-[m
+[31m-Start-Sleep -Milliseconds 750[m
+[31m-[m
+[31m-$gate.Set()[m
+[31m-[m
+[31m-$results = @([m
+[31m-    Receive-Job -Job $firstJob -Wait[m
+[31m-    Receive-Job -Job $secondJob -Wait[m
+[31m-)[m
+[31m-[m
+[31m-Remove-Job -Job $firstJob[m
+[31m-Remove-Job -Job $secondJob[m
+[31m-[m
+[31m-$results | Format-Table -AutoSize[m
+[31m-[m
+[31m-$codes = @($results.StatusCode | Sort-Object)[m
+[31m-[m
+[31m-if (($codes -join ",") -ne "201,409")[m
+[31m-{[m
+[31m-    throw "[CODE-ERROR] - el stress test debía devolver exactamente 201 y 409."[m
+[31m-}[m
+[31m-[m
+[31m-Write-Host "Stress test aprobado: una puja fue aceptada y la otra rechazada con 409."[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/auction.html b/SubastaYa.Api/wwwroot/auction.html[m
+[1mdeleted file mode 100644[m
+[1mindex b345031..0000000[m
+[1m--- a/SubastaYa.Api/wwwroot/auction.html[m
+[1m+++ /dev/null[m
+[36m@@ -1,66 +0,0 @@[m
+[31m-﻿<!DOCTYPE html>[m
+[31m-<html lang="es">[m
+[31m-<head>[m
+[31m-    <meta charset="UTF-8">[m
+[31m-    <meta name="viewport"[m
+[31m-          content="width=device-width, initial-scale=1.0">[m
+[31m-    <title>Detalle de subasta - SubastaYa</title>[m
+[31m-    <link rel="stylesheet" href="css/site.css">[m
+[31m-</head>[m
+[31m-<body>[m
+[31m-    <header class="topbar">[m
+[31m-        <a class="brand" href="/">SubastaYa</a>[m
+[31m-[m
+[31m-        <nav class="navigation">[m
+[31m-            <a href="/">Explorar</a>[m
+[31m-            <a href="profile.html?userId=2">Mi cuenta</a>[m
+[31m-        </nav>[m
+[31m-    </header>[m
+[31m-[m
+[31m-    <main class="page-container" data-sys-render="auto">[m
+[31m-        <a class="back-link" href="/">← Volver al catálogo</a>[m
+[31m-[m
+[31m-        <div id="loading-message" class="message">[m
+[31m-            Cargando subasta...[m
+[31m-        </div>[m
+[31m-[m
+[31m-        <div id="error-message" class="message error hidden"></div>[m
+[31m-[m
+[31m-        <section id="auction-detail" class="auction-detail hidden"></section>[m
+[31m-[m
+[31m-        <section class="bid-section">[m
+[31m-            <div>[m
+[31m-                <p class="eyebrow">REALIZAR OFERTA</p>[m
+[31m-                <h2>Participar en esta subasta</h2>[m
+[31m-            </div>[m
+[31m-[m
+[31m-            <form id="bid-form" class="bid-form">[m
+[31m-                <label>[m
+[31m-                    Usuario comprador[m
+[31m-                    <input id="buyer-id" type="number" value="3" min="1">[m
+[31m-                </label>[m
+[31m-[m
+[31m-                <label>[m
+[31m-                    Monto de la puja[m
+[31m-                    <input id="bid-amount" type="number" min="1">[m
+[31m-                </label>[m
+[31m-[m
+[31m-                <button type="submit">Confirmar puja</button>[m
+[31m-            </form>[m
+[31m-[m
+[31m-            <p id="bid-message" class="message hidden"></p>[m
+[31m-        </section>[m
+[31m-[m
+[31m-        <section class="history-section">[m
+[31m-            <p class="eyebrow">HISTORIAL</p>[m
+[31m-            <h2>Últimas pujas</h2>[m
+[31m-            <div id="bid-history"></div>[m
+[31m-        </section>[m
+[31m-    </main>[m
+[31m-[m
+[31m-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js">[m
+[31m-    </script>[m
+[31m-    <script src="js/auction-detail.js"></script>[m
+[31m-    <script src="js/realtime.js"></script>[m
+[31m-</body>[m
+[31m-</html>[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/css/index.css b/SubastaYa.Api/wwwroot/css/index.css[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d9192d2[m
+[1m--- /dev/null[m
+[1m+++ b/SubastaYa.Api/wwwroot/css/index.css[m
+[36m@@ -0,0 +1,314 @@[m
+[32m+[m[32m* {[m
+[32m+[m[32m    box-sizing: border-box;[m
+[32m+[m[32m    margin: 0;[m
+[32m+[m[32m    padding: 0;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mbody {[m
+[32m+[m[32m    font-family: Arial, Helvetica, sans-serif;[m
+[32m+[m[32m    background: #17191d;[m
+[32m+[m[32m    color: #ffffff;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.header {[m
+[32m+[m[32m    background: #075da8;[m
+[32m+[m[32m    border-bottom: 1px solid rgba(255,255,255,.12);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.navbar {[m
+[32m+[m[32m    max-width: 1400px;[m
+[32m+[m[32m    height: 76px;[m
+[32m+[m[32m    margin: auto;[m
+[32m+[m[32m    padding: 0 28px;[m
+[32m+[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    align-items: center;[m
+[32m+[m[32m    gap: 45px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.brand {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    align-items: center;[m
+[32m+[m[32m    gap: 10px;[m
+[32m+[m[32m    color: white;[m
+[32m+[m[32m    text-decoration: none;[m
+[32m+[m[32m    font-size: 24px;[m
+[32m+[m[32m    font-weight: 700;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.brand-icon {[m
+[32m+[m[32m    width: 38px;[m
+[32m+[m[32m    height: 38px;[m
+[32m+[m[32m    background: white;[m
+[32m+[m[32m    color: #075da8;[m
+[32m+[m[32m    border-radius: 10px;[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    align-items: center;[m
+[32m+[m[32m    justify-content: center;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.nav {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    gap: 30px;[m
+[32m+[m[32m    flex: 1;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.nav a {[m
+[32m+[m[32m    color: #dceafa;[m
+[32m+[m[32m    text-decoration: none;[m
+[32m+[m[32m    font-size: 15px;[m
+[32m+[m[32m    padding: 29px 0 25px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.nav a:hover,[m
+[32m+[m[32m.nav a.active {[m
+[32m+[m[32m    color: white;[m
+[32m+[m[32m    border-bottom: 3px solid white;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.user-actions {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    align-items: center;[m
+[32m+[m[32m    gap: 20px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.user-actions a {[m
+[32m+[m[32m    color: white;[m
+[32m+[m[32m    text-decoration: none;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.hero {[m
+[32m+[m[32m    background:[m
+[32m+[m[32m        linear-gradient([m
+[32m+[m[32m            110deg,[m
+[32m+[m[32m            #075da8 0%,[m
+[32m+[m[32m            #074e8d 55%,[m
+[32m+[m[32m            #063c70 100%[m
+[32m+[m[32m        );[m
+[32m+[m[32m    padding: 65px 30px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.hero-content {[m
+[32m+[m[32m    max-width: 1200px;[m
+[32m+[m[32m    margin: auto;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.hero-label,[m
+[32m+[m[32m.section-label {[m
+[32m+[m[32m    font-size: 12px;[m
+[32m+[m[32m    font-weight: bold;[m
+[32m+[m[32m    letter-spacing: 2px;[m
+[32m+[m[32m    color: #73c7ff;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.hero h1 {[m
+[32m+[m[32m    font-size: 44px;[m
+[32m+[m[32m    margin: 12px 0;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.hero p {[m
+[32m+[m[32m    color: #d1e6f7;[m
+[32m+[m[32m    font-size: 18px;[m
+[32m+[m[32m    margin-bottom: 30px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.search-container {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    max-width: 800px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.search-container input {[m
+[32m+[m[32m    flex: 1;[m
+[32m+[m[32m    padding: 17px 20px;[m
+[32m+[m[32m    border: none;[m
+[32m+[m[32m    border-radius: 7px 0 0 7px;[m
+[32m+[m[32m    font-size: 16px;[m
+[32m+[m[32m    outline: none;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.search-container button {[m
+[32m+[m[32m    padding: 0 30px;[m
+[32m+[m[32m    border: none;[m
+[32m+[m[32m    border-radius: 0 7px 7px 0;[m
+[32m+[m[32m    background: #111820;[m
+[32m+[m[32m    color: white;[m
+[32m+[m[32m    font-size: 16px;[m
+[32m+[m[32m    font-weight: bold;[m
+[32m+[m[32m    cursor: pointer;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.search-container button:hover {[m
+[32m+[m[32m    background: #252c34;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.filters-section {[m
+[32m+[m[32m    background: #202328;[m
+[32m+[m[32m    border-bottom: 1px solid #32363d;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.filters {[m
+[32m+[m[32m    max-width: 1400px;[m
+[32m+[m[32m    margin: auto;[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    gap: 15px;[m
+[32m+[m[32m    padding: 22px 30px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.filters select {[m
+[32m+[m[32m    min-width: 190px;[m
+[32m+[m[32m    padding: 13px 15px;[m
+[32m+[m[32m    background: #15171a;[m
+[32m+[m[32m    color: #eee;[m
+[32m+[m[32m    border: 1px solid #3c4148;[m
+[32m+[m[32m    border-radius: 6px;[m
+[32m+[m[32m    outline: none;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.auctions-section {[m
+[32m+[m[32m    max-width: 1400px;[m
+[32m+[m[32m    margin: auto;[m
+[32m+[m[32m    padding: 55px 30px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.section-header {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    justify-content: space-between;[m
+[32m+[m[32m    align-items: end;[m
+[32m+[m[32m    margin-bottom: 28px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.section-header h2 {[m
+[32m+[m[32m    font-size: 32px;[m
+[32m+[m[32m    margin-top: 5px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.view-all {[m
+[32m+[m[32m    color: #65baff;[m
+[32m+[m[32m    text-decoration: none;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.auction-grid {[m
+[32m+[m[32m    display: grid;[m
+[32m+[m[32m    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));[m
+[32m+[m[32m    gap: 25px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.auction-card {[m
+[32m+[m[32m    background: #22252a;[m
+[32m+[m[32m    border: 1px solid #34383f;[m
+[32m+[m[32m    border-radius: 9px;[m
+[32m+[m[32m    overflow: hidden;[m
+[32m+[m[32m    transition: .2s;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.auction-card:hover {[m
+[32m+[m[32m    transform: translateY(-5px);[m
+[32m+[m[32m    border-color: #1479cc;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.image-container {[m
+[32m+[m[32m    height: 200px;[m
+[32m+[m[32m    position: relative;[m
+[32m+[m[32m    background: white;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.image-container img {[m
+[32m+[m[32m    width: 100%;[m
+[32m+[m[32m    height: 100%;[m
+[32m+[m[32m    object-fit: cover;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.status {[m
+[32m+[m[32m    position: absolute;[m
+[32m+[m[32m    top: 14px;[m
+[32m+[m[32m    left: 14px;[m
+[32m+[m[32m    padding: 7px 10px;[m
+[32m+[m[32m    border-radius: 5px;[m
+[32m+[m[32m    font-size: 11px;[m
+[32m+[m[32m    font-weight: bold;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.active-status {[m
+[32m+[m[32m    background: #e53d3d;[m
+[32m+[m[32m    color: white;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.card-content {[m
+[32m+[m[32m    padding: 20px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.category {[m
+[32m+[m[32m    color: #66baff;[m
+[32m+[m[32m    font-size: 12px;[m
+[32m+[m[32m    text-transform: uppercase;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.card-content h3 {[m
+[32m+[m[32m    margin: 8px 0 20px;[m
+[32m+[m[32m    font-size: 20px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.auction-info {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    justify-content: space-between;[m
+[32m+[m[32m    padding-bottom: 18px;[m
+[32m+[m[32m    border-bottom: 1px solid #3a3d43;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.auction-info > div {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    flex-direction: column;[m
+[32m+[m[32m    gap: 5px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.info-label {[m
+[32m+[m[32m    color: #999;[m
+[32m+[m[32m    font-size: 12px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.auction-info strong {[m
+[32m+[m[32m    font-size: 18px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.card-footer {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    align-items: center;[m
+[32m+[m[32m    justify-content: space-between;[m
+[32m+[m[32m    margin-top: 18px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.timer {[m
+[32m+[m[32m    font-size: 14px;[m
+[32m+[m[32m    color: #ffbe55;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.bid-button {[m
+[32m+[m[32m    background: #0867b2;[m
+[32m+[m[32m    color: white;[m
+[32m+[m[32m    border: none;[m
+[32m+[m[32m    border-radius: 5px;[m
+[32m+[m[32m    padding: 10px 14px;[m
+[32m+[m[32m    cursor: pointer;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.bid-button:hover {[m
+[32m+[m[32m    background: #087bd5;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m@media (max-width: 900px) {[m
+[32m+[m[32m    .nav {[m
+[32m+[m[32m        display: none;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    .navbar {[m
+[32m+[m[32m        justify-content: space-between;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    .filters {[m
+[32m+[m[32m        flex-direction: column;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    .hero h1 {[m
+[32m+[m[32m        font-size: 34px;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    .search-container {[m
+[32m+[m[32m        width: 100%;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/css/login.css b/SubastaYa.Api/wwwroot/css/login.css[m
+[1mnew file mode 100644[m
+[1mindex 0000000..bc86cd2[m
+[1m--- /dev/null[m
+[1m+++ b/SubastaYa.Api/wwwroot/css/login.css[m
+[36m@@ -0,0 +1,274 @@[m
+[32m+[m[32m.open-login-btn {[m
+[32m+[m[32m    background: transparent;[m
+[32m+[m[32m    border: none;[m
+[32m+[m[32m    color: white;[m
+[32m+[m[32m    font-size: 16px;[m
+[32m+[m[32m    font-weight: 500;[m
+[32m+[m[32m    cursor: pointer;[m
+[32m+[m[32m    padding: 10px 15px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.open-login-btn:hover {[m
+[32m+[m[32m    opacity: .85;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-overlay {[m
+[32m+[m[32m    position: fixed;[m
+[32m+[m[32m    inset: 0;[m
+[32m+[m[32m    background: rgba(0, 0, 0, .72);[m
+[32m+[m[32m    backdrop-filter: blur(2px);[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    justify-content: center;[m
+[32m+[m[32m    align-items: center;[m
+[32m+[m[32m    padding: 20px;[m
+[32m+[m[32m    opacity: 0;[m
+[32m+[m[32m    visibility: hidden;[m
+[32m+[m[32m    transition: opacity .2s ease;[m
+[32m+[m[32m    z-index: 9999;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-overlay.active {[m
+[32m+[m[32m    opacity: 1;[m
+[32m+[m[32m    visibility: visible;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-modal {[m
+[32m+[m[32m    position: relative;[m
+[32m+[m[32m    width: 100%;[m
+[32m+[m[32m    max-width: 440px;[m
+[32m+[m[32m    background: #212326;[m
+[32m+[m[32m    border: 1px solid #34383d;[m
+[32m+[m[32m    border-radius: 8px;[m
+[32m+[m[32m    padding: 34px 30px 28px;[m
+[32m+[m[32m    box-shadow: 0 15px 45px rgba(0,0,0,.55);[m
+[32m+[m[32m    transform: translateY(-10px);[m
+[32m+[m[32m    transition: transform .2s ease;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[32m+[m[32m.login-overlay.active .login-modal {[m
+[32m+[m[32m    transform: translateY(0);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.close-login {[m
+[32m+[m[32m    position: absolute;[m
+[32m+[m[32m    top: 17px;[m
+[32m+[m[32m    right: 18px;[m
+[32m+[m[32m    width: 30px;[m
+[32m+[m[32m    height: 30px;[m
+[32m+[m[32m    border-radius: 50%;[m
+[32m+[m[32m    border: 2px solid #73bfff;[m
+[32m+[m[32m    background: transparent;[m
+[32m+[m[32m    color: #73bfff;[m
+[32m+[m[32m    font-size: 23px;[m
+[32m+[m[32m    line-height: 20px;[m
+[32m+[m[32m    cursor: pointer;[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    justify-content: center;[m
+[32m+[m[32m    align-items: center;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.close-login:hover {[m
+[32m+[m[32m    background: #73bfff;[m
+[32m+[m[32m    color: #162029;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-header h2 {[m
+[32m+[m[32m    color: #8bc7ff;[m
+[32m+[m[32m    font-size: 35px;[m
+[32m+[m[32m    font-weight: 400;[m
+[32m+[m[32m    margin-bottom: 12px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-header p {[m
+[32m+[m[32m    color: #e4e4e4;[m
+[32m+[m[32m    font-size: 15px;[m
+[32m+[m[32m    line-height: 1.5;[m
+[32m+[m[32m    font-weight: 500;[m
+[32m+[m[32m    margin-bottom: 28px;[m
+[32m+[m[32m    max-width: 340px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.form-group {[m
+[32m+[m[32m    margin-bottom: 20px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.form-group label {[m
+[32m+[m[32m    display: block;[m
+[32m+[m[32m    color: #ededed;[m
+[32m+[m[32m    font-size: 14px;[m
+[32m+[m[32m    font-weight: 600;[m
+[32m+[m[32m    margin-bottom: 8px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.form-group input {[m
+[32m+[m[32m    width: 100%;[m
+[32m+[m[32m    height: 48px;[m
+[32m+[m[32m    padding: 0 14px;[m
+[32m+[m[32m    background: #141517;[m
+[32m+[m[32m    color: white;[m
+[32m+[m[32m    border: 1px solid #414449;[m
+[32m+[m[32m    border-radius: 5px;[m
+[32m+[m[32m    font-size: 15px;[m
+[32m+[m[32m    outline: none;[m
+[32m+[m[32m    transition: border .2s;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.form-group input:focus {[m
+[32m+[m[32m    border-color: #1683d8;[m
+[32m+[m[32m    box-shadow: 0 0 0 2px rgba(22, 131, 216, .15);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.form-group input::placeholder {[m
+[32m+[m[32m    color: #73777d;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.password-container {[m
+[32m+[m[32m    position: relative;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.password-container input {[m
+[32m+[m[32m    padding-right: 55px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.toggle-password {[m
+[32m+[m[32m    position: absolute;[m
+[32m+[m[32m    top: 50%;[m
+[32m+[m[32m    right: 10px;[m
+[32m+[m[32m    transform: translateY(-50%);[m
+[32m+[m[32m    background: none;[m
+[32m+[m[32m    border: none;[m
+[32m+[m[32m    color: #d5d5d5;[m
+[32m+[m[32m    cursor: pointer;[m
+[32m+[m[32m    font-size: 19px;[m
+[32m+[m[32m    width: 35px;[m
+[32m+[m[32m    height: 35px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-options {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    justify-content: space-between;[m
+[32m+[m[32m    align-items: center;[m
+[32m+[m[32m    margin-top: -4px;[m
+[32m+[m[32m    margin-bottom: 22px;[m
+[32m+[m[32m    gap: 10px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.remember-me {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    align-items: center;[m
+[32m+[m[32m    gap: 7px;[m
+[32m+[m[32m    color: #aaa;[m
+[32m+[m[32m    font-size: 13px;[m
+[32m+[m[32m    cursor: pointer;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.remember-me input {[m
+[32m+[m[32m    accent-color: #0875c9;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.forgot-password {[m
+[32m+[m[32m    color: #73bfff;[m
+[32m+[m[32m    text-decoration: none;[m
+[32m+[m[32m    font-size: 13px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.forgot-password:hover {[m
+[32m+[m[32m    text-decoration: underline;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-button {[m
+[32m+[m[32m    width: 100%;[m
+[32m+[m[32m    height: 50px;[m
+[32m+[m[32m    border: none;[m
+[32m+[m[32m    border-radius: 5px;[m
+[32m+[m[32m    background: #0768b7;[m
+[32m+[m[32m    color: white;[m
+[32m+[m[32m    font-size: 18px;[m
+[32m+[m[32m    font-weight: 600;[m
+[32m+[m[32m    cursor: pointer;[m
+[32m+[m[32m    transition: background .2s;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-button:hover {[m
+[32m+[m[32m    background: #087bd5;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-button:disabled {[m
+[32m+[m[32m    cursor: not-allowed;[m
+[32m+[m[32m    opacity: .65;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.register-button {[m
+[32m+[m[32m    width: 100%;[m
+[32m+[m[32m    height: 47px;[m
+[32m+[m[32m    margin-top: 12px;[m
+[32m+[m[32m    border: 1px solid #6baee7;[m
+[32m+[m[32m    border-radius: 5px;[m
+[32m+[m[32m    background: transparent;[m
+[32m+[m[32m    color: #80beef;[m
+[32m+[m[32m    font-size: 16px;[m
+[32m+[m[32m    cursor: pointer;[m
+[32m+[m[32m    transition: .2s;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.register-button:hover {[m
+[32m+[m[32m    background: rgba(107, 174, 231, .08);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.terms {[m
+[32m+[m[32m    margin-top: 18px;[m
+[32m+[m[32m    color: #b9b9b9;[m
+[32m+[m[32m    font-size: 12px;[m
+[32m+[m[32m    text-align: center;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.terms a {[m
+[32m+[m[32m    color: #73bfff;[m
+[32m+[m[32m    text-decoration: none;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.field-error {[m
+[32m+[m[32m    display: block;[m
+[32m+[m[32m    min-height: 16px;[m
+[32m+[m[32m    color: #ff6969;[m
+[32m+[m[32m    font-size: 12px;[m
+[32m+[m[32m    margin-top: 5px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-message {[m
+[32m+[m[32m    display: none;[m
+[32m+[m[32m    padding: 10px 12px;[m
+[32m+[m[32m    margin-bottom: 15px;[m
+[32m+[m[32m    border-radius: 5px;[m
+[32m+[m[32m    font-size: 13px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-message.error {[m
+[32m+[m[32m    display: block;[m
+[32m+[m[32m    background: rgba(221, 62, 62, .12);[m
+[32m+[m[32m    border: 1px solid rgba(221, 62, 62, .45);[m
+[32m+[m[32m    color: #ff7d7d;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.login-message.success {[m
+[32m+[m[32m    display: block;[m
+[32m+[m[32m    background: rgba(50, 170, 100, .12);[m
+[32m+[m[32m    border: 1px solid rgba(50, 170, 100, .45);[m
+[32m+[m[32m    color: #70d99a;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m@media (max-width: 520px) {[m
+[32m+[m[32m    .login-modal {[m
+[32m+[m[32m        padding: 30px 20px 22px;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    .login-header h2 {[m
+[32m+[m[32m        font-size: 29px;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    .login-options {[m
+[32m+[m[32m        flex-direction: column;[m
+[32m+[m[32m        align-items: flex-start;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/css/site.css b/SubastaYa.Api/wwwroot/css/site.css[m
+[1mdeleted file mode 100644[m
+[1mindex 871e0b6..0000000[m
+[1m--- a/SubastaYa.Api/wwwroot/css/site.css[m
+[1m+++ /dev/null[m
+[36m@@ -1,505 +0,0 @@[m
+[31m-:root {[m
+[31m-    --background: #f5f7fb;[m
+[31m-    --surface: #ffffff;[m
+[31m-    --text: #1d2634;[m
+[31m-    --muted: #687386;[m
+[31m-    --primary: #5b34da;[m
+[31m-    --primary-dark: #3c1ca7;[m
+[31m-    --danger: #c43131;[m
+[31m-    --border: #e2e7f0;[m
+[31m-}[m
+[31m-[m
+[31m-* {[m
+[31m-    box-sizing: border-box;[m
+[31m-}[m
+[31m-[m
+[31m-body {[m
+[31m-    margin: 0;[m
+[31m-    background: var(--background);[m
+[31m-    color: var(--text);[m
+[31m-    font-family: Arial, Helvetica, sans-serif;[m
+[31m-}[m
+[31m-[m
+[31m-.topbar {[m
+[31m-    align-items: center;[m
+[31m-    background: var(--surface);[m
+[31m-    border-bottom: 1px solid var(--border);[m
+[31m-    display: flex;[m
+[31m-    justify-content: space-between;[m
+[31m-    padding: 18px max(24px, calc((100vw - 1180px) / 2));[m
+[31m-}[m
+[31m-[m
+[31m-.brand {[m
+[31m-    color: var(--primary);[m
+[31m-    font-size: 1.35rem;[m
+[31m-    font-weight: 800;[m
+[31m-    text-decoration: none;[m
+[31m-}[m
+[31m-[m
+[31m-.navigation {[m
+[31m-    display: flex;[m
+[31m-    gap: 22px;[m
+[31m-}[m
+[31m-[m
+[31m-.navigation a {[m
+[31m-    color: var(--muted);[m
+[31m-    font-size: 0.95rem;[m
+[31m-    text-decoration: none;[m
+[31m-}[m
+[31m-[m
+[31m-.page-container {[m
+[31m-    margin: 0 auto;[m
+[31m-    max-width: 1180px;[m
+[31m-    padding: 42px 24px 64px;[m
+[31m-}[m
+[31m-[m
+[31m-.hero {[m
+[31m-    background: linear-gradient(135deg, #31118e, #7758ef);[m
+[31m-    border-radius: 18px;[m
+[31m-    color: white;[m
+[31m-    margin-bottom: 30px;[m
+[31m-    padding: 46px;[m
+[31m-}[m
+[31m-[m
+[31m-.hero h1 {[m
+[31m-    font-size: clamp(2rem, 5vw, 3.5rem);[m
+[31m-    margin: 8px 0;[m
+[31m-}[m
+[31m-[m
+[31m-.hero p {[m
+[31m-    margin-bottom: 0;[m
+[31m-    max-width: 600px;[m
+[31m-}[m
+[31m-[m
+[31m-.eyebrow {[m
+[31m-    color: #8974e8;[m
+[31m-    font-size: 0.76rem;[m
+[31m-    font-weight: 800;[m
+[31m-    letter-spacing: 0.09em;[m
+[31m-    margin: 0;[m
+[31m-}[m
+[31m-[m
+[31m-.hero .eyebrow {[m
+[31m-    color: #d8d0ff;[m
+[31m-}[m
+[31m-[m
+[31m-.toolbar {[m
+[31m-    align-items: end;[m
+[31m-    background: var(--surface);[m
+[31m-    border: 1px solid var(--border);[m
+[31m-    border-radius: 14px;[m
+[31m-    display: flex;[m
+[31m-    flex-wrap: wrap;[m
+[31m-    gap: 16px;[m
+[31m-    margin-bottom: 36px;[m
+[31m-    padding: 20px;[m
+[31m-}[m
+[31m-[m
+[31m-.toolbar label {[m
+[31m-    color: var(--muted);[m
+[31m-    display: grid;[m
+[31m-    font-size: 0.82rem;[m
+[31m-    font-weight: 700;[m
+[31m-    gap: 7px;[m
+[31m-}[m
+[31m-[m
+[31m-.toolbar select,[m
+[31m-.toolbar input,[m
+[31m-.toolbar button {[m
+[31m-    border-radius: 8px;[m
+[31m-    font-size: 0.95rem;[m
+[31m-    min-height: 40px;[m
+[31m-    padding: 0 12px;[m
+[31m-}[m
+[31m-[m
+[31m-.toolbar select,[m
+[31m-.toolbar input {[m
+[31m-        background: white;[m
+[31m-        border: 1px solid var(--border);[m
+[31m-        color: var(--text);[m
+[31m-        min-width: 190px;[m
+[31m-    }[m
+[31m-[m
+[31m-.toolbar button {[m
+[31m-    background: var(--primary);[m
+[31m-    border: 0;[m
+[31m-    color: white;[m
+[31m-    cursor: pointer;[m
+[31m-    font-weight: 700;[m
+[31m-}[m
+[31m-[m
+[31m-.toolbar button:hover {[m
+[31m-    background: var(--primary-dark);[m
+[31m-}[m
+[31m-[m
+[31m-.section-heading {[m
+[31m-    align-items: center;[m
+[31m-    display: flex;[m
+[31m-    justify-content: space-between;[m
+[31m-    margin-bottom: 18px;[m
+[31m-}[m
+[31m-[m
+[31m-.section-heading h2 {[m
+[31m-    margin: 5px 0 0;[m
+[31m-}[m
+[31m-[m
+[31m-.auction-count {[m
+[31m-    color: var(--muted);[m
+[31m-    font-size: 0.9rem;[m
+[31m-}[m
+[31m-[m
+[31m-.auction-grid {[m
+[31m-    display: grid;[m
+[31m-    gap: 20px;[m
+[31m-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));[m
+[31m-}[m
+[31m-[m
+[31m-.auction-card {[m
+[31m-    background: var(--surface);[m
+[31m-    border: 1px solid var(--border);[m
+[31m-    border-radius: 14px;[m
+[31m-    overflow: hidden;[m
+[31m-}[m
+[31m-[m
+[31m-.auction-card img {[m
+[31m-    display: block;[m
+[31m-    height: 180px;[m
+[31m-    object-fit: cover;[m
+[31m-    width: 100%;[m
+[31m-}[m
+[31m-[m
+[31m-.card-content {[m
+[31m-    padding: 18px;[m
+[31m-}[m
+[31m-[m
+[31m-.category {[m
+[31m-    color: var(--primary);[m
+[31m-    font-size: 0.78rem;[m
+[31m-    font-weight: 800;[m
+[31m-    text-transform: uppercase;[m
+[31m-}[m
+[31m-[m
+[31m-.auction-card h3 {[m
+[31m-    font-size: 1.1rem;[m
+[31m-    margin: 8px 0 16px;[m
+[31m-}[m
+[31m-[m
+[31m-.price {[m
+[31m-    font-size: 1.35rem;[m
+[31m-    font-weight: 800;[m
+[31m-    margin: 4px 0;[m
+[31m-}[m
+[31m-[m
+[31m-.details {[m
+[31m-    color: var(--muted);[m
+[31m-    font-size: 0.86rem;[m
+[31m-    margin: 6px 0;[m
+[31m-}[m
+[31m-[m
+[31m-.timer {[m
+[31m-    color: var(--danger);[m
+[31m-    font-size: 0.9rem;[m
+[31m-    font-weight: 800;[m
+[31m-    margin-top: 14px;[m
+[31m-}[m
+[31m-[m
+[31m-.message {[m
+[31m-    color: var(--muted);[m
+[31m-    padding: 24px 0;[m
+[31m-}[m
+[31m-[m
+[31m-.error {[m
+[31m-    color: var(--danger);[m
+[31m-}[m
+[31m-[m
+[31m-.hidden {[m
+[31m-    display: none;[m
+[31m-}[m
+[31m-[m
+[31m-@media (max-width: 650px) {[m
+[31m-    .topbar {[m
+[31m-        align-items: flex-start;[m
+[31m-        flex-direction: column;[m
+[31m-        gap: 14px;[m
+[31m-    }[m
+[31m-[m
+[31m-    .navigation {[m
+[31m-        flex-wrap: wrap;[m
+[31m-    }[m
+[31m-[m
+[31m-    .hero {[m
+[31m-        padding: 30px 24px;[m
+[31m-    }[m
+[31m-}[m
+[31m-.auction-card-link {[m
+[31m-    color: inherit;[m
+[31m-    text-decoration: none;[m
+[31m-}[m
+[31m-[m
+[31m-    .auction-card-link:hover .auction-card {[m
+[31m-        box-shadow: 0 10px 28px rgba(46, 34, 100, 0.14);[m
+[31m-        transform: translateY(-3px);[m
+[31m-    }[m
+[31m-[m
+[31m-.auction-card {[m
+[31m-    transition: box-shadow 0.2s ease, transform 0.2s ease;[m
+[31m-}[m
+[31m-.back-link {[m
+[31m-    color: var(--primary);[m
+[31m-    display: inline-block;[m
+[31m-    font-weight: 700;[m
+[31m-    margin-bottom: 24px;[m
+[31m-    text-decoration: none;[m
+[31m-}[m
+[31m-[m
+[31m-.detail-card {[m
+[31m-    background: var(--surface);[m
+[31m-    border: 1px solid var(--border);[m
+[31m-    border-radius: 16px;[m
+[31m-    display: grid;[m
+[31m-    grid-template-columns: minmax(280px, 1fr) minmax(300px, 1fr);[m
+[31m-    margin-bottom: 28px;[m
+[31m-    overflow: hidden;[m
+[31m-}[m
+[31m-[m
+[31m-    .detail-card img {[m
+[31m-        height: 100%;[m
+[31m-        min-height: 320px;[m
+[31m-        object-fit: cover;[m
+[31m-        width: 100%;[m
+[31m-    }[m
+[31m-[m
+[31m-.detail-content {[m
+[31m-    padding: 32px;[m
+[31m-}[m
+[31m-[m
+[31m-    .detail-content h1 {[m
+[31m-        margin: 10px 0;[m
+[31m-    }[m
+[31m-[m
+[31m-.description {[m
+[31m-    color: var(--muted);[m
+[31m-    line-height: 1.6;[m
+[31m-}[m
+[31m-[m
+[31m-.price-panel {[m
+[31m-    background: #f1edff;[m
+[31m-    border-radius: 12px;[m
+[31m-    display: grid;[m
+[31m-    gap: 6px;[m
+[31m-    margin: 24px 0;[m
+[31m-    padding: 18px;[m
+[31m-}[m
+[31m-[m
+[31m-    .price-panel span,[m
+[31m-    .price-panel small {[m
+[31m-        color: var(--muted);[m
+[31m-    }[m
+[31m-[m
+[31m-    .price-panel strong {[m
+[31m-        color: var(--primary);[m
+[31m-        font-size: 2rem;[m
+[31m-    }[m
+[31m-[m
+[31m-.bid-section,[m
+[31m-.history-section {[m
+[31m-    background: var(--surface);[m
+[31m-    border: 1px solid var(--border);[m
+[31m-    border-radius: 14px;[m
+[31m-    margin-bottom: 28px;[m
+[31m-    padding: 26px;[m
+[31m-}[m
+[31m-[m
+[31m-.bid-form {[m
+[31m-    display: flex;[m
+[31m-    flex-wrap: wrap;[m
+[31m-    gap: 14px;[m
+[31m-    margin-top: 18px;[m
+[31m-}[m
+[31m-[m
+[31m-    .bid-form label {[m
+[31m-        color: var(--muted);[m
+[31m-        display: grid;[m
+[31m-        font-size: 0.82rem;[m
+[31m-        font-weight: 700;[m
+[31m-        gap: 7px;[m
+[31m-    }[m
+[31m-[m
+[31m-    .bid-form input {[m
+[31m-        border: 1px solid var(--border);[m
+[31m-        border-radius: 8px;[m
+[31m-        min-height: 42px;[m
+[31m-        padding: 0 12px;[m
+[31m-    }[m
+[31m-[m
+[31m-    .bid-form button {[m
+[31m-        align-self: end;[m
+[31m-        background: var(--primary);[m
+[31m-        border: 0;[m
+[31m-        border-radius: 8px;[m
+[31m-        color: white;[m
+[31m-        cursor: pointer;[m
+[31m-        font-weight: 700;[m
+[31m-        min-height: 42px;[m
+[31m-        padding: 0 18px;[m
+[31m-    }[m
+[31m-[m
+[31m-.history-item {[m
+[31m-    align-items: center;[m
+[31m-    border-bottom: 1px solid var(--border);[m
+[31m-    display: flex;[m
+[31m-    justify-content: space-between;[m
+[31m-    padding: 15px 0;[m
+[31m-}[m
+[31m-[m
+[31m-    .history-item p {[m
+[31m-        color: var(--muted);[m
+[31m-        font-size: 0.85rem;[m
+[31m-        margin: 5px 0 0;[m
+[31m-    }[m
+[31m-[m
+[31m-@media (max-width: 750px) {[m
+[31m-    .detail-card {[m
+[31m-        grid-template-columns: 1fr;[m
+[31m-    }[m
+[31m-[m
+[31m-        .detail-card img {[m
+[31m-            min-height: 220px;[m
+[31m-        }[m
+[31m-}[m
+[31m-.balance-grid {[m
+[31m-    display: grid;[m
+[31m-    gap: 18px;[m
+[31m-    grid-template-columns: repeat(3, 1fr);[m
+[31m-    margin: 24px 0;[m
+[31m-}[m
+[31m-[m
+[31m-.balance-card {[m
+[31m-    background: var(--surface);[m
+[31m-    border: 1px solid var(--border);[m
+[31m-    border-radius: 14px;[m
+[31m-    display: grid;[m
+[31m-    gap: 8px;[m
+[31m-    padding: 24px;[m
+[31m-}[m
+[31m-[m
+[31m-    .balance-card span {[m
+[31m-        color: var(--muted);[m
+[31m-        font-size: 0.9rem;[m
+[31m-    }[m
+[31m-[m
+[31m-    .balance-card strong {[m
+[31m-        font-size: 1.6rem;[m
+[31m-    }[m
+[31m-[m
+[31m-.retained {[m
+[31m-    border-left: 5px solid #e29c28;[m
+[31m-}[m
+[31m-[m
+[31m-.available {[m
+[31m-    border-left: 5px solid #27a66d;[m
+[31m-}[m
+[31m-[m
+[31m-.deposit-panel,[m
+[31m-.activity-panel {[m
+[31m-    background: var(--surface);[m
+[31m-    border: 1px solid var(--border);[m
+[31m-    border-radius: 14px;[m
+[31m-    margin-bottom: 25px;[m
+[31m-    padding: 24px;[m
+[31m-}[m
+[31m-[m
+[31m-.inline-form {[m
+[31m-    display: flex;[m
+[31m-    gap: 12px;[m
+[31m-    margin-top: 18px;[m
+[31m-}[m
+[31m-[m
+[31m-    .inline-form input {[m
+[31m-        border: 1px solid var(--border);[m
+[31m-        border-radius: 8px;[m
+[31m-        min-height: 42px;[m
+[31m-        padding: 0 12px;[m
+[31m-    }[m
+[31m-[m
+[31m-    .inline-form button,[m
+[31m-    .tab-button {[m
+[31m-        background: var(--primary);[m
+[31m-        border: 0;[m
+[31m-        border-radius: 8px;[m
+[31m-        color: white;[m
+[31m-        cursor: pointer;[m
+[31m-        font-weight: 700;[m
+[31m-        padding: 0 16px;[m
+[31m-    }[m
+[31m-[m
+[31m-.tabs {[m
+[31m-    border-bottom: 1px solid var(--border);[m
+[31m-    display: flex;[m
+[31m-    gap: 10px;[m
+[31m-    margin-bottom: 20px;[m
+[31m-    padding-bottom: 14px;[m
+[31m-}[m
+[31m-[m
+[31m-.tab-button {[m
+[31m-    background: #ece8fd;[m
+[31m-    color: var(--primary);[m
+[31m-    min-height: 38px;[m
+[31m-}[m
+[31m-[m
+[31m-    .tab-button.active {[m
+[31m-        background: var(--primary);[m
+[31m-        color: white;[m
+[31m-    }[m
+[31m-[m
+[31m-.activity-item,[m
+[31m-.transaction-item {[m
+[31m-    align-items: center;[m
+[31m-    border-bottom: 1px solid var(--border);[m
+[31m-    display: flex;[m
+[31m-    gap: 15px;[m
+[31m-    justify-content: space-between;[m
+[31m-    padding: 14px 0;[m
+[31m-}[m
+[31m-[m
+[31m-    .activity-item img {[m
+[31m-        border-radius: 8px;[m
+[31m-        height: 62px;[m
+[31m-        object-fit: cover;[m
+[31m-        width: 76px;[m
+[31m-    }[m
+[31m-[m
+[31m-    .activity-item div {[m
+[31m-        flex: 1;[m
+[31m-    }[m
+[31m-[m
+[31m-    .activity-item h3,[m
+[31m-    .activity-item p,[m
+[31m-    .transaction-item p {[m
+[31m-        margin: 4px 0;[m
+[31m-    }[m
+[31m-[m
+[31m-    .activity-item p,[m
+[31m-    .transaction-item p {[m
+[31m-        color: var(--muted);[m
+[31m-        font-size: 0.86rem;[m
+[31m-    }[m
+[31m-[m
+[31m-.status-badge {[m
+[31m-    background: #eeeafe;[m
+[31m-    border-radius: 999px;[m
+[31m-    color: var(--primary);[m
+[31m-    font-size: 0.78rem;[m
+[31m-    font-weight: 800;[m
+[31m-    padding: 7px 10px;[m
+[31m-}[m
+[31m-[m
+[31m-@media (max-width: 700px) {[m
+[31m-    .balance-grid {[m
+[31m-        grid-template-columns: 1fr;[m
+[31m-    }[m
+[31m-[m
+[31m-    .inline-form {[m
+[31m-        flex-direction: column;[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/index.html b/SubastaYa.Api/wwwroot/index.html[m
+[1mindex f06f446..add85e7 100644[m
+[1m--- a/SubastaYa.Api/wwwroot/index.html[m
+[1m+++ b/SubastaYa.Api/wwwroot/index.html[m
+[36m@@ -1,96 +1,134 @@[m
+[31m-﻿<!DOCTYPE html>[m
+[32m+[m[32m<!DOCTYPE html>[m
+ <html lang="es">[m
+ <head>[m
+     <meta charset="UTF-8">[m
+[31m-    <meta name="viewport"[m
+[31m-          content="width=device-width, initial-scale=1.0">[m
+[32m+[m[32m    <meta name="viewport" content="width=device-width, initial-scale=1.0">[m
+     <title>SubastaYa</title>[m
+[31m-    <link rel="stylesheet" href="css/site.css">[m
+[32m+[m[32m    <link rel="stylesheet" href="css/index.css">[m
+[32m+[m[32m    <link rel="stylesheet" href="/css/login.css">[m
+ </head>[m
+[32m+[m
+ <body>[m
+[31m-    <header class="topbar">[m
+[31m-        <a class="brand" href="/">SubastaYa</a>[m
+ [m
+[31m-        <nav class="navigation">[m
+[31m-            <a href="/">Explorar</a>[m
+[31m-            <a href="profile.html?userId=2">Mi cuenta</a>[m
+[31m-            <a href="#my-auctions">Mis actividades</a>[m
+[32m+[m[32m<header class="header">[m
+[32m+[m[32m    <div class="navbar">[m
+[32m+[m[32m        <a href="index.html" class="brand">[m
+[32m+[m[32m            <span class="brand-icon">S</span>[m
+[32m+[m[32m            <span>SubastaYa</span>[m
+[32m+[m[32m        </a>[m
+[32m+[m
+[32m+[m[32m        <nav class="nav">[m
+[32m+[m[32m            <a href="#" class="active">Inicio</a>[m
+[32m+[m[32m            <a href="#">Subastas</a>[m
+[32m+[m[32m            <a href="#">Mis pujas</a>[m
+[32m+[m[32m            <a href="#">Mis publicaciones</a>[m
+[32m+[m[32m            <a href="#">Publicar</a>[m
+         </nav>[m
+[31m-    </header>[m
+ [m
+[31m-    <main class="page-container" data-sys-render="auto">[m
+[31m-        <section class="hero">[m
+[31m-            <p class="eyebrow">SUBASTAS EN TIEMPO REAL</p>[m
+[31m-            <h1>Encontrá algo único.</h1>[m
+[32m+[m[32m        <div class="user-actions">[m
+[32m+[m[32m            <a href="#" class="wallet">Billetera</a>[m
+[32m+[m[32m            <button id="openLoginBtn" class="open-login-btn">Iniciar sesión</button>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m</header>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m<main>[m
+[32m+[m[32m    <section class="hero">[m
+[32m+[m[32m        <div class="hero-content">[m
+[32m+[m[32m            <span class="hero-label">SUBASTAS EN TIEMPO REAL</span>[m
+[32m+[m
+[32m+[m[32m            <h1>Encontrá tu próxima oportunidad</h1>[m
+             <p>[m
+[31m-                Explorá publicaciones, seguí las pujas y ofertá[m
+[31m-                con saldo garantizado.[m
+[32m+[m[32m                Explorá productos y participá de subastas[m
+[32m+[m[32m                seguras en tiempo real.[m
+             </p>[m
+[31m-        </section>[m
+[31m-[m
+[31m-        <section class="toolbar">[m
+[31m-            <label>[m
+[31m-                Estado[m
+[31m-                <select id="status-filter">[m
+[31m-                    <option value="">Todas</option>[m
+[31m-                    <option value="ACTIVA">Activas</option>[m
+[31m-                    <option value="PROGRAMADA">Próximas</option>[m
+[31m-                    <option value="FINALIZADA">Finalizadas</option>[m
+[31m-                    <option value="DESIERTA">Desiertas</option>[m
+[31m-                </select>[m
+[31m-            </label>[m
+[31m-[m
+[31m-            <label>[m
+[31m-                Categoría[m
+[31m-                <select id="category-filter">[m
+[31m-                    <option value="">Todas</option>[m
+[31m-                </select>[m
+[31m-            </label>[m
+[31m-[m
+[31m-            <label>[m
+[31m-                Precio mínimo[m
+[31m-                <input id="minimum-price-filter" type="number" min="0">[m
+[31m-            </label>[m
+[31m-[m
+[31m-            <label>[m
+[31m-                Precio máximo[m
+[31m-                <input id="maximum-price-filter" type="number" min="0">[m
+[31m-            </label>[m
+[31m-[m
+[31m-            <label>[m
+[31m-                Ordenar por[m
+[31m-                <select id="order-filter">[m
+[31m-                    <option value="menor-tiempo">Menor tiempo restante</option>[m
+[31m-                    <option value="mayor-puja">Mayor puja</option>[m
+[31m-                </select>[m
+[31m-            </label>[m
+[31m-[m
+[31m-            <button id="apply-filters-button" type="button">[m
+[31m-                Aplicar filtros[m
+[31m-            </button>[m
+[31m-        </section>[m
+[31m-[m
+[31m-        <section>[m
+[31m-            <div class="section-heading">[m
+[31m-                <div>[m
+[31m-                    <p class="eyebrow">CATÁLOGO</p>[m
+[31m-                    <h2>Subastas disponibles</h2>[m
+[31m-                </div>[m
+ [m
+[31m-                <span id="auction-count" class="auction-count"></span>[m
+[32m+[m[32m            <div class="search-container">[m
+[32m+[m[32m                <input type="text" id="search" placeholder="Buscar productos...">[m
+[32m+[m[32m                <button id="btnSearch">Buscar</button>[m
+             </div>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m    </section>[m
+ [m
+[31m-            <div id="loading-message" class="message">[m
+[31m-                Cargando subastas...[m
+[31m-            </div>[m
+[32m+[m[32m    <section class="filters-section">[m
+[32m+[m[32m        <div class="filters">[m
+[32m+[m[32m            <select id="categoryFilter">[m
+[32m+[m[32m                <option value="">Todas las categorías</option>[m
+[32m+[m[32m                <option>Tecnología</option>[m
+[32m+[m[32m                <option>Coleccionables</option>[m
+[32m+[m[32m                <option>Indumentaria</option>[m
+[32m+[m[32m                <option>Vehículos</option>[m
+[32m+[m[32m            </select>[m
+[32m+[m
+[32m+[m[32m            <select id="statusFilter">[m
+[32m+[m[32m                <option value="">Todos los estados</option>[m
+[32m+[m[32m                <option>Activas</option>[m
+[32m+[m[32m                <option>Próximas</option>[m
+[32m+[m[32m                <option>Finalizadas</option>[m
+[32m+[m[32m            </select>[m
+[32m+[m
+[32m+[m[32m            <select id="priceFilter">[m
+[32m+[m[32m                <option value="">Todos los precios</option>[m
+[32m+[m[32m                <option>Hasta $50.000</option>[m
+[32m+[m[32m                <option>$50.000 - $100.000</option>[m
+[32m+[m[32m                <option>Más de $100.000</option>[m
+[32m+[m[32m            </select>[m
+ [m
+[31m-            <div id="error-message" class="message error hidden">[m
+[32m+[m[32m            <select id="orderFilter">[m
+[32m+[m[32m                <option value="">Ordenar por</option>[m
+[32m+[m[32m                <option>Menor tiempo restante</option>[m
+[32m+[m[32m                <option>Mayor puja</option>[m
+[32m+[m[32m            </select>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m    </section>[m
+[32m+[m
+[32m+[m[32m    <section class="auctions-section">[m
+[32m+[m[32m        <div class="section-header">[m
+[32m+[m[32m            <div>[m
+[32m+[m[32m                <span class="section-label">EN VIVO</span>[m
+[32m+[m[32m                <h2>Subastas activas</h2>[m
+             </div>[m
+ [m
+[31m-            <div id="auction-grid" class="auction-grid"></div>[m
+[31m-        </section>[m
+[31m-    </main>[m
+[32m+[m[32m            <a href="#" class="view-all">Ver todas →</a>[m
+[32m+[m[32m        </div>[m
+[32m+[m
+[32m+[m[32m        <div class="auction-grid" id="auctionGrid">[m
+[32m+[m[32m            <article class="auction-card">[m
+[32m+[m[32m                <div class="image-container">[m
+[32m+[m[32m                    <img src="https://placehold.co/600x400" alt="Producto">[m
+[32m+[m[32m                    <span class="status active-status">EN VIVO</span>[m
+[32m+[m
+[32m+[m[32m                </div>[m
+[32m+[m
+[32m+[m[32m                <div class="card-content">[m
+[32m+[m[32m                    <span class="category">Tecnología</span>[m
+[32m+[m[32m                    <h3>Notebook Gamer</h3>[m
+[32m+[m
+[32m+[m[32m                    <div class="auction-info">[m
+[32m+[m[32m                        <div>[m
+[32m+[m[32m                            <span class="info-label">Puja actual</span>[m
+[32m+[m[32m                            <strong>$45.000</strong>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                        <div>[m
+[32m+[m[32m                            <span class="info-label">Ofertas</span>[m
+[32m+[m[32m                            <strong>12</strong>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                    </div>[m
+[32m+[m
+[32m+[m[32m                    <div class="card-footer">[m
+[32m+[m[32m                        <div class="timer">⏱ 00:24:32</div>[m
+[32m+[m[32m                        <button class="bid-button">Ver subasta</button>[m
+[32m+[m[32m                    </div>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m            </article>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m    </section>[m
+[32m+[m[32m</main>[m
+[32m+[m
+[32m+[m[32m<div id="loginContainer"></div>[m
+[32m+[m[32m<script src="/js/login.js"></script>[m
+[32m+[m[32m<script src="js/index.js"></script>[m
+ [m
+[31m-    <script src="js/catalog.js"></script>[m
+ </body>[m
+ </html>[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/js/auction-detail.js b/SubastaYa.Api/wwwroot/js/auction-detail.js[m
+[1mdeleted file mode 100644[m
+[1mindex 3d3fbf4..0000000[m
+[1m--- a/SubastaYa.Api/wwwroot/js/auction-detail.js[m
+[1m+++ /dev/null[m
+[36m@@ -1,222 +0,0 @@[m
+[31m-﻿const parameters = new URLSearchParams(window.location.search);[m
+[31m-const auctionId = parameters.get("auctionId");[m
+[31m-[m
+[31m-const loadingMessage = document.getElementById("loading-message");[m
+[31m-const errorMessage = document.getElementById("error-message");[m
+[31m-const auctionDetail = document.getElementById("auction-detail");[m
+[31m-const bidHistory = document.getElementById("bid-history");[m
+[31m-const bidForm = document.getElementById("bid-form");[m
+[31m-const bidMessage = document.getElementById("bid-message");[m
+[31m-const buyerIdInput = document.getElementById("buyer-id");[m
+[31m-const bidAmountInput = document.getElementById("bid-amount");[m
+[31m-[m
+[31m-let currentAuction = null;[m
+[31m-[m
+[31m-function formatCurrency(amount) {[m
+[31m-    return new Intl.NumberFormat("es-AR", {[m
+[31m-        style: "currency",[m
+[31m-        currency: "ARS",[m
+[31m-        maximumFractionDigits: 0[m
+[31m-    }).format(amount);[m
+[31m-}[m
+[31m-[m
+[31m-function escapeHtml(value) {[m
+[31m-    return String(value)[m
+[31m-        .replaceAll("&", "&amp;")[m
+[31m-        .replaceAll("<", "&lt;")[m
+[31m-        .replaceAll(">", "&gt;")[m
+[31m-        .replaceAll("\"", "&quot;")[m
+[31m-        .replaceAll("'", "&#039;");[m
+[31m-}[m
+[31m-[m
+[31m-function getRemainingTime(endAtUtc) {[m
+[31m-    const remainingMilliseconds = new Date(endAtUtc).getTime() - Date.now();[m
+[31m-[m
+[31m-    if (remainingMilliseconds <= 0) {[m
+[31m-        return "Finalizada";[m
+[31m-    }[m
+[31m-[m
+[31m-    const totalSeconds = Math.floor(remainingMilliseconds / 1000);[m
+[31m-    const hours = Math.floor(totalSeconds / 3600);[m
+[31m-    const minutes = Math.floor((totalSeconds % 3600) / 60);[m
+[31m-    const seconds = totalSeconds % 60;[m
+[31m-[m
+[31m-    return `${hours}h ${minutes}m ${seconds}s`;[m
+[31m-}[m
+[31m-[m
+[31m-function renderAuction() {[m
+[31m-    const visiblePrice =[m
+[31m-        currentAuction.highestBid ?? currentAuction.basePrice;[m
+[31m-[m
+[31m-    const minimumAmount = currentAuction.highestBid[m
+[31m-        ? currentAuction.highestBid + currentAuction.minimumIncrement[m
+[31m-        : currentAuction.basePrice;[m
+[31m-[m
+[31m-    auctionDetail.innerHTML = `[m
+[31m-        <article class="detail-card">[m
+[31m-            <img[m
+[31m-                src="${escapeHtml(currentAuction.imageUrl)}"[m
+[31m-                alt="${escapeHtml(currentAuction.title)}">[m
+[31m-[m
+[31m-            <div class="detail-content">[m
+[31m-                <span class="category">[m
+[31m-                    ${escapeHtml(currentAuction.categoryName)}[m
+[31m-                </span>[m
+[31m-[m
+[31m-                <h1>${escapeHtml(currentAuction.title)}</h1>[m
+[31m-[m
+[31m-                <p class="description">[m
+[31m-                    ${escapeHtml(currentAuction.description)}[m
+[31m-                </p>[m
+[31m-[m
+[31m-                <p class="details">[m
+[31m-                    Publicada por ${escapeHtml(currentAuction.sellerName)}[m
+[31m-                </p>[m
+[31m-[m
+[31m-                <div class="price-panel">[m
+[31m-                    <span>Puja actual</span>[m
+[31m-                    <strong>${formatCurrency(visiblePrice)}</strong>[m
+[31m-                    <small>[m
+[31m-                        Incremento mínimo:[m
+[31m-                        ${formatCurrency(currentAuction.minimumIncrement)}[m
+[31m-                    </small>[m
+[31m-                </div>[m
+[31m-[m
+[31m-                <p class="timer detail-timer">[m
+[31m-                    Finaliza en:[m
+[31m-                    <span id="detail-timer"></span>[m
+[31m-                </p>[m
+[31m-[m
+[31m-                <p class="details">[m
+[31m-                    Estado: ${escapeHtml(currentAuction.status)}[m
+[31m-                </p>[m
+[31m-            </div>[m
+[31m-        </article>[m
+[31m-    `;[m
+[31m-[m
+[31m-    bidAmountInput.value = minimumAmount;[m
+[31m-    updateTimer();[m
+[31m-}[m
+[31m-[m
+[31m-function renderBidHistory() {[m
+[31m-    bidHistory.innerHTML = "";[m
+[31m-[m
+[31m-    if (currentAuction.bids.length === 0) {[m
+[31m-        bidHistory.innerHTML =[m
+[31m-            `<p class="message">Todavía no hay pujas.</p>`;[m
+[31m-[m
+[31m-        return;[m
+[31m-    }[m
+[31m-[m
+[31m-    for (const idx_tk of currentAuction.bids) {[m
+[31m-        bidHistory.insertAdjacentHTML([m
+[31m-            "beforeend",[m
+[31m-            `[m
+[31m-                <article class="history-item">[m
+[31m-                    <div>[m
+[31m-                        <strong>${escapeHtml(idx_tk.buyerAlias)}</strong>[m
+[31m-                        <p>${new Date(idx_tk.bidAtUtc).toLocaleString("es-AR")}</p>[m
+[31m-                    </div>[m
+[31m-                    <strong>${formatCurrency(idx_tk.amount)}</strong>[m
+[31m-                </article>[m
+[31m-            `);[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-function updateTimer() {[m
+[31m-    if (!currentAuction) {[m
+[31m-        return;[m
+[31m-    }[m
+[31m-[m
+[31m-    const timer = document.getElementById("detail-timer");[m
+[31m-[m
+[31m-    if (timer) {[m
+[31m-        timer.textContent = getRemainingTime(currentAuction.endAtUtc);[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-async function loadAuction() {[m
+[31m-    if (!auctionId) {[m
+[31m-        errorMessage.textContent = "No se indicó una subasta.";[m
+[31m-[m
+[31m-        errorMessage.classList.remove("hidden");[m
+[31m-        loadingMessage.classList.add("hidden");[m
+[31m-[m
+[31m-        return;[m
+[31m-    }[m
+[31m-[m
+[31m-    try {[m
+[31m-        const response = await fetch(`/api/v1/auctions/${auctionId}`);[m
+[31m-[m
+[31m-        if (!response.ok) {[m
+[31m-            throw new Error("No se pudo cargar la subasta.");[m
+[31m-        }[m
+[31m-[m
+[31m-        currentAuction = await response.json();[m
+[31m-[m
+[31m-        renderAuction();[m
+[31m-        renderBidHistory();[m
+[31m-[m
+[31m-        auctionDetail.classList.remove("hidden");[m
+[31m-    } catch (error) {[m
+[31m-        console.error("[CODE-ERROR] -", error);[m
+[31m-[m
+[31m-        errorMessage.textContent =[m
+[31m-            "No se pudo cargar la subasta solicitada.";[m
+[31m-[m
+[31m-        errorMessage.classList.remove("hidden");[m
+[31m-    } finally {[m
+[31m-        loadingMessage.classList.add("hidden");[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-bidForm.addEventListener("submit", async (event) => {[m
+[31m-    event.preventDefault();[m
+[31m-[m
+[31m-    const buyerId = Number(buyerIdInput.value);[m
+[31m-    const amount = Number(bidAmountInput.value);[m
+[31m-[m
+[31m-    bidMessage.classList.add("hidden");[m
+[31m-[m
+[31m-    try {[m
+[31m-        const response = await fetch([m
+[31m-            `/api/v1/auctions/${auctionId}/bids`,[m
+[31m-            {[m
+[31m-                method: "POST",[m
+[31m-                headers: {[m
+[31m-                    "Content-Type": "application/json"[m
+[31m-                },[m
+[31m-                body: JSON.stringify({[m
+[31m-                    buyerId,[m
+[31m-                    amount[m
+[31m-                })[m
+[31m-            });[m
+[31m-[m
+[31m-        const data = await response.json();[m
+[31m-[m
+[31m-        if (!response.ok) {[m
+[31m-            throw new Error([m
+[31m-                data.message ?? "No se pudo registrar la puja.");[m
+[31m-        }[m
+[31m-[m
+[31m-        bidMessage.textContent =[m
+[31m-            "¡Puja registrada correctamente!";[m
+[31m-[m
+[31m-        bidMessage.classList.remove("hidden");[m
+[31m-[m
+[31m-        await loadAuction();[m
+[31m-    } catch (error) {[m
+[31m-        console.error("[CODE-ERROR] -", error);[m
+[31m-[m
+[31m-        bidMessage.textContent = error.message;[m
+[31m-        bidMessage.classList.add("error");[m
+[31m-        bidMessage.classList.remove("hidden");[m
+[31m-    }[m
+[31m-});[m
+[31m-[m
+[31m-setInterval(updateTimer, 1000);[m
+[31m-[m
+[31m-loadAuction();[m
+[31m-window.reloadAuctionFromRealtime = async () => {[m
+[31m-    await loadAuction();[m
+[31m-};[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/js/catalog.js b/SubastaYa.Api/wwwroot/js/catalog.js[m
+[1mdeleted file mode 100644[m
+[1mindex 1e10ee7..0000000[m
+[1m--- a/SubastaYa.Api/wwwroot/js/catalog.js[m
+[1m+++ /dev/null[m
+[36m@@ -1,179 +0,0 @@[m
+[31m-const auctionGrid = document.getElementById("auction-grid");[m
+[31m-const loadingMessage = document.getElementById("loading-message");[m
+[31m-const errorMessage = document.getElementById("error-message");[m
+[31m-const auctionCount = document.getElementById("auction-count");[m
+[31m-const statusFilter = document.getElementById("status-filter");[m
+[31m-const categoryFilter = document.getElementById("category-filter");[m
+[31m-const minimumPriceFilter = document.getElementById([m
+[31m-    "minimum-price-filter");[m
+[31m-const maximumPriceFilter = document.getElementById([m
+[31m-    "maximum-price-filter");[m
+[31m-const orderFilter = document.getElementById("order-filter");[m
+[31m-const applyFiltersButton = document.getElementById([m
+[31m-    "apply-filters-button");[m
+[31m-[m
+[31m-function formatCurrency(amount) {[m
+[31m-    return new Intl.NumberFormat("es-AR", {[m
+[31m-        style: "currency",[m
+[31m-        currency: "ARS",[m
+[31m-        maximumFractionDigits: 0[m
+[31m-    }).format(amount);[m
+[31m-}[m
+[31m-[m
+[31m-function escapeHtml(value) {[m
+[31m-    return String(value)[m
+[31m-        .replaceAll("&", "&amp;")[m
+[31m-        .replaceAll("<", "&lt;")[m
+[31m-        .replaceAll(">", "&gt;")[m
+[31m-        .replaceAll("\"", "&quot;")[m
+[31m-        .replaceAll("'", "&#039;");[m
+[31m-}[m
+[31m-[m
+[31m-function getRemainingTime(endAtUtc) {[m
+[31m-    const remainingMilliseconds = new Date(endAtUtc).getTime() - Date.now();[m
+[31m-[m
+[31m-    if (remainingMilliseconds <= 0) {[m
+[31m-        return "Finalizada";[m
+[31m-    }[m
+[31m-[m
+[31m-    const totalSeconds = Math.floor(remainingMilliseconds / 1000);[m
+[31m-    const hours = Math.floor(totalSeconds / 3600);[m
+[31m-    const minutes = Math.floor((totalSeconds % 3600) / 60);[m
+[31m-    const seconds = totalSeconds % 60;[m
+[31m-[m
+[31m-    return `${hours}h ${minutes}m ${seconds}s`;[m
+[31m-}[m
+[31m-[m
+[31m-function renderAuctions(auctions) {[m
+[31m-    auctionGrid.innerHTML = "";[m
+[31m-[m
+[31m-    for (const idx_tk of auctions) {[m
+[31m-        const visiblePrice = idx_tk.highestBid ?? idx_tk.basePrice;[m
+[31m-[m
+[31m-        auctionGrid.insertAdjacentHTML([m
+[31m-            "beforeend",[m
+[31m-            `[m
+[31m-                <a[m
+[31m-    class="auction-card-link"[m
+[31m-    href="auction.html?auctionId=${idx_tk.id}">[m
+[31m-    <article[m
+[31m-        class="auction-card"[m
+[31m-        data-end-at="${idx_tk.endAtUtc}">[m
+[31m-        <img[m
+[31m-            src="${escapeHtml(idx_tk.imageUrl)}"[m
+[31m-            alt="${escapeHtml(idx_tk.title)}">[m
+[31m-        <div class="card-content">[m
+[31m-            <span class="category">[m
+[31m-                ${escapeHtml(idx_tk.categoryName)}[m
+[31m-            </span>[m
+[31m-            <h3>${escapeHtml(idx_tk.title)}</h3>[m
+[31m-            <p class="price">${formatCurrency(visiblePrice)}</p>[m
+[31m-            <p class="details">[m
+[31m-                ${idx_tk.bidCount} puja(s) ·[m
+[31m-                ${escapeHtml(idx_tk.status)}[m
+[31m-            </p>[m
+[31m-            <p class="timer"></p>[m
+[31m-        </div>[m
+[31m-    </article>[m
+[31m-</a>[m
+[31m-            `);[m
+[31m-    }[m
+[31m-[m
+[31m-    updateTimers();[m
+[31m-}[m
+[31m-[m
+[31m-function updateTimers() {[m
+[31m-    const cards = document.querySelectorAll(".auction-card");[m
+[31m-[m
+[31m-    for (const idx_tk of cards) {[m
+[31m-        const timer = idx_tk.querySelector(".timer");[m
+[31m-        timer.textContent = getRemainingTime([m
+[31m-            idx_tk.dataset.endAt);[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-async function loadAuctions() {[m
+[31m-    loadingMessage.classList.remove("hidden");[m
+[31m-    errorMessage.classList.add("hidden");[m
+[31m-    auctionGrid.innerHTML = "";[m
+[31m-[m
+[31m-    const parameters = new URLSearchParams({[m
+[31m-        page: "1",[m
+[31m-        pageSize: "50",[m
+[31m-        orderBy: orderFilter.value[m
+[31m-    });[m
+[31m-[m
+[31m-    if (statusFilter.value) {[m
+[31m-        parameters.set("status", statusFilter.value);[m
+[31m-    }[m
+[31m-[m
+[31m-    if (categoryFilter.value) {[m
+[31m-        parameters.set("categoryId", categoryFilter.value);[m
+[31m-    }[m
+[31m-[m
+[31m-    if (minimumPriceFilter.value) {[m
+[31m-        parameters.set([m
+[31m-            "minimumPrice",[m
+[31m-            minimumPriceFilter.value);[m
+[31m-    }[m
+[31m-[m
+[31m-    if (maximumPriceFilter.value) {[m
+[31m-        parameters.set([m
+[31m-            "maximumPrice",[m
+[31m-            maximumPriceFilter.value);[m
+[31m-    }[m
+[31m-[m
+[31m-    try {[m
+[31m-        const response = await fetch([m
+[31m-            `/api/v1/auctions?${parameters.toString()}`);[m
+[31m-[m
+[31m-        if (!response.ok) {[m
+[31m-            throw new Error("No se pudieron cargar las subastas.");[m
+[31m-        }[m
+[31m-[m
+[31m-        const data = await response.json();[m
+[31m-[m
+[31m-        auctionCount.textContent =[m
+[31m-            `${data.totalItems} subasta(s) encontradas`;[m
+[31m-[m
+[31m-        renderAuctions(data.items);[m
+[31m-    } catch (error) {[m
+[31m-        console.error("[CODE-ERROR] -", error);[m
+[31m-[m
+[31m-        errorMessage.textContent =[m
+[31m-            "No se pudieron cargar las subastas. Intentá nuevamente.";[m
+[31m-[m
+[31m-        errorMessage.classList.remove("hidden");[m
+[31m-    } finally {[m
+[31m-        loadingMessage.classList.add("hidden");[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-async function loadCategories() {[m
+[31m-    try {[m
+[31m-        const response = await fetch("/api/v1/categories");[m
+[31m-[m
+[31m-        if (!response.ok) {[m
+[31m-            throw new Error("No se pudieron cargar las categorías.");[m
+[31m-        }[m
+[31m-[m
+[31m-        const categories = await response.json();[m
+[31m-[m
+[31m-        for (const idx_tk of categories) {[m
+[31m-            const option = document.createElement("option");[m
+[31m-[m
+[31m-            option.value = idx_tk.id;[m
+[31m-            option.textContent = idx_tk.name;[m
+[31m-[m
+[31m-            categoryFilter.appendChild(option);[m
+[31m-        }[m
+[31m-    } catch (error) {[m
+[31m-        console.error("[CODE-ERROR] -", error);[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-applyFiltersButton.addEventListener("click", loadAuctions);[m
+[31m-setInterval(updateTimers, 1000);[m
+[31m-[m
+[31m-loadCategories();[m
+[31m-loadAuctions();[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/js/index.js b/SubastaYa.Api/wwwroot/js/index.js[m
+[1mnew file mode 100644[m
+[1mindex 0000000..63ce99a[m
+[1m--- /dev/null[m
+[1m+++ b/SubastaYa.Api/wwwroot/js/index.js[m
+[36m@@ -0,0 +1,67 @@[m
+[32m+[m[32mconst searchButton = document.getElementById("btnSearch");[m
+[32m+[m
+[32m+[m[32mif (searchButton) {[m
+[32m+[m[32m    searchButton.addEventListener("click", () => {[m
+[32m+[m[32m        const searchValue = document.getElementById("search").value;[m
+[32m+[m[32m        console.log("Buscar:", searchValue);[m
+[32m+[m[32m    });[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mconst openLoginButton = document.getElementById("openLoginBtn");[m
+[32m+[m[32mconst loginContainer = document.getElementById("loginContainer");[m
+[32m+[m
+[32m+[m[32mif (openLoginButton && loginContainer) {[m
+[32m+[m[32m    openLoginButton.addEventListener([m
+[32m+[m[32m        "click",[m
+[32m+[m[32m        async () => {[m
+[32m+[m[32m            try {[m
+[32m+[m[32m                const response = await fetch("/login.html");[m
+[32m+[m[32m                if (!response.ok) {[m
+[32m+[m[32m                    throw new Error([m
+[32m+[m[32m                        "No se pudo cargar login.html"[m
+[32m+[m[32m                    );[m
+[32m+[m[32m                }[m
+[32m+[m
+[32m+[m[32m                const html = await response.text();[m
+[32m+[m[32m                loginContainer.innerHTML = html;[m
+[32m+[m[32m                document.body.style.overflow = "hidden";[m
+[32m+[m[32m                initializeLogin();[m
+[32m+[m[32m                const overlay = document.getElementById("loginOverlay");[m
+[32m+[m[32m                const closeLoginButton = document.getElementById("closeLoginBtn");[m
+[32m+[m[41m                [m
+[32m+[m[32m                if (closeLoginButton) {[m
+[32m+[m[32m                    closeLoginButton.addEventListener("click",closeLogin);[m
+[32m+[m[32m                }[m
+[32m+[m
+[32m+[m[32m                if (overlay) {[m
+[32m+[m[32m                    overlay.addEventListener([m
+[32m+[m[32m                        "click",[m
+[32m+[m[32m                        (event) => {[m
+[32m+[m[32m                            if ([m
+[32m+[m[32m                                event.target === overlay[m
+[32m+[m[32m                            ) {[m
+[32m+[m[32m                                closeLogin();[m
+[32m+[m[32m                            }[m
+[32m+[m[32m                        }[m
+[32m+[m[32m                    );[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+[32m+[m[32m            catch (error) {[m
+[32m+[m[32m                console.error("Error cargando el login:", error);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m[32m    );[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mdocument.addEventListener([m
+[32m+[m[32m    "keydown",[m
+[32m+[m[32m    (event) => {[m
+[32m+[m[32m        if (event.key === "Escape") {[m
+[32m+[m[32m            const overlay = document.getElementById("loginOverlay");[m
+[32m+[m
+[32m+[m[32m            if (overlay) {[m
+[32m+[m[32m                closeLogin();[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m[32m);[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/js/login.js b/SubastaYa.Api/wwwroot/js/login.js[m
+[1mnew file mode 100644[m
+[1mindex 0000000..99e879a[m
+[1m--- /dev/null[m
+[1m+++ b/SubastaYa.Api/wwwroot/js/login.js[m
+[36m@@ -0,0 +1,344 @@[m
+[32m+[m[32m// ==========================================[m
+[32m+[m[32m// INICIALIZAR LOGIN[m
+[32m+[m[32m// ==========================================[m
+[32m+[m
+[32m+[m[32mfunction initializeLogin() {[m
+[32m+[m
+[32m+[m[32m    const loginForm =[m
+[32m+[m[32m        document.getElementById("loginForm");[m
+[32m+[m
+[32m+[m[32m    const emailInput =[m
+[32m+[m[32m        document.getElementById("email");[m
+[32m+[m
+[32m+[m[32m    const passwordInput =[m
+[32m+[m[32m        document.getElementById("password");[m
+[32m+[m
+[32m+[m[32m    const togglePasswordButton =[m
+[32m+[m[32m        document.getElementById("togglePassword");[m
+[32m+[m
+[32m+[m[32m    const loginButton =[m
+[32m+[m[32m        document.getElementById("loginButton");[m
+[32m+[m
+[32m+[m[32m    const loginMessage =[m
+[32m+[m[32m        document.getElementById("loginMessage");[m
+[32m+[m
+[32m+[m[32m    const emailError =[m
+[32m+[m[32m        document.getElementById("emailError");[m
+[32m+[m
+[32m+[m[32m    const passwordError =[m
+[32m+[m[32m        document.getElementById("passwordError");[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    // Si el login todavía no existe,[m
+[32m+[m[32m    // no hacemos nada.[m
+[32m+[m[32m    if ([m
+[32m+[m[32m        !loginForm ||[m
+[32m+[m[32m        !emailInput ||[m
+[32m+[m[32m        !passwordInput[m
+[32m+[m[32m    ) {[m
+[32m+[m
+[32m+[m[32m        console.error([m
+[32m+[m[32m            "No se encontraron los elementos del login."[m
+[32m+[m[32m        );[m
+[32m+[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    // ======================================[m
+[32m+[m[32m    // MOSTRAR / OCULTAR PASSWORD[m
+[32m+[m[32m    // ======================================[m
+[32m+[m
+[32m+[m[32m    if (togglePasswordButton) {[m
+[32m+[m
+[32m+[m[32m        togglePasswordButton.addEventListener([m
+[32m+[m[32m            "click",[m
+[32m+[m[32m            () => {[m
+[32m+[m
+[32m+[m[32m                if ([m
+[32m+[m[32m                    passwordInput.type === "password"[m
+[32m+[m[32m                ) {[m
+[32m+[m
+[32m+[m[32m                    passwordInput.type = "text";[m
+[32m+[m
+[32m+[m[32m                    togglePasswordButton.textContent =[m
+[32m+[m[32m                        "🙈";[m
+[32m+[m
+[32m+[m[32m                }[m
+[32m+[m[32m                else {[m
+[32m+[m
+[32m+[m[32m                    passwordInput.type = "password";[m
+[32m+[m
+[32m+[m[32m                    togglePasswordButton.textContent =[m
+[32m+[m[32m                        "👁";[m
+[32m+[m
+[32m+[m[32m                }[m
+[32m+[m
+[32m+[m[32m            }[m
+[32m+[m[32m        );[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    // ======================================[m
+[32m+[m[32m    // VALIDACIÓN EMAIL[m
+[32m+[m[32m    // ======================================[m
+[32m+[m
+[32m+[m[32m    function isValidEmail(email) {[m
+[32m+[m
+[32m+[m[32m        const regex =[m
+[32m+[m[32m            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;[m
+[32m+[m
+[32m+[m[32m        return regex.test(email);[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    // ======================================[m
+[32m+[m[32m    // VALIDAR FORMULARIO[m
+[32m+[m[32m    // ======================================[m
+[32m+[m
+[32m+[m[32m    function validateForm() {[m
+[32m+[m
+[32m+[m[32m        let valid = true;[m
+[32m+[m
+[32m+[m[32m        emailError.textContent = "";[m
+[32m+[m[32m        passwordError.textContent = "";[m
+[32m+[m
+[32m+[m
+[32m+[m[32m        const email =[m
+[32m+[m[32m            emailInput.value.trim();[m
+[32m+[m
+[32m+[m[32m        const password =[m
+[32m+[m[32m            passwordInput.value;[m
+[32m+[m
+[32m+[m
+[32m+[m[32m        // EMAIL[m
+[32m+[m
+[32m+[m[32m        if (email === "") {[m
+[32m+[m
+[32m+[m[32m            emailError.textContent =[m
+[32m+[m[32m                "Ingresá tu correo electrónico.";[m
+[32m+[m
+[32m+[m[32m            valid = false;[m
+[32m+[m
+[32m+[m[32m        }[m
+[32m+[m[32m        else if (!isValidEmail(email)) {[m
+[32m+[m
+[32m+[m[32m            emailError.textContent =[m
+[32m+[m[32m                "Ingresá un correo válido.";[m
+[32m+[m
+[32m+[m[32m            valid = false;[m
+[32m+[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m        // PASSWORD[m
+[32m+[m
+[32m+[m[32m        if (password === "") {[m
+[32m+[m
+[32m+[m[32m            passwordError.textContent =[m
+[32m+[m[32m                "Ingresá tu contraseña.";[m
+[32m+[m
+[32m+[m[32m            valid = false;[m
+[32m+[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m        return valid;[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    // ======================================[m
+[32m+[m[32m    // LIMPIAR ERRORES[m
+[32m+[m[32m    // ======================================[m
+[32m+[m
+[32m+[m[32m    emailInput.addEventListener([m
+[32m+[m[32m        "input",[m
+[32m+[m[32m        () => {[m
+[32m+[m
+[32m+[m[32m            emailError.textContent = "";[m
+[32m+[m
+[32m+[m[32m        }[m
+[32m+[m[32m    );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    passwordInput.addEventListener([m
+[32m+[m[32m        "input",[m
+[32m+[m[32m        () => {[m
+[32m+[m
+[32m+[m[32m            passwordError.textContent = "";[m
+[32m+[m
+[32m+[m[32m        }[m
+[32m+[m[32m    );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    // ======================================[m
+[32m+[m[32m    // SUBMIT[m
+[32m+[m[32m    // ======================================[m
+[32m+[m
+[32m+[m[32m    loginForm.addEventListener([m
+[32m+[m[32m        "submit",[m
+[32m+[m[32m        async (event) => {[m
+[32m+[m
+[32m+[m[32m            event.preventDefault();[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            loginMessage.className =[m
+[32m+[m[32m                "login-message";[m
+[32m+[m
+[32m+[m[32m            loginMessage.textContent = "";[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            if (!validateForm()) {[m
+[32m+[m
+[32m+[m[32m                return;[m
+[32m+[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            const loginData = {[m
+[32m+[m
+[32m+[m[32m                email:[m
+[32m+[m[32m                    emailInput.value.trim(),[m
+[32m+[m
+[32m+[m[32m                password:[m
+[32m+[m[32m                    passwordInput.value[m
+[32m+[m
+[32m+[m[32m            };[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            loginButton.disabled = true;[m
+[32m+[m
+[32m+[m[32m            loginButton.textContent =[m
+[32m+[m[32m                "Ingresando...";[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            try {[m
+[32m+[m
+[32m+[m[32m                const response =[m
+[32m+[m[32m                    await fetch([m
+[32m+[m[32m                        "/api/auth/login",[m
+[32m+[m[32m                        {[m
+[32m+[m[32m                            method: "POST",[m
+[32m+[m
+[32m+[m[32m                            headers: {[m
+[32m+[m[32m                                "Content-Type":[m
+[32m+[m[32m                                    "application/json"[m
+[32m+[m[32m                            },[m
+[32m+[m
+[32m+[m[32m                            body:[m
+[32m+[m[32m                                JSON.stringify([m
+[32m+[m[32m                                    loginData[m
+[32m+[m[32m                                )[m
+[32m+[m[32m                        }[m
+[32m+[m[32m                    );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                if (!response.ok) {[m
+[32m+[m
+[32m+[m[32m                    if (response.status === 401) {[m
+[32m+[m
+[32m+[m[32m                        throw new Error([m
+[32m+[m[32m                            "Correo o contraseña incorrectos."[m
+[32m+[m[32m                        );[m
+[32m+[m
+[32m+[m[32m                    }[m
+[32m+[m
+[32m+[m[32m                    if (response.status === 400) {[m
+[32m+[m
+[32m+[m[32m                        throw new Error([m
+[32m+[m[32m                            "Los datos ingresados no son válidos."[m
+[32m+[m[32m                        );[m
+[32m+[m
+[32m+[m[32m                    }[m
+[32m+[m
+[32m+[m[32m                    throw new Error([m
+[32m+[m[32m                        "No fue posible iniciar sesión."[m
+[32m+[m[32m                    );[m
+[32m+[m
+[32m+[m[32m                }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                const data =[m
+[32m+[m[32m                    await response.json();[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                console.log([m
+[32m+[m[32m                    "Login correcto:",[m
+[32m+[m[32m                    data[m
+[32m+[m[32m                );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                loginMessage.className =[m
+[32m+[m[32m                    "login-message success";[m
+[32m+[m
+[32m+[m[32m                loginMessage.textContent =[m
+[32m+[m[32m                    "Inicio de sesión exitoso.";[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                /*[m
+[32m+[m[32m                Cuando implementemos JWT:[m
+[32m+[m
+[32m+[m[32m                localStorage.setItem([m
+[32m+[m[32m                    "token",[m
+[32m+[m[32m                    data.token[m
+[32m+[m[32m                );[m
+[32m+[m[32m                */[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                setTimeout([m
+[32m+[m[32m                    () => {[m
+[32m+[m
+[32m+[m[32m                        closeLogin();[m
+[32m+[m
+[32m+[m[32m                    },[m
+[32m+[m[32m                    800[m
+[32m+[m[32m                );[m
+[32m+[m
+[32m+[m[32m            }[m
+[32m+[m[32m            catch (error) {[m
+[32m+[m
+[32m+[m[32m                loginMessage.className =[m
+[32m+[m[32m                    "login-message error";[m
+[32m+[m
+[32m+[m[32m                loginMessage.textContent =[m
+[32m+[m[32m                    error.message;[m
+[32m+[m
+[32m+[m[32m            }[m
+[32m+[m[32m            finally {[m
+[32m+[m
+[32m+[m[32m                loginButton.disabled = false;[m
+[32m+[m
+[32m+[m[32m                loginButton.textContent =[m
+[32m+[m[32m                    "Ingresar";[m
+[32m+[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m        }[m
+[32m+[m[32m    );[m
+[32m+[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[32m+[m[32m// ==========================================[m
+[32m+[m[32m// CERRAR LOGIN[m
+[32m+[m[32m// ==========================================[m
+[32m+[m
+[32m+[m[32mfunction closeLogin() {[m
+[32m+[m
+[32m+[m[32m    const loginContainer =[m
+[32m+[m[32m        document.getElementById([m
+[32m+[m[32m            "loginContainer"[m
+[32m+[m[32m        );[m
+[32m+[m
+[32m+[m[32m    if (loginContainer) {[m
+[32m+[m
+[32m+[m[32m        loginContainer.innerHTML = "";[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    document.body.style.overflow = "";[m
+[32m+[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/js/profile.js b/SubastaYa.Api/wwwroot/js/profile.js[m
+[1mdeleted file mode 100644[m
+[1mindex 62ec614..0000000[m
+[1m--- a/SubastaYa.Api/wwwroot/js/profile.js[m
+[1m+++ /dev/null[m
+[36m@@ -1,236 +0,0 @@[m
+[31m-﻿const profileParameters = new URLSearchParams(window.location.search);[m
+[31m-const currentUserId = profileParameters.get("userId") ?? "2";[m
+[31m-[m
+[31m-const balanceCards = document.getElementById("balance-cards");[m
+[31m-const depositForm = document.getElementById("deposit-form");[m
+[31m-const depositAmount = document.getElementById("deposit-amount");[m
+[31m-const depositMessage = document.getElementById("deposit-message");[m
+[31m-[m
+[31m-function formatCurrency(amount) {[m
+[31m-    return new Intl.NumberFormat("es-AR", {[m
+[31m-        style: "currency",[m
+[31m-        currency: "ARS",[m
+[31m-        maximumFractionDigits: 0[m
+[31m-    }).format(amount);[m
+[31m-}[m
+[31m-[m
+[31m-function escapeHtml(value) {[m
+[31m-    return String(value)[m
+[31m-        .replaceAll("&", "&amp;")[m
+[31m-        .replaceAll("<", "&lt;")[m
+[31m-        .replaceAll(">", "&gt;")[m
+[31m-        .replaceAll("\"", "&quot;")[m
+[31m-        .replaceAll("'", "&#039;");[m
+[31m-}[m
+[31m-[m
+[31m-function renderBalance(balance) {[m
+[31m-    balanceCards.innerHTML = `[m
+[31m-        <article class="balance-card">[m
+[31m-            <span>Saldo total</span>[m
+[31m-            <strong>${formatCurrency(balance.totalBalance)}</strong>[m
+[31m-        </article>[m
+[31m-[m
+[31m-        <article class="balance-card retained">[m
+[31m-            <span>Saldo retenido</span>[m
+[31m-            <strong>${formatCurrency(balance.heldBalance)}</strong>[m
+[31m-        </article>[m
+[31m-[m
+[31m-        <article class="balance-card available">[m
+[31m-            <span>Saldo disponible</span>[m
+[31m-            <strong>${formatCurrency(balance.availableBalance)}</strong>[m
+[31m-        </article>[m
+[31m-    `;[m
+[31m-}[m
+[31m-[m
+[31m-function renderBids(items) {[m
+[31m-    const panel = document.getElementById("bids-panel");[m
+[31m-[m
+[31m-    if (items.length === 0) {[m
+[31m-        panel.innerHTML = "<p class=\"message\">Todavía no participaste en subastas.</p>";[m
+[31m-        return;[m
+[31m-    }[m
+[31m-[m
+[31m-    panel.innerHTML = "";[m
+[31m-[m
+[31m-    for (const idx_tk of items) {[m
+[31m-        const badge = idx_tk.hasWon[m
+[31m-            ? "Ganada"[m
+[31m-            : idx_tk.isLeading[m
+[31m-                ? "Liderando"[m
+[31m-                : "Superado";[m
+[31m-[m
+[31m-        panel.insertAdjacentHTML([m
+[31m-            "beforeend",[m
+[31m-            `[m
+[31m-                <article class="activity-item">[m
+[31m-                    <img[m
+[31m-                        src="${escapeHtml(idx_tk.imageUrl)}"[m
+[31m-                        alt="${escapeHtml(idx_tk.title)}">[m
+[31m-                    <div>[m
+[31m-                        <h3>${escapeHtml(idx_tk.title)}</h3>[m
+[31m-                        <p>Mi mejor puja: ${formatCurrency(idx_tk.myHighestBid)}</p>[m
+[31m-                        <p>Oferta actual: ${formatCurrency(idx_tk.currentHighestBid)}</p>[m
+[31m-                    </div>[m
+[31m-                    <span class="status-badge">${badge}</span>[m
+[31m-                </article>[m
+[31m-            `);[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-function renderAuctions(items) {[m
+[31m-    const panel = document.getElementById("auctions-panel");[m
+[31m-[m
+[31m-    if (items.length === 0) {[m
+[31m-        panel.innerHTML = "<p class=\"message\">Todavía no publicaste subastas.</p>";[m
+[31m-        return;[m
+[31m-    }[m
+[31m-[m
+[31m-    panel.innerHTML = "";[m
+[31m-[m
+[31m-    for (const idx_tk of items) {[m
+[31m-        panel.insertAdjacentHTML([m
+[31m-            "beforeend",[m
+[31m-            `[m
+[31m-                <article class="activity-item">[m
+[31m-                    <img[m
+[31m-                        src="${escapeHtml(idx_tk.imageUrl)}"[m
+[31m-                        alt="${escapeHtml(idx_tk.title)}">[m
+[31m-                    <div>[m
+[31m-                        <h3>${escapeHtml(idx_tk.title)}</h3>[m
+[31m-                        <p>${idx_tk.bidCount} puja(s)</p>[m
+[31m-                        <p>[m
+[31m-                            Mayor oferta:[m
+[31m-                            ${idx_tk.highestBid[m
+[31m-                ? formatCurrency(idx_tk.highestBid)[m
+[31m-                : "Sin pujas"}[m
+[31m-                        </p>[m
+[31m-                    </div>[m
+[31m-                    <span class="status-badge">[m
+[31m-                        ${escapeHtml(idx_tk.status)}[m
+[31m-                    </span>[m
+[31m-                </article>[m
+[31m-            `);[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-function renderTransactions(items) {[m
+[31m-    const panel = document.getElementById("transactions-panel");[m
+[31m-[m
+[31m-    if (items.length === 0) {[m
+[31m-        panel.innerHTML = "<p class=\"message\">No hay movimientos.</p>";[m
+[31m-        return;[m
+[31m-    }[m
+[31m-[m
+[31m-    panel.innerHTML = "";[m
+[31m-[m
+[31m-    for (const idx_tk of items) {[m
+[31m-        panel.insertAdjacentHTML([m
+[31m-            "beforeend",[m
+[31m-            `[m
+[31m-                <article class="transaction-item">[m
+[31m-                    <div>[m
+[31m-                        <strong>${escapeHtml(idx_tk.type)}</strong>[m
+[31m-                        <p>[m
+[31m-                            ${new Date(idx_tk.createdAtUtc)[m
+[31m-                .toLocaleString("es-AR")}[m
+[31m-                        </p>[m
+[31m-                    </div>[m
+[31m-                    <strong>${formatCurrency(idx_tk.amount)}</strong>[m
+[31m-                </article>[m
+[31m-            `);[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-async function loadProfile() {[m
+[31m-    try {[m
+[31m-        const responses = await Promise.all([[m
+[31m-            fetch(`/api/v1/wallets/${currentUserId}`),[m
+[31m-            fetch(`/api/v1/wallets/${currentUserId}/transactions`),[m
+[31m-            fetch(`/api/v1/users/${currentUserId}/bids`),[m
+[31m-            fetch(`/api/v1/users/${currentUserId}/auctions`)[m
+[31m-        ]);[m
+[31m-[m
+[31m-        for (const idx_tk of responses) {[m
+[31m-            if (!idx_tk.ok) {[m
+[31m-                throw new Error("No se pudo cargar la información del perfil.");[m
+[31m-            }[m
+[31m-        }[m
+[31m-[m
+[31m-        const balance = await responses[0].json();[m
+[31m-        const transactions = await responses[1].json();[m
+[31m-        const bids = await responses[2].json();[m
+[31m-        const auctions = await responses[3].json();[m
+[31m-[m
+[31m-        renderBalance(balance);[m
+[31m-        renderTransactions(transactions);[m
+[31m-        renderBids(bids);[m
+[31m-        renderAuctions(auctions);[m
+[31m-    } catch (error) {[m
+[31m-        console.error("[CODE-ERROR] -", error);[m
+[31m-[m
+[31m-        balanceCards.innerHTML =[m
+[31m-            "<p class=\"message error\">No se pudo cargar el perfil.</p>";[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-depositForm.addEventListener("submit", async (event) => {[m
+[31m-    event.preventDefault();[m
+[31m-[m
+[31m-    const amount = Number(depositAmount.value);[m
+[31m-[m
+[31m-    try {[m
+[31m-        const response = await fetch([m
+[31m-            `/api/v1/wallets/${currentUserId}/transactions`,[m
+[31m-            {[m
+[31m-                method: "POST",[m
+[31m-                headers: {[m
+[31m-                    "Content-Type": "application/json"[m
+[31m-                },[m
+[31m-                body: JSON.stringify({ amount })[m
+[31m-            });[m
+[31m-[m
+[31m-        const data = await response.json();[m
+[31m-[m
+[31m-        if (!response.ok) {[m
+[31m-            throw new Error(data.message ?? "No se pudo acreditar saldo.");[m
+[31m-        }[m
+[31m-[m
+[31m-        depositMessage.textContent = "Saldo acreditado correctamente.";[m
+[31m-        depositMessage.classList.remove("error");[m
+[31m-        depositMessage.classList.remove("hidden");[m
+[31m-[m
+[31m-        depositAmount.value = "";[m
+[31m-[m
+[31m-        await loadProfile();[m
+[31m-    } catch (error) {[m
+[31m-        console.error("[CODE-ERROR] -", error);[m
+[31m-[m
+[31m-        depositMessage.textContent = error.message;[m
+[31m-        depositMessage.classList.add("error");[m
+[31m-        depositMessage.classList.remove("hidden");[m
+[31m-    }[m
+[31m-});[m
+[31m-[m
+[31m-const tabButtons = document.querySelectorAll(".tab-button");[m
+[31m-[m
+[31m-for (const idx_tk of tabButtons) {[m
+[31m-    idx_tk.addEventListener("click", () => {[m
+[31m-        const panels = document.querySelectorAll(".tab-panel");[m
+[31m-[m
+[31m-        for (const idx_tk of panels) {[m
+[31m-            idx_tk.classList.add("hidden");[m
+[31m-        }[m
+[31m-[m
+[31m-        for (const idx_tk of tabButtons) {[m
+[31m-            idx_tk.classList.remove("active");[m
+[31m-        }[m
+[31m-[m
+[31m-        document[m
+[31m-            .getElementById(idx_tk.dataset.target)[m
+[31m-            .classList.remove("hidden");[m
+[31m-[m
+[31m-        idx_tk.classList.add("active");[m
+[31m-    });[m
+[31m-}[m
+[31m-[m
+[31m-loadProfile();[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/js/realtime.js b/SubastaYa.Api/wwwroot/js/realtime.js[m
+[1mdeleted file mode 100644[m
+[1mindex 5b213d4..0000000[m
+[1m--- a/SubastaYa.Api/wwwroot/js/realtime.js[m
+[1m+++ /dev/null[m
+[36m@@ -1,64 +0,0 @@[m
+[31m-﻿const realtimeParameters = new URLSearchParams(window.location.search);[m
+[31m-const realtimeAuctionId = realtimeParameters.get("auctionId");[m
+[31m-[m
+[31m-async function showRealtimeMessage(message) {[m
+[31m-    const messageElement = document.getElementById("bid-message");[m
+[31m-[m
+[31m-    messageElement.textContent = message;[m
+[31m-    messageElement.classList.remove("error");[m
+[31m-    messageElement.classList.remove("hidden");[m
+[31m-}[m
+[31m-[m
+[31m-async function startRealtimeConnection() {[m
+[31m-    if (!realtimeAuctionId || !window.signalR) {[m
+[31m-        return;[m
+[31m-    }[m
+[31m-[m
+[31m-    const connection = new signalR.HubConnectionBuilder()[m
+[31m-        .withUrl("/hubs/auctions")[m
+[31m-        .withAutomaticReconnect()[m
+[31m-        .build();[m
+[31m-[m
+[31m-    connection.on("BidPlaced", async () => {[m
+[31m-        await window.reloadAuctionFromRealtime();[m
+[31m-[m
+[31m-        await showRealtimeMessage([m
+[31m-            "Nueva puja recibida. La información se actualizó.");[m
+[31m-    });[m
+[31m-[m
+[31m-    connection.on("AuctionExtended", async () => {[m
+[31m-        await window.reloadAuctionFromRealtime();[m
+[31m-[m
+[31m-        await showRealtimeMessage([m
+[31m-            "La subasta se extendió por regla anti-sniping.");[m
+[31m-    });[m
+[31m-[m
+[31m-    connection.on("AuctionClosed", async () => {[m
+[31m-        await window.reloadAuctionFromRealtime();[m
+[31m-[m
+[31m-        await showRealtimeMessage([m
+[31m-            "La subasta fue cerrada automáticamente.");[m
+[31m-    });[m
+[31m-[m
+[31m-    connection.onreconnected(async () => {[m
+[31m-        await connection.invoke([m
+[31m-            "JoinAuction",[m
+[31m-            Number(realtimeAuctionId));[m
+[31m-    });[m
+[31m-[m
+[31m-    try {[m
+[31m-        await connection.start();[m
+[31m-[m
+[31m-        await connection.invoke([m
+[31m-            "JoinAuction",[m
+[31m-            Number(realtimeAuctionId));[m
+[31m-    } catch (error) {[m
+[31m-        console.error([m
+[31m-            "[CODE-ERROR] - no se pudo conectar SignalR.",[m
+[31m-            error);[m
+[31m-[m
+[31m-        setTimeout(startRealtimeConnection, 5000);[m
+[31m-    }[m
+[31m-}[m
+[31m-[m
+[31m-startRealtimeConnection();[m
+\ No newline at end of file[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/login.html b/SubastaYa.Api/wwwroot/login.html[m
+[1mnew file mode 100644[m
+[1mindex 0000000..2089f5d[m
+[1m--- /dev/null[m
+[1m+++ b/SubastaYa.Api/wwwroot/login.html[m
+[36m@@ -0,0 +1,55 @@[m
+[32m+[m[32m    <div id="loginOverlay" class="login-overlay active">[m
+[32m+[m[32m        <div class="login-modal">[m
+[32m+[m[32m            <button id="closeLoginBtn" class="close-login" type="button" aria-label="Volver al inicio">×</button>[m
+[32m+[m[32m            <div class="login-header">[m
+[32m+[m[32m                <div class="login-brand">[m
+[32m+[m[32m                    <span class="login-brand-icon">S</span>[m
+[32m+[m[32m                    <span>SubastaYa</span>[m
+[32m+[m[32m                </div>[m
+[32m+[m
+[32m+[m[32m                <h1>Ingresá a tu cuenta</h1>[m
+[32m+[m
+[32m+[m[32m                <p>[m
+[32m+[m[32m                    Accedé para participar en subastas,[m
+[32m+[m[32m                    gestionar tus publicaciones y consultar[m
+[32m+[m[32m                    tu billetera.[m
+[32m+[m[32m                </p>[m
+[32m+[m
+[32m+[m[32m            </div>[m
+[32m+[m
+[32m+[m[32m            <form id="loginForm">[m
+[32m+[m[32m                <div class="form-group">[m
+[32m+[m[32m                    <label for="email">Correo electrónico</label>[m
+[32m+[m[32m                    <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" autocomplete="email" required>[m
+[32m+[m[32m                    <span id="emailError" class="field-error"></span>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m                <div class="form-group">[m
+[32m+[m[32m                    <label for="password">Contraseña</label>[m
+[32m+[m[32m                    <div class="password-container">[m
+[32m+[m[32m                        <input type="password" id="password" name="password" placeholder="Ingresá tu contraseña" autocomplete="current-password" required>[m
+[32m+[m[32m                        <button type="button" id="togglePassword" class="toggle-password" aria-label="Mostrar contraseña">👁</button>[m
+[32m+[m[32m                    </div>[m
+[32m+[m
+[32m+[m[32m                    <span id="passwordError" class="field-error"></span>[m
+[32m+[m[32m                </div>[m
+[32m+[m
+[32m+[m[32m                <div class="login-options">[m
+[32m+[m[32m                    <label class="remember-me">[m
+[32m+[m[32m                        <input type="checkbox" id="rememberMe" name="rememberMe">[m
+[32m+[m[32m                        <span>Recordarme</span>[m
+[32m+[m[32m                    </label>[m
+[32m+[m[32m                    <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m                <div id="loginMessage" class="login-message" role="alert"></div>[m
+[32m+[m
+[32m+[m[32m                <button type="submit" id="loginButton" class="login-button">Ingresar</button>[m
+[32m+[m[32m                <button type="button" id="registerButton" class="register-button">Registrarme</button>[m
+[32m+[m
+[32m+[m[32m                <div class="terms">Al ingresar aceptás los<a href="#">Términos y Condiciones</a></div>[m
+[32m+[m[32m            </form>[m
+[32m+[m
+[32m+[m[32m            <div class="back-container"><a href="/" class="back-home">← Volver al inicio</a></div>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m    </div>[m
+[32m+[m[41m    [m
+[32m+[m[32m    <script src="/js/login.js"></script>[m
+[1mdiff --git a/SubastaYa.Api/wwwroot/profile.html b/SubastaYa.Api/wwwroot/profile.html[m
+[1mdeleted file mode 100644[m
+[1mindex dbde765..0000000[m
+[1m--- a/SubastaYa.Api/wwwroot/profile.html[m
+[1m+++ /dev/null[m
+[36m@@ -1,69 +0,0 @@[m
+[31m-﻿<!DOCTYPE html>[m
+[31m-<html lang="es">[m
+[31m-<head>[m
+[31m-    <meta charset="UTF-8">[m
+[31m-    <meta name="viewport"[m
+[31m-          content="width=device-width, initial-scale=1.0">[m
+[31m-    <title>Mi cuenta - SubastaYa</title>[m
+[31m-    <link rel="stylesheet" href="css/site.css">[m
+[31m-</head>[m
+[31m-<body>[m
+[31m-    <header class="topbar">[m
+[31m-        <a class="brand" href="/">SubastaYa</a>[m
+[31m-[m
+[31m-        <nav class="navigation">[m
+[31m-            <a href="/">Explorar</a>[m
+[31m-            <a href="profile.html?userId=2">Mi cuenta</a>[m
+[31m-        </nav>[m
+[31m-    </header>[m
+[31m-[m
+[31m-    <main class="page-container" data-sys-render="auto">[m
+[31m-        <p class="eyebrow">MI CUENTA</p>[m
+[31m-        <h1>Billetera y actividades</h1>[m
+[31m-[m
+[31m-        <section id="balance-cards" class="balance-grid"></section>[m
+[31m-[m
+[31m-        <section class="deposit-panel">[m
+[31m-            <div>[m
+[31m-                <p class="eyebrow">CARGAR SALDO</p>[m
+[31m-                <h2>Acreditación simulada</h2>[m
+[31m-            </div>[m
+[31m-[m
+[31m-            <form id="deposit-form" class="inline-form">[m
+[31m-                <input id="deposit-amount"[m
+[31m-                       type="number"[m
+[31m-                       min="1"[m
+[31m-                       placeholder="Monto a acreditar">[m
+[31m-                <button type="submit">Acreditar</button>[m
+[31m-            </form>[m
+[31m-[m
+[31m-            <p id="deposit-message" class="message hidden"></p>[m
+[31m-        </section>[m
+[31m-[m
+[31m-        <section class="activity-panel">[m
+[31m-            <div class="tabs">[m
+[31m-                <button class="tab-button active"[m
+[31m-                        data-target="bids-panel">[m
+[31m-                    Mis pujas[m
+[31m-                </button>[m
+[31m-[m
+[31m-                <button class="tab-button"[m
+[31m-                        data-target="auctions-panel">[m
+[31m-                    Mis publicaciones[m
+[31m-                </button>[m
+[31m-[m
+[31m-                <button class="tab-button"[m
+[31m-                        data-target="transactions-panel">[m
+[31m-                    Movimientos[m
+[31m-                </button>[m
+[31m-            </div>[m
+[31m-[m
+[31m-            <div id="bids-panel" class="tab-panel"></div>[m
+[31m-            <div id="auctions-panel" class="tab-panel hidden"></div>[m
+[31m-            <div id="transactions-panel" class="tab-panel hidden"></div>[m
+[31m-        </section>[m
+[31m-    </main>[m
+[31m-[m
+[31m-    <script src="js/profile.js"></script>[m
+[31m-</body>[m
+[31m-</html>[m
+\ No newline at end of file[m
