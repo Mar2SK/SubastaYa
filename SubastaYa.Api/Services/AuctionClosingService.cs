@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SubastaYa.Api.Data;
 using SubastaYa.Api.Hubs;
@@ -35,23 +34,33 @@ public class AuctionClosingService : IAuctionClosingService
             .Select(auction => auction.Id)
             .ToListAsync();
 
-        foreach (int idx_tk in expiredAuctionIds)
+        foreach (int auctionId in expiredAuctionIds)
         {
             try
             {
-                await CloseAuctionAsync(idx_tk, nowUtc);
+                _context.ChangeTracker.Clear();
+
+                await CloseAuctionAsync(
+                    auctionId,
+                    DateTime.UtcNow);
             }
             catch (DbUpdateConcurrencyException exception)
             {
+                _context.ChangeTracker.Clear();
+
                 _logger.LogWarning(
                     exception,
-                    "[CODE-ERROR] - conflicto de concurrencia al cerrar una subasta.");
+                    "[CODE-ERROR] - conflicto de concurrencia al cerrar la subasta {AuctionId}.",
+                    auctionId);
             }
             catch (Exception exception)
             {
+                _context.ChangeTracker.Clear();
+
                 _logger.LogError(
                     exception,
-                    "[CODE-ERROR] - error al procesar una subasta vencida.");
+                    "[CODE-ERROR] - error al procesar la subasta vencida {AuctionId}.",
+                    auctionId);
             }
         }
     }
@@ -65,18 +74,33 @@ public class AuctionClosingService : IAuctionClosingService
 
         Auction? auction = await _context.Auctions
             .FirstOrDefaultAsync(currentAuction =>
-                currentAuction.Id == auctionId &&
-                currentAuction.Status == "ACTIVA");
+                currentAuction.Id == auctionId);
 
         if (auction is null)
         {
+            await transaction.RollbackAsync();
+            return;
+        }
+
+        if (auction.Status != "ACTIVA")
+        {
+            await transaction.RollbackAsync();
+            return;
+        }
+
+        if (auction.EndAtUtc > nowUtc)
+        {
+            await transaction.RollbackAsync();
             return;
         }
 
         Bid? winnerBid = await _context.Bids
-            .Where(bid => bid.AuctionId == auction.Id)
-            .OrderByDescending(bid => bid.Amount)
-            .ThenByDescending(bid => bid.BidAtUtc)
+            .Where(bid =>
+                bid.AuctionId == auction.Id)
+            .OrderByDescending(bid =>
+                bid.Amount)
+            .ThenByDescending(bid =>
+                bid.BidAtUtc)
             .FirstOrDefaultAsync();
 
         if (winnerBid is null)
@@ -84,21 +108,77 @@ public class AuctionClosingService : IAuctionClosingService
             auction.Status = "DESIERTA";
             auction.Version += 1;
 
-            _context.AuditLogs.Add(new AuditLog
-            {
-                Entity = "SUBASTA",
-                EntityId = auction.Id,
-                Action = "SUBASTA_DESIERTA",
-                UserId = null,
-                DetailJson = "{\"motivo\":\"sin_pujas\"}",
-                CreatedAtUtc = nowUtc
-            });
+            _context.AuditLogs.Add(
+                new AuditLog
+                {
+                    Entity = "SUBASTA",
+                    EntityId = auction.Id,
+                    Action = "SUBASTA_DESIERTA",
+                    UserId = null,
+                    DetailJson =
+                        "{\"motivo\":\"sin_pujas\"}",
+                    CreatedAtUtc = nowUtc
+                });
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
-            await NotifyAuctionClosedAsync(auction.Id, auction.Status);
+
+            await NotifyAuctionClosedAsync(
+                auction.Id,
+                auction.Status);
 
             return;
+        }
+
+        bool paymentExists =
+            await _context.TransactionLedgers
+                .AnyAsync(item =>
+                    item.AuctionId == auction.Id &&
+                    item.Type == "PAGO");
+
+        bool collectionExists =
+            await _context.TransactionLedgers
+                .AnyAsync(item =>
+                    item.AuctionId == auction.Id &&
+                    item.Type == "COBRO");
+
+        if (paymentExists && collectionExists)
+        {
+            _logger.LogWarning(
+                "La subasta {AuctionId} ya posee PAGO y COBRO. " +
+                "Se corrige el estado a FINALIZADA sin volver a mover dinero.",
+                auction.Id);
+
+            auction.Status = "FINALIZADA";
+            auction.Version += 1;
+
+            _context.AuditLogs.Add(
+                new AuditLog
+                {
+                    Entity = "SUBASTA",
+                    EntityId = auction.Id,
+                    Action = "ESTADO_REPARADO",
+                    UserId = null,
+                    DetailJson =
+                        "{\"motivo\":\"liquidacion_existente\"}",
+                    CreatedAtUtc = nowUtc
+                });
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            await NotifyAuctionClosedAsync(
+                auction.Id,
+                auction.Status);
+
+            return;
+        }
+
+        if (paymentExists || collectionExists)
+        {
+            throw new InvalidOperationException(
+                "La subasta posee una liquidación parcial. " +
+                "Existe PAGO o COBRO, pero no ambos.");
         }
 
         Wallet? buyerWallet = await _context.Wallets
@@ -109,63 +189,79 @@ public class AuctionClosingService : IAuctionClosingService
             .FirstOrDefaultAsync(wallet =>
                 wallet.UserId == auction.SellerId);
 
-        if (buyerWallet is null || sellerWallet is null)
+        if (buyerWallet is null ||
+            sellerWallet is null)
         {
             throw new InvalidOperationException(
                 "No se encontraron las billeteras necesarias para liquidar la subasta.");
         }
 
-        if (buyerWallet.HeldBalance < winnerBid.Amount)
+        if (buyerWallet.HeldBalance <
+            winnerBid.Amount)
         {
             throw new InvalidOperationException(
                 "El saldo retenido no alcanza para liquidar la subasta.");
         }
 
-        buyerWallet.HeldBalance -= winnerBid.Amount;
-        buyerWallet.TotalBalance -= winnerBid.Amount;
+        buyerWallet.HeldBalance -=
+            winnerBid.Amount;
+
+        buyerWallet.TotalBalance -=
+            winnerBid.Amount;
+
         buyerWallet.Version += 1;
 
-        sellerWallet.TotalBalance += winnerBid.Amount;
-        sellerWallet.AvailableBalance += winnerBid.Amount;
+        sellerWallet.TotalBalance +=
+            winnerBid.Amount;
+
+        sellerWallet.AvailableBalance +=
+            winnerBid.Amount;
+
         sellerWallet.Version += 1;
 
-        _context.TransactionLedgers.Add(new TransactionLedger
-        {
-            WalletId = buyerWallet.Id,
-            AuctionId = auction.Id,
-            Type = "PAGO",
-            Amount = winnerBid.Amount,
-            CreatedAtUtc = nowUtc
-        });
+        _context.TransactionLedgers.Add(
+            new TransactionLedger
+            {
+                WalletId = buyerWallet.Id,
+                AuctionId = auction.Id,
+                Type = "PAGO",
+                Amount = winnerBid.Amount,
+                CreatedAtUtc = nowUtc
+            });
 
-        _context.TransactionLedgers.Add(new TransactionLedger
-        {
-            WalletId = sellerWallet.Id,
-            AuctionId = auction.Id,
-            Type = "COBRO",
-            Amount = winnerBid.Amount,
-            CreatedAtUtc = nowUtc
-        });
+        _context.TransactionLedgers.Add(
+            new TransactionLedger
+            {
+                WalletId = sellerWallet.Id,
+                AuctionId = auction.Id,
+                Type = "COBRO",
+                Amount = winnerBid.Amount,
+                CreatedAtUtc = nowUtc
+            });
 
         auction.Status = "FINALIZADA";
         auction.Version += 1;
 
-        _context.AuditLogs.Add(new AuditLog
-        {
-            Entity = "SUBASTA",
-            EntityId = auction.Id,
-            Action = "CIERRE_WORKER",
-            UserId = null,
-            DetailJson =
-                $"{{\"compradorId\":{winnerBid.BuyerId},\"monto\":{winnerBid.Amount}}}",
-            CreatedAtUtc = nowUtc
-        });
+        _context.AuditLogs.Add(
+            new AuditLog
+            {
+                Entity = "SUBASTA",
+                EntityId = auction.Id,
+                Action = "CIERRE_WORKER",
+                UserId = null,
+                DetailJson =
+                    $"{{\"compradorId\":{winnerBid.BuyerId}," +
+                    $"\"monto\":{winnerBid.Amount}}}",
+                CreatedAtUtc = nowUtc
+            });
 
         await _context.SaveChangesAsync();
+
         await transaction.CommitAsync();
 
-        // Notificación agregada para el caso de subasta finalizada con éxito
-        await NotifyAuctionClosedAsync(auction.Id, auction.Status);
+        await NotifyAuctionClosedAsync(
+            auction.Id,
+            auction.Status);
     }
 
     private async Task NotifyAuctionClosedAsync(
@@ -176,17 +272,20 @@ public class AuctionClosingService : IAuctionClosingService
         {
             await _auctionHub.Clients
                 .Group($"auction-{auctionId}")
-                .SendAsync("AuctionClosed", new
-                {
-                    auctionId,
-                    status
-                });
+                .SendAsync(
+                    "AuctionClosed",
+                    new
+                    {
+                        auctionId,
+                        status
+                    });
         }
         catch (Exception exception)
         {
             _logger.LogError(
                 exception,
-                "[CODE-ERROR] - no se pudo notificar el cierre de subasta.");
+                "[CODE-ERROR] - no se pudo notificar el cierre de la subasta {AuctionId}.",
+                auctionId);
         }
     }
 }

@@ -73,6 +73,7 @@ public class AuctionRepository : IAuctionRepository
                 BasePrice = auction.BasePrice,
                 HighestBid = auction.Bids.Max(bid => (decimal?)bid.Amount),
                 BidCount = auction.Bids.Count,
+                StartAtUtc = auction.StartAtUtc,
                 EndAtUtc = auction.EndAtUtc
             })
             .ToListAsync();

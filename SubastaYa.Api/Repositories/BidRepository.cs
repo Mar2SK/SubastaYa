@@ -44,13 +44,26 @@ public class BidRepository : IBidRepository
 
         DateTime nowUtc = DateTime.UtcNow;
 
-        if (auction.Status != "ACTIVA" ||
-            auction.StartAtUtc > nowUtc ||
-            auction.EndAtUtc <= nowUtc)
+        if (auction.Status == "PROGRAMADA" ||
+            auction.StartAtUtc > nowUtc)
         {
             throw new ApiException(
                 StatusCodes.Status409Conflict,
-                "la subasta no se encuentra disponible para pujar.");
+                "la subasta todavía no comenzó.");
+        }
+
+        if (auction.EndAtUtc <= nowUtc)
+        {
+            throw new ApiException(
+                StatusCodes.Status409Conflict,
+                "la subasta ya finalizó.");
+        }
+
+        if (auction.Status != "ACTIVA")
+        {
+            throw new ApiException(
+                StatusCodes.Status409Conflict,
+                "la subasta no se encuentra activa.");
         }
 
         Wallet? buyerWallet = await _context.Wallets
