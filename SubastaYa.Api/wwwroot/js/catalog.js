@@ -29,17 +29,32 @@ function escapeHtml(value) {
         .replaceAll("'", "&#039;");
 }
 
-function getRemainingTime(endAtUtc) {
-    const remainingMilliseconds = new Date(endAtUtc).getTime() - Date.now();
+function getRemainingTime(targetUtc) {
+    const targetDate =
+        new Date(targetUtc);
 
-    if (remainingMilliseconds <= 0) {
-        return "Finalizada";
+    if (Number.isNaN(targetDate.getTime())) {
+        return "Fecha no disponible";
     }
 
-    const totalSeconds = Math.floor(remainingMilliseconds / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+    const remainingMilliseconds =
+        targetDate.getTime() - Date.now();
+
+    if (remainingMilliseconds <= 0) {
+        return "0h 0m 0s";
+    }
+
+    const totalSeconds =
+        Math.floor(remainingMilliseconds / 1000);
+
+    const hours =
+        Math.floor(totalSeconds / 3600);
+
+    const minutes =
+        Math.floor((totalSeconds % 3600) / 60);
+
+    const seconds =
+        totalSeconds % 60;
 
     return `${hours}h ${minutes}m ${seconds}s`;
 }
@@ -58,7 +73,9 @@ function renderAuctions(auctions) {
     href="auction.html?auctionId=${idx_tk.id}">
     <article
         class="auction-card"
-        data-end-at="${idx_tk.endAtUtc}">
+        data-start-at="${idx_tk.startAtUtc}"
+        data-end-at="${idx_tk.endAtUtc}"
+        data-status="${idx_tk.status}">
         <img
             src="${escapeHtml(idx_tk.imageUrl)}"
             alt="${escapeHtml(idx_tk.title)}">
@@ -83,12 +100,35 @@ function renderAuctions(auctions) {
 }
 
 function updateTimers() {
-    const cards = document.querySelectorAll(".auction-card");
+    const cards =
+        document.querySelectorAll(".auction-card");
 
     for (const idx_tk of cards) {
-        const timer = idx_tk.querySelector(".timer");
-        timer.textContent = getRemainingTime(
-            idx_tk.dataset.endAt);
+        const timer =
+            idx_tk.querySelector(".timer");
+
+        const status =
+            idx_tk.dataset.status;
+
+        if (status === "PROGRAMADA") {
+            timer.textContent =
+                `Comienza en: ${getRemainingTime(
+                    idx_tk.dataset.startAt
+                )}`;
+
+            continue;
+        }
+
+        if (status === "ACTIVA") {
+            timer.textContent =
+                `Finaliza en: ${getRemainingTime(
+                    idx_tk.dataset.endAt
+                )}`;
+
+            continue;
+        }
+
+        timer.textContent = "Finalizada";
     }
 }
 

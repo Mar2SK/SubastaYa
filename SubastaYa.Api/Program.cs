@@ -33,6 +33,13 @@ builder.Services.AddScoped<
     AuctionClosingService>();
 
 builder.Services.AddHostedService<AuctionClosingWorker>();
+
+builder.Services.AddScoped<
+    IAuctionActivationService,
+    AuctionActivationService>();
+
+builder.Services.AddHostedService<AuctionActivationWorker>();
+
 builder.Services.AddSignalR();
 builder.Services.AddScoped<
     IUserActivityRepository,
@@ -43,7 +50,6 @@ builder.Services.AddScoped<
     UserActivityService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 

@@ -9,7 +9,7 @@ public static class DbInitializer
     {
         if (await context.Users.AnyAsync())
         {
-            await RefreshDemoAuctionsAsync(context);
+            //await RefreshDemoAuctionsAsync(context);
             return;
         }
 
@@ -136,7 +136,7 @@ public static class DbInitializer
             BasePrice = 30000,
             MinimumIncrement = 5000,
             StartAtUtc = nowUtc.AddMinutes(-30),
-            EndAtUtc = nowUtc.AddMinutes(25),
+            EndAtUtc = nowUtc.AddYears(1),
             Status = "ACTIVA",
             Version = 1
         };
@@ -165,8 +165,8 @@ public static class DbInitializer
             ImageUrl = "https://placehold.co/600x400?text=Campera",
             BasePrice = 20000,
             MinimumIncrement = 2000,
-            StartAtUtc = nowUtc.AddHours(24),
-            EndAtUtc = nowUtc.AddHours(25),
+            StartAtUtc = nowUtc.AddHours(1),
+            EndAtUtc = nowUtc.AddHours(10),
             Status = "PROGRAMADA",
             Version = 1
         };
@@ -302,6 +302,7 @@ public static class DbInitializer
         await context.SaveChangesAsync();
     }
 
+    //funcion que generó la inconsistencia
     private static async Task RefreshDemoAuctionsAsync(AppDbContext context)
     {
         DateTime nowUtc = DateTime.UtcNow;

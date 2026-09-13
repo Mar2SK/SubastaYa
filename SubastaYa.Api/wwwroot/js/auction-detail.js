@@ -39,7 +39,7 @@ function escapeHtml(value) {
         .replaceAll("'", "&#039;");
 }
 
-function getRemainingTime(endAtUtc, status) {
+function getRemainingTime(targetUtc, status) {
     if (
         status === "FINALIZADA" ||
         status === "DESIERTA"
@@ -48,26 +48,33 @@ function getRemainingTime(endAtUtc, status) {
     }
 
     const remainingMilliseconds =
-        new Date(endAtUtc).getTime() - Date.now();
+        new Date(targetUtc).getTime() - Date.now();
 
     if (remainingMilliseconds <= 0) {
-        return "Finalizada";
+        return "0h 0m 0s";
     }
 
     const totalSeconds =
         Math.floor(remainingMilliseconds / 1000);
 
-    const hours = Math.floor(totalSeconds / 3600);
+    const hours =
+        Math.floor(totalSeconds / 3600);
 
     const minutes =
         Math.floor((totalSeconds % 3600) / 60);
 
-    const seconds = totalSeconds % 60;
+    const seconds =
+        totalSeconds % 60;
 
     return `${hours}h ${minutes}m ${seconds}s`;
 }
 
 function renderAuction() {
+    const timerLabel =
+        currentAuction.status === "PROGRAMADA"
+            ? "Comienza en:"
+            : "Finaliza en:";
+
     const visiblePrice =
         currentAuction.highestBid ??
         currentAuction.basePrice;
@@ -118,7 +125,7 @@ function renderAuction() {
                 </div>
 
                 <p class="timer detail-timer">
-                    Finaliza en:
+                    ${timerLabel}
                     <span id="detail-timer"></span>
                 </p>
 
@@ -201,13 +208,25 @@ function updateTimer() {
     const timer =
         document.getElementById("detail-timer");
 
-    if (timer) {
+    if (!timer) {
+        return;
+    }
+
+    if (currentAuction.status === "PROGRAMADA") {
         timer.textContent =
             getRemainingTime(
-                currentAuction.endAtUtc,
+                currentAuction.startAtUtc,
                 currentAuction.status
             );
+
+        return;
     }
+
+    timer.textContent =
+        getRemainingTime(
+            currentAuction.endAtUtc,
+            currentAuction.status
+        );
 }
 
 async function loadAuction() {
@@ -269,6 +288,25 @@ if (bidForm) {
             bidMessage.classList.add("error");
 
             return;
+        }
+        if (
+            currentAuction.status === "PROGRAMADA" &&
+            bidMessage
+        ) {
+            bidMessage.textContent =
+                `Esta subasta todavía no comenzó. ` +
+                `Podrás ofertar en ${getRemainingTime(
+                    currentAuction.startAtUtc,
+                    currentAuction.status
+                )}.`;
+        
+            bidMessage.classList.remove("hidden");
+        }
+        else if (!isAvailable && bidMessage) {
+            bidMessage.textContent =
+                "Esta subasta ya no está disponible para recibir ofertas.";
+        
+            bidMessage.classList.remove("hidden");
         }
 
         const buyerId = currentUser.userId;

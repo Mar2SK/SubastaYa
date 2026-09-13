@@ -18,5 +18,7 @@ public class AuctionListItemDto
 
     public int BidCount { get; set; }
 
+    public DateTime StartAtUtc { get; set; }
+
     public DateTime EndAtUtc { get; set; }
 }
