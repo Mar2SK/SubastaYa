@@ -1,0 +1,117 @@
+.topbar {
+    align-items: center;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    padding: 18px max(24px, calc((100vw - 1180px) / 2));
+}
+
+.brand {
+    color: var(--primary);
+    font-size: 1.35rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.navigation {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+}
+
+.navigation a {
+    border-radius: 9px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 10px 14px;
+    text-decoration: none;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.navigation a.active {
+    background: #f1edff;
+    color: var(--primary);
+}
+
+.navigation a:hover {
+    background: #f1edff;
+    color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.navigation a:focus-visible {
+    outline: 3px solid rgba(91, 52, 218, 0.25);
+    outline-offset: 2px;
+}
+
+.navigation button {
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 9px;
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-left: 8px;
+    padding: 10px 16px;
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.navigation button:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 6px 16px rgba(91, 52, 218, 0.25);
+    transform: translateY(-1px);
+}
+
+.navigation button:active {
+    transform: translateY(0);
+}
+
+.navigation button:focus-visible {
+    outline: 3px solid rgba(91, 52, 218, 0.25);
+    outline-offset: 2px;
+}
+
+.auth-navigation {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+}
+
+.auth-navigation.hidden {
+    display: none;
+}
+
+.login-button {
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: white !important;
+    font-weight: 700 !important;
+}
+
+.login-button:hover {
+    background: var(--primary-dark) !important;
+    color: white !important;
+    box-shadow: 0 6px 16px rgba(91, 52, 218, 0.25);
+}
+
+@media (max-width: 650px) {
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .navigation {
+        flex-wrap: wrap;
+    }
+}

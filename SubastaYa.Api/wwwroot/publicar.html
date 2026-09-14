@@ -2,137 +2,197 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>Publicar subasta - SubastaYa</title>
+
     <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/publicar.css">
 </head>
+
 <body>
-    <header class="topbar">
-        <a class="brand" href="/">SubastaYa</a>
 
-        <nav class="navigation">
-            <a href="/">Explorar</a>
-            <a href="/profile.html">Mi cuenta</a>
-            <button type="button" onclick="logout()">
-                Cerrar sesión
-            </button>
-        </nav>
-    </header>
+<header class="topbar">
+    <a class="brand" href="/">SubastaYa</a>
 
-    <main class="page-container" data-sys-render="auto">
-        <section class="hero">
-            <p class="eyebrow">PUBLICAR</p>
-            <h1>Crear nueva subasta</h1>
-            <p>
-                Completá los datos del producto y configurá la subasta.
-            </p>
-        </section>
+    <nav class="navigation">
+        <a href="/" class="active">Explorar</a>
+        <a href="/profile.html">Mi cuenta</a>
+        <a href="/profile.html#my-auctions">Mis actividades</a>
+        <a href="/publicar.html">Publicar subasta</a>
 
-        <section class="bid-section">
-            <form id="auction-form">
-                <div style="display: block; margin-bottom: 1rem; width: 100%;">
-                    <label style="display: block; width: 100%;">
-                        Título
-                        <input id="title"
-                               type="text"
-                               maxlength="150"
-                               required
-                               style="display: block; width: 100%; margin-top: 0.3rem;">
-                    </label>
-                </div>
+        <button type="button" onclick="logout()">
+            Cerrar sesión
+        </button>
+    </nav>
+</header>
 
-                <div style="display: block; margin-bottom: 1rem; width: 100%;">
-                    <label style="display: block; width: 100%;">
-                        Descripción
-                        <textarea id="description"
-                                  maxlength="1000"
-                                  required
-                                  style="display: block; width: 100%; margin-top: 0.3rem;"></textarea>
-                    </label>
-                </div>
 
-                <div style="display: block; margin-bottom: 1rem; width: 100%;">
-                    <label style="display: block; width: 100%;">
-                        Imagen
-                        <input id="imageUrl"
-                               type="url"
-                               placeholder="https://..."
-                               required
-                               style="display: block; width: 100%; margin-top: 0.3rem;">
-                    </label>
-                </div>
+<main class="page-container" data-sys-render="auto">
 
-                <div style="display: block; margin-bottom: 1rem; width: 100%;">
-                    <label style="display: block; width: 100%;">
-                        Categoría
-                        <select id="categoryId"
-                                required
-                                style="display: block; width: 100%; margin-top: 0.3rem;">
-                            <option value="">
-                                Seleccioná una categoría
-                            </option>
-                        </select>
-                    </label>
-                </div>
+    <section class="publish-header">
+        <p class="eyebrow">
+            PUBLICAR
+        </p>
 
-                <div style="display: block; margin-bottom: 1rem; width: 100%;">
-                    <label style="display: block; width: 100%;">
+        <h1>
+            Crear nueva subasta
+        </h1>
+
+        <p class="publish-description">
+            Completá los datos del producto y configurá la subasta.
+        </p>
+    </section>
+
+
+    <section class="publish-panel">
+
+        <form id="auction-form"
+              class="auction-form">
+
+            <div class="form-group">
+                <label for="title">
+                    Título
+                </label>
+
+                <input
+                    id="title"
+                    type="text"
+                    maxlength="150"
+                    required>
+            </div>
+
+
+            <div class="form-group">
+                <label for="description">
+                    Descripción
+                </label>
+
+                <textarea
+                    id="description"
+                    maxlength="1000"
+                    required>
+                </textarea>
+            </div>
+
+
+            <div class="form-group">
+                <label for="imageUrl">
+                    Imagen
+                </label>
+
+                <input
+                    id="imageUrl"
+                    type="url"
+                    placeholder="https://..."
+                    required>
+            </div>
+
+
+            <div class="form-group">
+                <label for="categoryId">
+                    Categoría
+                </label>
+
+                <select
+                    id="categoryId"
+                    required>
+
+                    <option value="">
+                        Seleccioná una categoría
+                    </option>
+
+                </select>
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label for="basePrice">
                         Precio base
-                        <input id="basePrice"
-                               type="number"
-                               min="1"
-                               step="1"
-                               required
-                               style="display: block; width: 100%; margin-top: 0.3rem;">
                     </label>
+
+                    <input
+                        id="basePrice"
+                        type="number"
+                        min="1"
+                        step="1"
+                        required>
                 </div>
 
-                <div style="display: block; margin-bottom: 1rem; width: 100%;">
-                    <label style="display: block; width: 100%;">
+
+                <div class="form-group">
+                    <label for="minimumIncrement">
                         Incremento mínimo
-                        <input id="minimumIncrement"
-                               type="number"
-                               min="1"
-                               step="1"
-                               required
-                               style="display: block; width: 100%; margin-top: 0.3rem;">
                     </label>
+
+                    <input
+                        id="minimumIncrement"
+                        type="number"
+                        min="1"
+                        step="1"
+                        required>
                 </div>
 
-                <div style="display: block; margin-bottom: 1rem; width: 100%;">
-                    <label style="display: block; width: 100%;">
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label for="startAt">
                         Fecha de inicio
-                        <input id="startAt"
-                               type="datetime-local"
-                               required
-                               style="display: block; width: 100%; margin-top: 0.3rem;">
                     </label>
+
+                    <input
+                        id="startAt"
+                        type="datetime-local"
+                        required>
                 </div>
 
-                <div style="display: block; margin-bottom: 1rem; width: 100%;">
-                    <label style="display: block; width: 100%;">
+
+                <div class="form-group">
+                    <label for="endAt">
                         Fecha de finalización
-                        <input id="endAt"
-                               type="datetime-local"
-                               required
-                               style="display: block; width: 100%; margin-top: 0.3rem;">
                     </label>
+
+                    <input
+                        id="endAt"
+                        type="datetime-local"
+                        required>
                 </div>
 
-                <button type="submit"
-                        id="publish-button"
-                        style="margin-top: 1rem; display: block; width: 100%;">
-                    Publicar subasta
-                </button>
+            </div>
 
-                <p id="publish-message"
-                   class="message hidden">
-                </p>
-            </form>
-        </section>
-    </main>
 
-    <script src="/js/auth.js"></script>
-    <script src="/js/publicar.js"></script>
+            <button
+                type="submit"
+                id="publish-button"
+                class="publish-button">
+
+                Publicar subasta
+
+            </button>
+
+
+            <p
+                id="publish-message"
+                class="message hidden">
+            </p>
+
+        </form>
+
+    </section>
+
+</main>
+
+
+<script src="/js/auth.js"></script>
+<script src="/js/publicar.js"></script>
+
 </body>
 </html>

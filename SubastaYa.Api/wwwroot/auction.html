@@ -4,16 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Consultá los detalles de la subasta, seguí las pujas en tiempo real y realizá tu oferta en SubastaYa.">
     <title>Detalle de subasta - SubastaYa</title>
-    <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/auction-detail.css">
 </head>
 <body>
     <header class="topbar">
         <a class="brand" href="/">SubastaYa</a>
-
+    
         <nav class="navigation">
-            <a href="/">Explorar</a>
-            <a href="profile.html">Mi cuenta</a>
+            <a href="/" class="active">Explorar</a>
+            <a href="/profile.html">Mi cuenta</a>
+            <a href="/profile.html#my-auctions">Mis actividades</a>
+            <a href="/publicar.html">Publicar subasta</a>
+    
+            <button type="button" onclick="logout()">
+                Cerrar sesión
+            </button>
         </nav>
     </header>
 

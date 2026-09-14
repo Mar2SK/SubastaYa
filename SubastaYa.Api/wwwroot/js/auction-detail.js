@@ -39,6 +39,25 @@ function escapeHtml(value) {
         .replaceAll("'", "&#039;");
 }
 
+function getStatusClass(status) {
+    switch (status) {
+        case "ACTIVA":
+            return "status-active";
+
+        case "PROGRAMADA":
+            return "status-programmed";
+
+        case "FINALIZADA":
+            return "status-finished";
+
+        case "DESIERTA":
+            return "status-deserted";
+
+        default:
+            return "";
+    }
+}
+
 function getRemainingTime(targetUtc, status) {
     if (
         status === "FINALIZADA" ||
@@ -89,7 +108,9 @@ function renderAuction() {
         <article class="detail-card">
             <img
                 src="${escapeHtml(currentAuction.imageUrl)}"
-                alt="${escapeHtml(currentAuction.title)}">
+                alt="${escapeHtml(currentAuction.title)}"
+                width="600"
+                height="400">
 
             <div class="detail-content">
                 <span class="category">
@@ -131,29 +152,57 @@ function renderAuction() {
 
                 <p class="details">
                     Estado:
-                    ${escapeHtml(currentAuction.status)}
                 </p>
+
+                <span class="status-badge ${getStatusClass(currentAuction.status)}">
+                    ${escapeHtml(currentAuction.status)}
+                </span>
             </div>
         </article>
     `;
 
-    if (bidAmountInput) {
-        bidAmountInput.value = minimumAmount;
-    }
-
     const isAvailable =
         currentAuction.status === "ACTIVA" &&
+        new Date(currentAuction.startAtUtc).getTime() <= Date.now() &&
         new Date(currentAuction.endAtUtc).getTime() > Date.now();
 
     if (bidForm) {
-        bidForm.classList.toggle("hidden", !isAvailable);
+        const submitButton =
+            bidForm.querySelector("button[type='submit']");
+
+        if (bidAmountInput) {
+            bidAmountInput.disabled = !isAvailable;
+        }
+
+        if (submitButton) {
+            submitButton.disabled = !isAvailable;
+        }
     }
 
-    if (!isAvailable && bidMessage) {
-        bidMessage.textContent =
-            "[CODE-ERROR] - Esta subasta no está disponible para pujar.";
+    if (bidMessage) {
+        if (currentAuction.status === "PROGRAMADA") {
+            bidMessage.textContent =
+                `Esta subasta todavía no comenzó. ` +
+                `Podrás ofertar en ${getRemainingTime(
+                    currentAuction.startAtUtc,
+                    currentAuction.status
+                )}.`;
 
-        bidMessage.classList.remove("hidden");
+            bidMessage.classList.remove("hidden");
+            bidMessage.classList.remove("error");
+        }
+        else if (!isAvailable) {
+            bidMessage.textContent =
+                "Esta subasta ya no está disponible para recibir ofertas.";
+
+            bidMessage.classList.remove("hidden");
+            bidMessage.classList.add("error");
+        }
+        else {
+            bidMessage.textContent = "";
+            bidMessage.classList.add("hidden");
+            bidMessage.classList.remove("error");
+        }
     }
 
     updateTimer();
@@ -276,37 +325,34 @@ if (bidForm) {
     bidForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        if (
-            !currentAuction ||
-            currentAuction.status !== "ACTIVA" ||
-            new Date(currentAuction.endAtUtc).getTime() <= Date.now()
-        ) {
-            bidMessage.textContent =
-                "[CODE-ERROR] - Esta subasta no está disponible para pujar.";
-
-            bidMessage.classList.remove("hidden");
-            bidMessage.classList.add("error");
-
+        if (!currentAuction) {
             return;
         }
-        if (
-            currentAuction.status === "PROGRAMADA" &&
-            bidMessage
-        ) {
-            bidMessage.textContent =
-                `Esta subasta todavía no comenzó. ` +
-                `Podrás ofertar en ${getRemainingTime(
-                    currentAuction.startAtUtc,
-                    currentAuction.status
-                )}.`;
+        
+        const now = Date.now();
+        
+        const isAvailable =
+            currentAuction.status === "ACTIVA" &&
+            new Date(currentAuction.startAtUtc).getTime() <= now &&
+            new Date(currentAuction.endAtUtc).getTime() > now;
+        
+        if (!isAvailable) {
+            if (currentAuction.status === "PROGRAMADA") {
+                bidMessage.textContent =
+                    `Esta subasta todavía no comenzó. ` +
+                    `Podrás ofertar en ${getRemainingTime(
+                        currentAuction.startAtUtc,
+                        currentAuction.status
+                    )}.`;
+            } else {
+                bidMessage.textContent =
+                    "Esta subasta ya no está disponible para recibir ofertas.";
+            }
         
             bidMessage.classList.remove("hidden");
-        }
-        else if (!isAvailable && bidMessage) {
-            bidMessage.textContent =
-                "Esta subasta ya no está disponible para recibir ofertas.";
+            bidMessage.classList.add("error");
         
-            bidMessage.classList.remove("hidden");
+            return;
         }
 
         const buyerId = currentUser.userId;
