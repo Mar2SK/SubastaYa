@@ -1,0 +1,136 @@
+.balance-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 24px 0;
+}
+
+.balance-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    display: grid;
+    gap: 8px;
+    padding: 24px;
+}
+
+.balance-card span {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.balance-card strong {
+    font-size: 1.6rem;
+}
+
+.retained {
+    border-left: 5px solid #e29c28;
+}
+
+.available {
+    border-left: 5px solid #27a66d;
+}
+
+.deposit-panel,
+.activity-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 25px;
+    padding: 24px;
+}
+
+.inline-form {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.inline-form input {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-height: 42px;
+    padding: 0 12px;
+}
+
+.inline-form button,
+.tab-button {
+    background: var(--primary);
+    border: 0;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: 700;
+    padding: 0 16px;
+}
+
+.tabs {
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+}
+
+.tab-button {
+    background: #ece8fd;
+    color: var(--primary);
+    min-height: 38px;
+}
+
+.tab-button.active {
+    background: var(--primary);
+    color: white;
+}
+
+.activity-item,
+.transaction-item {
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+    padding: 14px 0;
+}
+
+.activity-item img {
+    border-radius: 8px;
+    height: 62px;
+    object-fit: cover;
+    width: 76px;
+}
+
+.activity-item div {
+    flex: 1;
+}
+
+.activity-item h3,
+.activity-item p,
+.transaction-item p {
+    margin: 4px 0;
+}
+
+.activity-item p,
+.transaction-item p {
+    color: var(--muted);
+    font-size: 0.86rem;
+}
+
+.status-badge {
+    background: #eeeafe;
+    border-radius: 999px;
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 7px 10px;
+}
+
+@media (max-width: 700px) {
+    .balance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .inline-form {
+        flex-direction: column;
+    }
+}
