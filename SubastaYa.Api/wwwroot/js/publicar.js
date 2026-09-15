@@ -88,28 +88,31 @@ auctionForm.addEventListener(
         const endAt =
             document.getElementById("endAt").value;
 
-        const startDate =
+            const startDate =
             new Date(startAt);
-
+        
         const endDate =
             new Date(endAt);
-
-        if (endDate <= startDate) {
+        
+        if (
+            Number.isNaN(startDate.getTime()) ||
+            Number.isNaN(endDate.getTime())
+        ) {
             showMessage(
-                "[CODE-ERROR] - La fecha de finalización debe ser posterior al inicio.",
+                "[CODE-ERROR] - Ingresá fechas válidas.",
                 true
             );
-
+        
             publishButton.disabled = false;
             return;
         }
-
+        
         if (endDate <= new Date()) {
             showMessage(
                 "[CODE-ERROR] - La fecha de finalización debe estar en el futuro.",
                 true
             );
-
+        
             publishButton.disabled = false;
             return;
         }
@@ -138,6 +141,8 @@ auctionForm.addEventListener(
         };
 
         if (
+            !Number.isFinite(request.basePrice) ||
+            !Number.isFinite(request.minimumIncrement) ||
             request.basePrice <= 0 ||
             request.minimumIncrement <= 0
         ) {
@@ -198,4 +203,4 @@ auctionForm.addEventListener(
     }
 );
 
-loadCategories();
+await loadCategories();

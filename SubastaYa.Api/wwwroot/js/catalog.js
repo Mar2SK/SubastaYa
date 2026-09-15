@@ -213,7 +213,10 @@ async function loadCategories() {
 }
 
 applyFiltersButton.addEventListener("click", loadAuctions);
+
 setInterval(updateTimers, 1000);
 
-loadCategories();
-loadAuctions();
+await Promise.all([
+    loadCategories(),
+    loadAuctions()
+]);

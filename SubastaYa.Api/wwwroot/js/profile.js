@@ -61,11 +61,13 @@ function renderBids(items) {
     panel.innerHTML = "";
 
     for (const idx_tk of items) {
-        const badge = idx_tk.hasWon
-            ? "Ganada"
-            : idx_tk.isLeading
-                ? "Liderando"
-                : "Superado";
+        let badge = "Superado";
+
+        if (idx_tk.hasWon) {
+            badge = "Ganada";
+        } else if (idx_tk.isLeading) {
+            badge = "Liderando";
+        }
 
         panel.insertAdjacentHTML(
             "beforeend",
@@ -186,6 +188,16 @@ depositForm.addEventListener("submit", async (event) => {
 
     const amount = Number(depositAmount.value);
 
+    if (!Number.isFinite(amount) || amount <= 0) {
+        depositMessage.textContent =
+            "Ingresá un monto válido para acreditar.";
+
+        depositMessage.classList.add("error");
+        depositMessage.classList.remove("hidden");
+
+        return;
+    }
+
     try {
         const response = await fetch(
             `/api/v1/wallets/${currentUserId}/transactions`,
@@ -200,12 +212,15 @@ depositForm.addEventListener("submit", async (event) => {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.message ?? "No se pudo acreditar saldo.");
+            throw new Error(
+                data.message ?? "No se pudo acreditar saldo."
+            );
         }
 
-        depositMessage.textContent = "Saldo acreditado correctamente.";
-        depositMessage.classList.remove("error");
-        depositMessage.classList.remove("hidden");
+        depositMessage.textContent =
+            "Saldo acreditado correctamente.";
+
+        depositMessage.classList.remove("error", "hidden");
 
         depositAmount.value = "";
 

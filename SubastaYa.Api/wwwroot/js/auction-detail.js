@@ -98,12 +98,6 @@ function renderAuction() {
         currentAuction.highestBid ??
         currentAuction.basePrice;
 
-    const minimumAmount =
-        currentAuction.highestBid
-            ? currentAuction.highestBid +
-            currentAuction.minimumIncrement
-            : currentAuction.basePrice;
-
     auctionDetail.innerHTML = `
         <article class="detail-card">
             <img
@@ -187,9 +181,8 @@ function renderAuction() {
                     currentAuction.startAtUtc,
                     currentAuction.status
                 )}.`;
-
-            bidMessage.classList.remove("hidden");
-            bidMessage.classList.remove("error");
+        
+            bidMessage.classList.remove("hidden", "error");
         }
         else if (!isAvailable) {
             bidMessage.textContent =
@@ -358,6 +351,16 @@ if (bidForm) {
         const buyerId = currentUser.userId;
         const amount = Number(bidAmountInput.value);
 
+        if (!Number.isFinite(amount) || amount <= 0) {
+            bidMessage.textContent =
+                "Ingresá un monto válido para realizar la puja.";
+        
+            bidMessage.classList.add("error");
+            bidMessage.classList.remove("hidden");
+        
+            return;
+        }
+
         bidMessage.classList.add("hidden");
 
         try {
@@ -387,8 +390,7 @@ if (bidForm) {
             bidMessage.textContent =
                 "¡Puja registrada correctamente!";
 
-            bidMessage.classList.remove("hidden");
-            bidMessage.classList.remove("error");
+            bidMessage.classList.remove("hidden", "error");
 
             await loadAuction();
         } catch (error) {
@@ -410,6 +412,4 @@ setInterval(updateTimer, 1000);
 
 loadAuction();
 
-window.reloadAuctionFromRealtime = async () => {
-    await loadAuction();
-};
+window.reloadAuctionFromRealtime = loadAuction;
