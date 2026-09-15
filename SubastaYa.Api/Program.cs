@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using SubastaYa.Api.Data;
+using SubastaYa.Api.Hubs;
 using SubastaYa.Api.Middleware;
 using SubastaYa.Api.Repositories;
 using SubastaYa.Api.Services;
 using SubastaYa.Api.Workers;
-using SubastaYa.Api.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +26,7 @@ builder.Services.AddScoped<IWalletService, WalletService>();
 
 builder.Services.AddScoped<IBidRepository, BidRepository>();
 builder.Services.AddScoped<IBidService, BidService>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<
@@ -41,6 +42,7 @@ builder.Services.AddScoped<
 builder.Services.AddHostedService<AuctionActivationWorker>();
 
 builder.Services.AddSignalR();
+
 builder.Services.AddScoped<
     IUserActivityRepository,
     UserActivityRepository>();
@@ -48,8 +50,14 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IUserActivityService,
     UserActivityService>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+builder.Services.AddScoped<
+    ICategoryRepository,
+    CategoryRepository>();
+
+builder.Services.AddScoped<
+    ICategoryService,
+    CategoryService>();
 
 var app = builder.Build();
 
@@ -66,6 +74,7 @@ using (IServiceScope scope = app.Services.CreateScope())
 
 app.UseMiddleware<ApiVersionMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
@@ -76,4 +85,4 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<AuctionHub>("/hubs/auctions");
 
-app.Run();
+await app.RunAsync();

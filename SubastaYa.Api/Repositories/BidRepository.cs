@@ -24,6 +24,76 @@ public class BidRepository : IBidRepository
         await using var transaction =
             await _context.Database.BeginTransactionAsync();
 
+        Auction auction = await GetAuctionAsync(auctionId);
+
+        DateTime nowUtc = DateTime.UtcNow;
+
+        ValidateAuction(
+            auction,
+            request.BuyerId,
+            nowUtc);
+
+        Wallet buyerWallet =
+            await GetBuyerWalletAsync(request.BuyerId);
+
+        Bid? previousLeadingBid =
+            await GetPreviousLeadingBidAsync(auctionId);
+
+        ValidateBidAmount(
+            auction,
+            previousLeadingBid,
+            request.Amount);
+
+        ValidateAvailableBalance(
+            buyerWallet,
+            previousLeadingBid,
+            request);
+
+        if (previousLeadingBid is not null)
+        {
+            await ReleasePreviousBidAsync(
+                auction,
+                previousLeadingBid,
+                buyerWallet,
+                nowUtc);
+        }
+
+        Bid newBid = RegisterNewBid(
+            auction,
+            buyerWallet,
+            request,
+            nowUtc);
+
+        bool antiSnipingApplied =
+            ApplyAntiSnipingIfNecessary(
+                auction,
+                request.BuyerId,
+                nowUtc);
+
+        auction.Version += 1;
+
+        RegisterBidAudit(
+            auction,
+            request,
+            nowUtc);
+
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return new BidResultDto
+        {
+            BidId = newBid.Id,
+            AuctionId = auction.Id,
+            BuyerId = request.BuyerId,
+            Amount = request.Amount,
+            BidAtUtc = newBid.BidAtUtc,
+            EndAtUtc = auction.EndAtUtc,
+            AntiSnipingApplied = antiSnipingApplied
+        };
+    }
+
+    private async Task<Auction> GetAuctionAsync(int auctionId)
+    {
         Auction? auction = await _context.Auctions
             .FirstOrDefaultAsync(currentAuction =>
                 currentAuction.Id == auctionId);
@@ -35,14 +105,20 @@ public class BidRepository : IBidRepository
                 "la subasta indicada no existe.");
         }
 
-        if (auction.SellerId == request.BuyerId)
+        return auction;
+    }
+
+    private static void ValidateAuction(
+        Auction auction,
+        int buyerId,
+        DateTime nowUtc)
+    {
+        if (auction.SellerId == buyerId)
         {
             throw new ApiException(
                 StatusCodes.Status400BadRequest,
                 "el vendedor no puede pujar en su propia subasta.");
         }
-
-        DateTime nowUtc = DateTime.UtcNow;
 
         if (auction.Status == "PROGRAMADA" ||
             auction.StartAtUtc > nowUtc)
@@ -65,10 +141,13 @@ public class BidRepository : IBidRepository
                 StatusCodes.Status409Conflict,
                 "la subasta no se encuentra activa.");
         }
+    }
 
+    private async Task<Wallet> GetBuyerWalletAsync(int buyerId)
+    {
         Wallet? buyerWallet = await _context.Wallets
             .FirstOrDefaultAsync(wallet =>
-                wallet.UserId == request.BuyerId);
+                wallet.UserId == buyerId);
 
         if (buyerWallet is null)
         {
@@ -77,55 +156,88 @@ public class BidRepository : IBidRepository
                 "la billetera del comprador no existe.");
         }
 
-        Bid? previousLeadingBid = await _context.Bids
+        return buyerWallet;
+    }
+
+    private async Task<Bid?> GetPreviousLeadingBidAsync(
+        int auctionId)
+    {
+        return await _context.Bids
             .Where(bid => bid.AuctionId == auctionId)
             .OrderByDescending(bid => bid.Amount)
             .ThenByDescending(bid => bid.BidAtUtc)
             .FirstOrDefaultAsync();
+    }
 
-        decimal minimumRequiredAmount = previousLeadingBid is null
-            ? auction.BasePrice
-            : previousLeadingBid.Amount + auction.MinimumIncrement;
+    private static void ValidateBidAmount(
+        Auction auction,
+        Bid? previousLeadingBid,
+        decimal amount)
+    {
+        decimal minimumRequiredAmount =
+            previousLeadingBid is null
+                ? auction.BasePrice
+                : previousLeadingBid.Amount +
+                  auction.MinimumIncrement;
 
-        if (request.Amount < minimumRequiredAmount)
+        if (amount < minimumRequiredAmount)
         {
             throw new ApiException(
                 StatusCodes.Status409Conflict,
                 $"la puja mínima permitida es {minimumRequiredAmount}.");
         }
+    }
 
+    private static void ValidateAvailableBalance(
+        Wallet buyerWallet,
+        Bid? previousLeadingBid,
+        CreateBidRequestDto request)
+    {
         decimal reusableHeldAmount =
             previousLeadingBid?.BuyerId == request.BuyerId
                 ? previousLeadingBid.Amount
                 : 0;
 
-        if (buyerWallet.AvailableBalance + reusableHeldAmount < request.Amount)
+        if (buyerWallet.AvailableBalance +
+            reusableHeldAmount < request.Amount)
         {
             throw new ApiException(
                 StatusCodes.Status400BadRequest,
                 "el comprador no posee saldo disponible suficiente.");
         }
+    }
 
-        if (previousLeadingBid is not null)
+    private async Task ReleasePreviousBidAsync(
+        Auction auction,
+        Bid previousLeadingBid,
+        Wallet buyerWallet,
+        DateTime nowUtc)
+    {
+        Wallet? previousBuyerWallet =
+            previousLeadingBid.BuyerId == buyerWallet.UserId
+                ? buyerWallet
+                : await _context.Wallets
+                    .FirstOrDefaultAsync(wallet =>
+                        wallet.UserId ==
+                        previousLeadingBid.BuyerId);
+
+        if (previousBuyerWallet is null)
         {
-            Wallet? previousBuyerWallet =
-                previousLeadingBid.BuyerId == request.BuyerId
-                    ? buyerWallet
-                    : await _context.Wallets.FirstOrDefaultAsync(wallet =>
-                        wallet.UserId == previousLeadingBid.BuyerId);
+            throw new ApiException(
+                StatusCodes.Status500InternalServerError,
+                "no se encontró la billetera del líder anterior.");
+        }
 
-            if (previousBuyerWallet is null)
-            {
-                throw new ApiException(
-                    StatusCodes.Status500InternalServerError,
-                    "no se encontró la billetera del líder anterior.");
-            }
+        previousBuyerWallet.HeldBalance -=
+            previousLeadingBid.Amount;
 
-            previousBuyerWallet.HeldBalance -= previousLeadingBid.Amount;
-            previousBuyerWallet.AvailableBalance += previousLeadingBid.Amount;
-            previousBuyerWallet.Version += 1;
+        previousBuyerWallet.AvailableBalance +=
+            previousLeadingBid.Amount;
 
-            _context.TransactionLedgers.Add(new TransactionLedger
+        previousBuyerWallet.Version += 1;
+
+        _context.TransactionLedgers.Add(
+            new TransactionLedger
             {
                 WalletId = previousBuyerWallet.Id,
                 AuctionId = auction.Id,
@@ -133,8 +245,14 @@ public class BidRepository : IBidRepository
                 Amount = previousLeadingBid.Amount,
                 CreatedAtUtc = nowUtc
             });
-        }
+    }
 
+    private Bid RegisterNewBid(
+        Auction auction,
+        Wallet buyerWallet,
+        CreateBidRequestDto request,
+        DateTime nowUtc)
+    {
         buyerWallet.HeldBalance += request.Amount;
         buyerWallet.AvailableBalance -= request.Amount;
         buyerWallet.Version += 1;
@@ -149,30 +267,45 @@ public class BidRepository : IBidRepository
 
         _context.Bids.Add(newBid);
 
-        _context.TransactionLedgers.Add(new TransactionLedger
-        {
-            WalletId = buyerWallet.Id,
-            AuctionId = auction.Id,
-            Type = "RETENCION",
-            Amount = request.Amount,
-            CreatedAtUtc = nowUtc
-        });
+        _context.TransactionLedgers.Add(
+            new TransactionLedger
+            {
+                WalletId = buyerWallet.Id,
+                AuctionId = auction.Id,
+                Type = "RETENCION",
+                Amount = request.Amount,
+                CreatedAtUtc = nowUtc
+            });
 
+        return newBid;
+    }
+
+    private bool ApplyAntiSnipingIfNecessary(
+        Auction auction,
+        int buyerId,
+        DateTime nowUtc)
+    {
         bool antiSnipingApplied =
-            auction.EndAtUtc - nowUtc <= TimeSpan.FromSeconds(60);
+            auction.EndAtUtc - nowUtc <=
+            TimeSpan.FromSeconds(60);
 
-        if (antiSnipingApplied)
+        if (!antiSnipingApplied)
         {
-            DateTime previousEndAtUtc = auction.EndAtUtc;
+            return false;
+        }
 
-            auction.EndAtUtc = auction.EndAtUtc.AddMinutes(2);
+        DateTime previousEndAtUtc = auction.EndAtUtc;
 
-            _context.AuditLogs.Add(new AuditLog
+        auction.EndAtUtc =
+            auction.EndAtUtc.AddMinutes(2);
+
+        _context.AuditLogs.Add(
+            new AuditLog
             {
                 Entity = "SUBASTA",
                 EntityId = auction.Id,
                 Action = "EXTENSION_TIEMPO",
-                UserId = request.BuyerId,
+                UserId = buyerId,
                 DetailJson = JsonSerializer.Serialize(new
                 {
                     previousEndAtUtc,
@@ -180,38 +313,29 @@ public class BidRepository : IBidRepository
                 }),
                 CreatedAtUtc = nowUtc
             });
-        }
 
-        auction.Version += 1;
+        return true;
+    }
 
-        _context.AuditLogs.Add(new AuditLog
-        {
-            Entity = "SUBASTA",
-            EntityId = auction.Id,
-            Action = "PUJA_REGISTRADA",
-            UserId = request.BuyerId,
-            DetailJson = JsonSerializer.Serialize(new
+    private void RegisterBidAudit(
+        Auction auction,
+        CreateBidRequestDto request,
+        DateTime nowUtc)
+    {
+        _context.AuditLogs.Add(
+            new AuditLog
             {
-                amount = request.Amount,
-                bidAtUtc = nowUtc
-            }),
-            CreatedAtUtc = nowUtc
-        });
-
-        await _context.SaveChangesAsync();
-
-        await transaction.CommitAsync();
-
-        return new BidResultDto
-        {
-            BidId = newBid.Id,
-            AuctionId = auction.Id,
-            BuyerId = request.BuyerId,
-            Amount = request.Amount,
-            BidAtUtc = newBid.BidAtUtc,
-            EndAtUtc = auction.EndAtUtc,
-            AntiSnipingApplied = antiSnipingApplied
-        };
+                Entity = "SUBASTA",
+                EntityId = auction.Id,
+                Action = "PUJA_REGISTRADA",
+                UserId = request.BuyerId,
+                DetailJson = JsonSerializer.Serialize(new
+                {
+                    amount = request.Amount,
+                    bidAtUtc = nowUtc
+                }),
+                CreatedAtUtc = nowUtc
+            });
     }
 
     public async Task RegisterRejectedBidAsync(
@@ -225,19 +349,20 @@ public class BidRepository : IBidRepository
         bool buyerExists = await _context.Users
             .AnyAsync(user => user.Id == buyerId);
 
-        _context.AuditLogs.Add(new AuditLog
-        {
-            Entity = "SUBASTA",
-            EntityId = auctionId,
-            Action = "PUJA_RECHAZADA",
-            UserId = buyerExists ? buyerId : null,
-            DetailJson = JsonSerializer.Serialize(new
+        _context.AuditLogs.Add(
+            new AuditLog
             {
-                amount,
-                reason
-            }),
-            CreatedAtUtc = DateTime.UtcNow
-        });
+                Entity = "SUBASTA",
+                EntityId = auctionId,
+                Action = "PUJA_RECHAZADA",
+                UserId = buyerExists ? buyerId : null,
+                DetailJson = JsonSerializer.Serialize(new
+                {
+                    amount,
+                    reason
+                }),
+                CreatedAtUtc = DateTime.UtcNow
+            });
 
         await _context.SaveChangesAsync();
     }

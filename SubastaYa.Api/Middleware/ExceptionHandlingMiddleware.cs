@@ -1,5 +1,5 @@
-﻿using SubastaYa.Api.Helpers;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using SubastaYa.Api.Helpers;
 
 namespace SubastaYa.Api.Middleware;
 
@@ -25,6 +25,7 @@ public class ExceptionHandlingMiddleware
         catch (ApiException exception)
         {
             _logger.LogWarning(
+                exception,
                 "[CODE-ERROR] - {Message}",
                 exception.Message);
 
@@ -33,9 +34,10 @@ public class ExceptionHandlingMiddleware
                 exception.StatusCode,
                 exception.Message);
         }
-        catch (DbUpdateConcurrencyException)
+        catch (DbUpdateConcurrencyException exception)
         {
             _logger.LogWarning(
+                exception,
                 "[CODE-ERROR] - conflicto de concurrencia detectado.");
 
             await WriteErrorAsync(
@@ -69,9 +71,11 @@ public class ExceptionHandlingMiddleware
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
 
-        await context.Response.WriteAsJsonAsync(new
-        {
-            message = $"[CODE-ERROR] - {message}"
-        });
+        await context.Response.WriteAsJsonAsync(
+            new
+            {
+                message = $"[CODE-ERROR] - {message}"
+            },
+            cancellationToken: context.RequestAborted);
     }
 }

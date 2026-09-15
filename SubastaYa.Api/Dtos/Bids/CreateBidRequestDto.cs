@@ -1,8 +1,13 @@
-﻿namespace SubastaYa.Api.Dtos.Bids;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SubastaYa.Api.Dtos.Bids;
 
 public class CreateBidRequestDto
 {
-    public int BuyerId { get; set; }
+    [Required]
+    public required int BuyerId { get; set; }
 
-    public decimal Amount { get; set; }
+    [Required]
+    [Range(typeof(decimal), "0.01", "79228162514264337593543950335")]
+    public required decimal Amount { get; set; }
 }

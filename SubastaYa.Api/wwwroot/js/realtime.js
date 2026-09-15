@@ -1,12 +1,42 @@
-﻿const realtimeParameters = new URLSearchParams(window.location.search);
-const realtimeAuctionId = realtimeParameters.get("auctionId");
+﻿const realtimeParameters =
+    new URLSearchParams(window.location.search);
 
-async function showRealtimeMessage(message) {
-    const messageElement = document.getElementById("bid-message");
+const realtimeAuctionId =
+    realtimeParameters.get("auctionId");
+
+function showRealtimeMessage(message) {
+    const messageElement =
+        document.getElementById("bid-message");
+
+    if (!messageElement) {
+        return;
+    }
 
     messageElement.textContent = message;
-    messageElement.classList.remove("error");
-    messageElement.classList.remove("hidden");
+
+    messageElement.classList.remove(
+        "error",
+        "hidden"
+    );
+}
+
+async function reloadAuctionAndShowMessage(message) {
+    if (typeof window.reloadAuctionFromRealtime === "function") {
+        await window.reloadAuctionFromRealtime();
+    }
+
+    showRealtimeMessage(message);
+}
+
+async function retryRealtimeConnection() {
+    try {
+        await startRealtimeConnection();
+    } catch (error) {
+        console.error(
+            "[CODE-ERROR] - error al reintentar SignalR.",
+            error
+        );
+    }
 }
 
 async function startRealtimeConnection() {
@@ -14,36 +44,35 @@ async function startRealtimeConnection() {
         return;
     }
 
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/hubs/auctions")
-        .withAutomaticReconnect()
-        .build();
+    const connection =
+        new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/auctions")
+            .withAutomaticReconnect()
+            .build();
 
     connection.on("BidPlaced", async () => {
-        await window.reloadAuctionFromRealtime();
-
-        await showRealtimeMessage(
-            "Nueva puja recibida. La información se actualizó.");
+        await reloadAuctionAndShowMessage(
+            "Nueva puja recibida. La información se actualizó."
+        );
     });
 
     connection.on("AuctionExtended", async () => {
-        await window.reloadAuctionFromRealtime();
-
-        await showRealtimeMessage(
-            "La subasta se extendió por regla anti-sniping.");
+        await reloadAuctionAndShowMessage(
+            "La subasta se extendió por regla anti-sniping."
+        );
     });
 
     connection.on("AuctionClosed", async () => {
-        await window.reloadAuctionFromRealtime();
-
-        await showRealtimeMessage(
-            "La subasta fue cerrada automáticamente.");
+        await reloadAuctionAndShowMessage(
+            "La subasta fue cerrada automáticamente."
+        );
     });
 
     connection.onreconnected(async () => {
         await connection.invoke(
             "JoinAuction",
-            Number(realtimeAuctionId));
+            Number(realtimeAuctionId)
+        );
     });
 
     try {
@@ -51,14 +80,26 @@ async function startRealtimeConnection() {
 
         await connection.invoke(
             "JoinAuction",
-            Number(realtimeAuctionId));
+            Number(realtimeAuctionId)
+        );
     } catch (error) {
         console.error(
             "[CODE-ERROR] - no se pudo conectar SignalR.",
-            error);
+            error
+        );
 
-        setTimeout(startRealtimeConnection, 5000);
+        setTimeout(
+            retryRealtimeConnection,
+            5000
+        );
     }
 }
 
-startRealtimeConnection();
+try {
+    await startRealtimeConnection();
+} catch (error) {
+    console.error(
+        "[CODE-ERROR] - error al iniciar SignalR.",
+        error
+    );
+}

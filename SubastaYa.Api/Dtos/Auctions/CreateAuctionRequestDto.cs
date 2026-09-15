@@ -1,22 +1,37 @@
-﻿namespace SubastaYa.Api.Dtos.Auctions;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SubastaYa.Api.Dtos.Auctions;
 
 public class CreateAuctionRequestDto
 {
-    public int SellerId { get; set; }
+    [Required]
+    public required int SellerId { get; set; }
 
-    public int CategoryId { get; set; }
+    [Required]
+    public required int CategoryId { get; set; }
 
-    public string Title { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(150)]
+    public required string Title { get; set; }
 
-    public string Description { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(1000)]
+    public required string Description { get; set; }
 
-    public string ImageUrl { get; set; } = string.Empty;
+    [Required]
+    public required string ImageUrl { get; set; }
 
-    public decimal BasePrice { get; set; }
+    [Required]
+    [Range(typeof(decimal), "0.01", "79228162514264337593543950335")]
+    public required decimal BasePrice { get; set; }
 
-    public decimal MinimumIncrement { get; set; }
+    [Required]
+    [Range(typeof(decimal), "0.01", "79228162514264337593543950335")]
+    public required decimal MinimumIncrement { get; set; }
 
-    public DateTime StartAtUtc { get; set; }
+    [Required]
+    public required DateTime StartAtUtc { get; set; }
 
-    public DateTime EndAtUtc { get; set; }
+    [Required]
+    public required DateTime EndAtUtc { get; set; }
 }
