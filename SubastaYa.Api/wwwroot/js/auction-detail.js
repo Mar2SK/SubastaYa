@@ -413,3 +413,11 @@ loadAuction();
 window.reloadAuctionFromRealtime = async () => {
     await loadAuction();
 };
+const logoutButton = document.getElementById("logout-button");
+
+if (logoutButton) {
+    logoutButton.addEventListener("click", () => {
+        localStorage.removeItem("subastaYaUser");
+        window.location.href = "/";
+    });
+}

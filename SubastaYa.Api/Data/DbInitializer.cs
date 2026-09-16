@@ -9,7 +9,7 @@ public static class DbInitializer
     {
         if (await context.Users.AnyAsync())
         {
-            //await RefreshDemoAuctionsAsync(context);
+            await RepairExpiredWinnerAuctionAsync(context);
             return;
         }
 
@@ -132,7 +132,7 @@ public static class DbInitializer
             Category = technology,
             Title = "Notebook Gamer",
             Description = "Notebook para pruebas de pujas en tiempo real.",
-            ImageUrl = "https://placehold.co/600x400?text=Notebook+Gamer",
+            ImageUrl = "https://www.bidcom.com.ar/_next/image?url=https%3A%2F%2Fstatic.bidcom.com.ar%2FpublicacionesML%2Fproductos%2FKMNOTMSI4%2F1000x1000-KMNOTMSI4.jpg&w=750&q=75",
             BasePrice = 30000,
             MinimumIncrement = 5000,
             StartAtUtc = nowUtc.AddMinutes(-30),
@@ -147,7 +147,7 @@ public static class DbInitializer
             Category = collectibles,
             Title = "Figura de colección",
             Description = "Subasta próxima a finalizar para probar anti-sniping.",
-            ImageUrl = "https://placehold.co/600x400?text=Figura",
+            ImageUrl = "https://http2.mlstatic.com/D_NQ_NP_675234-MLA99995661465_112025-O.webp",
             BasePrice = 10000,
             MinimumIncrement = 1000,
             StartAtUtc = nowUtc.AddMinutes(-20),
@@ -162,7 +162,7 @@ public static class DbInitializer
             Category = clothing,
             Title = "Campera de cuero",
             Description = "Subasta programada para iniciar dentro de 24 horas.",
-            ImageUrl = "https://placehold.co/600x400?text=Campera",
+            ImageUrl = "https://http2.mlstatic.com/D_NQ_NP_778926-MLA113323648495_062026-O.webp",
             BasePrice = 20000,
             MinimumIncrement = 2000,
             StartAtUtc = nowUtc.AddHours(1),
@@ -177,7 +177,7 @@ public static class DbInitializer
             Category = vehicles,
             Title = "Bicicleta urbana",
             Description = "Subasta vencida con una puja ganadora para probar el Worker.",
-            ImageUrl = "https://placehold.co/600x400?text=Bicicleta",
+            ImageUrl = "https://static.hendel.com/media/catalog/product/cache/b866fd8d147dcce474dc8744e477ca66/5/5/55333_ng19-0.jpg",
             BasePrice = 50000,
             MinimumIncrement = 5000,
             StartAtUtc = nowUtc.AddDays(-2),
@@ -192,7 +192,7 @@ public static class DbInitializer
             Category = technology,
             Title = "Monitor usado",
             Description = "Subasta vencida sin pujas para probar estado DESIERTA.",
-            ImageUrl = "https://placehold.co/600x400?text=Monitor",
+            ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSVzFZ6yIVd0Rt8Sj5SWt-TtiL_g7-EpgSyaytEPGy6eBwTyH0T8ded-E&s=10",
             BasePrice = 25000,
             MinimumIncrement = 2500,
             StartAtUtc = nowUtc.AddDays(-2),
@@ -301,36 +301,82 @@ public static class DbInitializer
 
         await context.SaveChangesAsync();
     }
-
-    //funcion que generó la inconsistencia
-    private static async Task RefreshDemoAuctionsAsync(AppDbContext context)
+    private static async Task RepairExpiredWinnerAuctionAsync(
+    AppDbContext context)
     {
-        DateTime nowUtc = DateTime.UtcNow;
+        Auction? bicycleAuction = await context.Auctions
+            .FirstOrDefaultAsync(auction =>
+                auction.Title == "Bicicleta urbana");
 
-        Auction? standardAuction =
-            await context.Auctions
-                .FirstOrDefaultAsync(auction =>
-                    auction.Title == "Notebook Gamer");
-
-        if (standardAuction is not null &&
-            standardAuction.Status == "FINALIZADA")
+        if (bicycleAuction is null ||
+            bicycleAuction.Status != "ACTIVA" ||
+            bicycleAuction.EndAtUtc > DateTime.UtcNow)
         {
-            standardAuction.Status = "ACTIVA";
-            standardAuction.EndAtUtc = nowUtc.AddMinutes(25);
-            standardAuction.Version += 1;
+            return;
         }
 
-        Auction? criticalAuction =
-            await context.Auctions
-                .FirstOrDefaultAsync(auction =>
-                    auction.Title == "Figura de colección");
+        Bid? winnerBid = await context.Bids
+            .Where(bid => bid.AuctionId == bicycleAuction.Id)
+            .OrderByDescending(bid => bid.Amount)
+            .ThenByDescending(bid => bid.BidAtUtc)
+            .FirstOrDefaultAsync();
 
-        if (criticalAuction is not null &&
-            criticalAuction.Status == "FINALIZADA")
+        if (winnerBid is null)
         {
-            criticalAuction.Status = "ACTIVA";
-            criticalAuction.EndAtUtc = nowUtc.AddMinutes(2);
-            criticalAuction.Version += 1;
+            return;
+        }
+
+        Wallet? buyerWallet = await context.Wallets
+            .FirstOrDefaultAsync(wallet =>
+                wallet.UserId == winnerBid.BuyerId);
+
+        if (buyerWallet is null)
+        {
+            return;
+        }
+
+        decimal requiredAmount = winnerBid.Amount;
+
+        if (buyerWallet.HeldBalance < requiredAmount)
+        {
+            decimal missingAmount =
+                requiredAmount - buyerWallet.HeldBalance;
+
+            if (buyerWallet.AvailableBalance < missingAmount)
+            {
+                buyerWallet.TotalBalance =
+                    buyerWallet.HeldBalance +
+                    buyerWallet.AvailableBalance;
+
+                buyerWallet.HeldBalance = requiredAmount;
+                buyerWallet.AvailableBalance =
+                    buyerWallet.TotalBalance - requiredAmount;
+            }
+            else
+            {
+                buyerWallet.AvailableBalance -= missingAmount;
+                buyerWallet.HeldBalance += missingAmount;
+            }
+
+            buyerWallet.Version += 1;
+        }
+
+        bool retentionExists = await context.TransactionLedgers
+            .AnyAsync(transaction =>
+                transaction.AuctionId == bicycleAuction.Id &&
+                transaction.WalletId == buyerWallet.Id &&
+                transaction.Type == "RETENCION");
+
+        if (!retentionExists)
+        {
+            context.TransactionLedgers.Add(new TransactionLedger
+            {
+                WalletId = buyerWallet.Id,
+                AuctionId = bicycleAuction.Id,
+                Type = "RETENCION",
+                Amount = requiredAmount,
+                CreatedAtUtc = DateTime.UtcNow
+            });
         }
 
         await context.SaveChangesAsync();

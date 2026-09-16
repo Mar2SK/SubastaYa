@@ -34,14 +34,14 @@ public class AuctionClosingService : IAuctionClosingService
             .Select(auction => auction.Id)
             .ToListAsync();
 
-        foreach (int auctionId in expiredAuctionIds)
+        foreach (int idx_tk in expiredAuctionIds)
         {
             try
             {
                 _context.ChangeTracker.Clear();
 
                 await CloseAuctionAsync(
-                    auctionId,
+                    idx_tk,
                     DateTime.UtcNow);
             }
             catch (DbUpdateConcurrencyException exception)
@@ -51,16 +51,14 @@ public class AuctionClosingService : IAuctionClosingService
                 _logger.LogWarning(
                     exception,
                     "[CODE-ERROR] - conflicto de concurrencia al cerrar la subasta {AuctionId}.",
-                    auctionId);
+                    idx_tk);
             }
             catch (Exception exception)
             {
-                _context.ChangeTracker.Clear();
-
                 _logger.LogError(
                     exception,
                     "[CODE-ERROR] - error al procesar la subasta vencida {AuctionId}.",
-                    auctionId);
+                    idx_tk);
             }
         }
     }
@@ -177,8 +175,7 @@ public class AuctionClosingService : IAuctionClosingService
         if (paymentExists || collectionExists)
         {
             throw new InvalidOperationException(
-                "La subasta posee una liquidación parcial. " +
-                "Existe PAGO o COBRO, pero no ambos.");
+            "[CODE-ERROR] - La subasta posee una liquidación parcial. Existe PAGO o COBRO, pero no ambos.");
         }
 
         Wallet? buyerWallet = await _context.Wallets
@@ -193,14 +190,22 @@ public class AuctionClosingService : IAuctionClosingService
             sellerWallet is null)
         {
             throw new InvalidOperationException(
-                "No se encontraron las billeteras necesarias para liquidar la subasta.");
+                "[CODE-ERROR] - No se encontraron las billeteras necesarias para liquidar la subasta.");
         }
 
-        if (buyerWallet.HeldBalance <
-            winnerBid.Amount)
+        if (buyerWallet.HeldBalance < winnerBid.Amount)
         {
-            throw new InvalidOperationException(
-                "El saldo retenido no alcanza para liquidar la subasta.");
+            decimal missingAmount =
+                winnerBid.Amount - buyerWallet.HeldBalance;
+
+            if (buyerWallet.AvailableBalance < missingAmount)
+            {
+                throw new InvalidOperationException(
+                    "[CODE-ERROR] - el comprador no tiene fondos suficientes para liquidar la subasta.");
+            }
+
+            buyerWallet.AvailableBalance -= missingAmount;
+            buyerWallet.HeldBalance += missingAmount;
         }
 
         buyerWallet.HeldBalance -=
@@ -220,24 +225,23 @@ public class AuctionClosingService : IAuctionClosingService
         sellerWallet.Version += 1;
 
         _context.TransactionLedgers.Add(
-            new TransactionLedger
-            {
-                WalletId = buyerWallet.Id,
-                AuctionId = auction.Id,
-                Type = "PAGO",
-                Amount = winnerBid.Amount,
-                CreatedAtUtc = nowUtc
-            });
+    new TransactionLedger
+    {
+        WalletId = sellerWallet.Id,
+        AuctionId = auction.Id,
+        Type = "COBRO",
+        Amount = winnerBid.Amount,
+        CreatedAtUtc = nowUtc
+    });
 
-        _context.TransactionLedgers.Add(
-            new TransactionLedger
-            {
-                WalletId = sellerWallet.Id,
-                AuctionId = auction.Id,
-                Type = "COBRO",
-                Amount = winnerBid.Amount,
-                CreatedAtUtc = nowUtc
-            });
+        _context.Sales.Add(new Sale
+        {
+            AuctionId = auction.Id,
+            BuyerId = winnerBid.BuyerId,
+            SellerId = auction.SellerId,
+            Amount = winnerBid.Amount,
+            CreatedAtUtc = nowUtc
+        });
 
         auction.Status = "FINALIZADA";
         auction.Version += 1;

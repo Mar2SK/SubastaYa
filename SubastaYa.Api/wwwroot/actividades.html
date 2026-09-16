@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Mis actividades - SubastaYa</title>
+
+    <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="css/actividades.css">
+</head>
+
+<body>
+    <main class="page-container activities-page"
+          data-sys-render="auto">
+
+        <div class="activities-header">
+            
+            <button class="back-button" type="button" onclick="history.back()">
+                ← Volver
+            </button>
+
+            <p class="eyebrow">MI CUENTA</p>
+
+            <h1>Mis actividades</h1>
+
+            <p>
+                Consultá tus pujas, publicaciones y movimientos.
+            </p>
+        </div>
+
+        <section class="activities-panel"
+                 data-sys-render="auto">
+
+            <div class="activities-tabs">
+
+                <button class="activities-tab active"
+                        data-target="bids-panel"
+                        type="button">
+                    Mis pujas
+                </button>
+
+                <button class="activities-tab"
+                        data-target="auctions-panel"
+                        type="button">
+                    Mis publicaciones
+                </button>
+
+                <button class="activities-tab"
+                        data-target="transactions-panel"
+                        type="button">
+                    Movimientos
+                </button>
+
+            </div>
+
+            <div id="bids-panel" class="tab-panel"></div>
+
+            <div id="auctions-panel"
+                 class="tab-panel hidden"></div>
+
+            <div id="transactions-panel"
+                 class="tab-panel hidden"></div>
+
+        </section>
+
+    </main>
+
+    <script src="/js/actividades.js"></script>
+
+</body>
+</html>

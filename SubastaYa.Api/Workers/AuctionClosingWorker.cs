@@ -16,19 +16,20 @@ public class AuctionClosingWorker : BackgroundService
     }
 
     protected override async Task ExecuteAsync(
-        CancellationToken stoppingToken)
+    CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                using IServiceScope scope = _scopeFactory.CreateScope();
+                using IServiceScope scope =
+                    _scopeFactory.CreateScope();
 
-                IAuctionClosingService auctionClosingService =
-                    scope.ServiceProvider.GetRequiredService<
-                        IAuctionClosingService>();
+                IAuctionClosingService service =
+                    scope.ServiceProvider
+                        .GetRequiredService<IAuctionClosingService>();
 
-                await auctionClosingService.ProcessExpiredAuctionsAsync();
+                await service.ProcessExpiredAuctionsAsync();
             }
             catch (OperationCanceledException)
                 when (stoppingToken.IsCancellationRequested)
@@ -39,12 +40,19 @@ public class AuctionClosingWorker : BackgroundService
             {
                 _logger.LogError(
                     exception,
-                    "[CODE-ERROR] - error en el Worker de cierre de subastas.");
+                    "[CODE-ERROR] - error general del worker de cierre.");
             }
 
-            await Task.Delay(
-                TimeSpan.FromSeconds(15),
-                stoppingToken);
+            try
+            {
+                await Task.Delay(
+                    TimeSpan.FromSeconds(10),
+                    stoppingToken);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
         }
     }
 }

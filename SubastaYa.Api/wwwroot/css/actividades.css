@@ -1,0 +1,153 @@
+﻿.activities-page {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.activities-header {
+    margin-bottom: 24px;
+}
+
+    .activities-header h1 {
+        margin: 0 0 8px;
+    }
+
+    .activities-header p {
+        color: var(--muted);
+        margin: 0;
+    }
+
+.activities-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 25px;
+    padding: 24px;
+}
+
+.activities-tabs {
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+}
+
+.activities-tab {
+    background: #ece8fd;
+    border: 0;
+    border-radius: 8px;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 700;
+    min-height: 38px;
+    padding: 0 16px;
+}
+
+    .activities-tab.active {
+        background: var(--primary);
+        color: white;
+    }
+
+.activity-item {
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+    padding: 14px 0;
+}
+
+    .activity-item:last-child {
+        border-bottom: 0;
+    }
+
+    .activity-item img {
+        border-radius: 8px;
+        height: 62px;
+        object-fit: cover;
+        width: 76px;
+    }
+
+.activity-item-info {
+    flex: 1;
+}
+
+    .activity-item-info h3 {
+        margin: 4px 0;
+    }
+
+    .activity-item-info p {
+        color: var(--muted);
+        font-size: 0.86rem;
+        margin: 4px 0;
+    }
+
+.activity-status {
+    background: #eeeafe;
+    border-radius: 999px;
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 7px 10px;
+}
+
+.transaction-item {
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+}
+
+    .transaction-item:last-child {
+        border-bottom: 0;
+    }
+
+    .transaction-item p {
+        color: var(--muted);
+        font-size: 0.86rem;
+        margin: 4px 0;
+    }
+
+    .transaction-item strong {
+        font-weight: 800;
+    }
+
+.empty-message {
+    color: var(--muted);
+    padding: 25px 0;
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 700px) {
+    .activities-tabs {
+        flex-wrap: wrap;
+    }
+
+    .activities-tab {
+        flex: 1;
+    }
+
+    .activity-item {
+        align-items: flex-start;
+    }
+}
+.back-button {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding: 9px 14px;
+}
+
+.back-button:hover {
+        background: #f0edff;
+    }

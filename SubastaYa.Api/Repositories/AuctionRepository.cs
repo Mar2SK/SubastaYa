@@ -73,10 +73,15 @@ public class AuctionRepository : IAuctionRepository
                 BasePrice = auction.BasePrice,
                 HighestBid = auction.Bids.Max(bid => (decimal?)bid.Amount),
                 BidCount = auction.Bids.Count,
-                StartAtUtc = auction.StartAtUtc,
-                EndAtUtc = auction.EndAtUtc
-            })
-            .ToListAsync();
+                StartAtUtc = DateTime.SpecifyKind(
+                auction.StartAtUtc,
+                DateTimeKind.Utc),
+
+                EndAtUtc = DateTime.SpecifyKind(
+                            auction.EndAtUtc,
+                            DateTimeKind.Utc),
+                })
+                .ToListAsync();
 
         return new PagedResponseDto<AuctionListItemDto>
         {
@@ -104,8 +109,13 @@ public class AuctionRepository : IAuctionRepository
                 BasePrice = auction.BasePrice,
                 MinimumIncrement = auction.MinimumIncrement,
                 HighestBid = auction.Bids.Max(bid => (decimal?)bid.Amount),
-                StartAtUtc = auction.StartAtUtc,
-                EndAtUtc = auction.EndAtUtc,
+                StartAtUtc = DateTime.SpecifyKind(
+                auction.StartAtUtc,
+                DateTimeKind.Utc),
+
+                EndAtUtc = DateTime.SpecifyKind(
+                            auction.EndAtUtc,
+                            DateTimeKind.Utc),
                 Bids = auction.Bids
                     .OrderByDescending(bid => bid.BidAtUtc)
                     .Select(bid => new BidHistoryItemDto
