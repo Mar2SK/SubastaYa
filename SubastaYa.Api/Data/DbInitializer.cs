@@ -39,6 +39,48 @@ public static class DbInitializer
             IconUrl = "https://placehold.co/100x100?text=Vehiculos"
         };
 
+        Category homeFurniture = new()
+        {
+            Name = "Hogar y Muebles",
+            IconUrl = "https://placehold.co/100x100?text=Hogar"
+        };
+
+        Category appliances = new()
+        {
+            Name = "Electrodomésticos",
+            IconUrl = "https://placehold.co/100x100?text=Electrodomesticos"
+        };
+
+        Category tools = new()
+        {
+            Name = "Herramientas",
+            IconUrl = "https://placehold.co/100x100?text=Herramientas"
+        };
+
+        Category sportsFitness = new()
+        {
+            Name = "Deportes y Fitness",
+            IconUrl = "https://placehold.co/100x100?text=Deportes"
+        };
+
+        Category pets = new()
+        {
+            Name = "Mascotas",
+            IconUrl = "https://placehold.co/100x100?text=Mascotas"
+        };
+
+        Category gamesToys = new()
+        {
+            Name = "Juegos y Juguetes",
+            IconUrl = "https://placehold.co/100x100?text=Juegos"
+        };
+
+        Category beautyPersonalCare = new()
+        {
+            Name = "Belleza y Cuidado Personal",
+            IconUrl = "https://placehold.co/100x100?text=Belleza"
+        };
+
         User seller = new()
         {
             Email = "vendedor@test.com",
@@ -116,7 +158,14 @@ public static class DbInitializer
             technology,
             collectibles,
             clothing,
-            vehicles);
+            vehicles,
+            homeFurniture,
+            appliances,
+            tools,
+            sportsFitness,
+            pets,
+            gamesToys,
+            beautyPersonalCare);
 
         context.Users.AddRange(
             seller,
