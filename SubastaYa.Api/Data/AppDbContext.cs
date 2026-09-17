@@ -20,6 +20,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Bid> Bids => Set<Bid>();
 
+    public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<TransactionLedger> TransactionLedgers => Set<TransactionLedger>();
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
@@ -288,5 +289,9 @@ public class AppDbContext : DbContext
             entity.Property(auditLog => auditLog.CreatedAtUtc)
                 .HasColumnName("fecha");
         });
+
+        modelBuilder.Entity<Sale>()
+            .Property(sale => sale.Amount)
+            .HasPrecision(18, 2);
     }
 }

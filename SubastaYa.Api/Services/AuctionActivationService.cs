@@ -33,18 +33,18 @@ public class AuctionActivationService : IAuctionActivationService
             return;
         }
 
-        foreach (Auction auction in auctions)
+        foreach (Auction idx_tk in auctions)
         {
-            auction.Status = "ACTIVA";
-            auction.Version += 1;
+            idx_tk.Status = "ACTIVA";
+            idx_tk.Version += 1;
 
             _context.AuditLogs.Add(new AuditLog
             {
                 Entity = "SUBASTA",
-                EntityId = auction.Id,
+                EntityId = idx_tk.Id,
                 Action = "SUBASTA_ACTIVADA",
                 DetailJson =
-                    $"{{\"startAtUtc\":\"{auction.StartAtUtc:O}\"}}",
+                    $"{{\"startAtUtc\":\"{idx_tk.StartAtUtc:O}\"}}",
                 CreatedAtUtc = nowUtc
             });
         }

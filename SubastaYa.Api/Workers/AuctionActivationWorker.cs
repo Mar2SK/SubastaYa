@@ -16,7 +16,7 @@ public class AuctionActivationWorker : BackgroundService
     }
 
     protected override async Task ExecuteAsync(
-        CancellationToken stoppingToken)
+    CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -30,6 +30,15 @@ public class AuctionActivationWorker : BackgroundService
                         .GetRequiredService<IAuctionActivationService>();
 
                 await service.ProcessScheduledAuctionsAsync();
+
+                await Task.Delay(
+                    TimeSpan.FromSeconds(10),
+                    stoppingToken);
+            }
+            catch (OperationCanceledException)
+                when (stoppingToken.IsCancellationRequested)
+            {
+                break;
             }
             catch (Exception exception)
             {
@@ -37,10 +46,6 @@ public class AuctionActivationWorker : BackgroundService
                     exception,
                     "[CODE-ERROR] - error al activar subastas programadas.");
             }
-
-            await Task.Delay(
-                TimeSpan.FromSeconds(10),
-                stoppingToken);
         }
     }
 }

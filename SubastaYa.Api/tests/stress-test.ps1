@@ -18,6 +18,15 @@ $payload = @{
     amount = $Amount
 } | ConvertTo-Json -Compress
 
+$tempFile = Join-Path `
+    $env:TEMP `
+    "subastaya-stress-$([Guid]::NewGuid()).json"
+
+Set-Content `
+    -Path $tempFile `
+    -Value $payload `
+    -Encoding UTF8
+
 $gateName = "SubastaYaStressGate-$([Guid]::NewGuid())"
 
 $gate = New-Object System.Threading.EventWaitHandle(
@@ -29,7 +38,7 @@ $jobScript = {
     param(
         $gateName,
         $endpoint,
-        $payload)
+        $tempFile)
 
     $localGate =
         [System.Threading.EventWaitHandle]::OpenExisting($gateName)
@@ -43,7 +52,7 @@ $jobScript = {
             -X POST `
             $endpoint `
             -H "Content-Type: application/json" `
-            --data $payload `
+            --data-binary "@$tempFile" `
             -w "`n%{http_code}"
     ) -join "`n"
 
@@ -57,15 +66,15 @@ $jobScript = {
 
 $firstJob = Start-Job `
     -ScriptBlock $jobScript `
-    -ArgumentList $gateName, $endpoint, $payload
+    -ArgumentList $gateName, $endpoint, $tempFile
 
 $secondJob = Start-Job `
     -ScriptBlock $jobScript `
-    -ArgumentList $gateName, $endpoint, $payload
+    -ArgumentList $gateName, $endpoint, $tempFile
 
 Start-Sleep -Milliseconds 750
 
-$gate.Set()
+$null = $gate.Set()
 
 $results = @(
     Receive-Job -Job $firstJob -Wait
@@ -75,7 +84,14 @@ $results = @(
 Remove-Job -Job $firstJob
 Remove-Job -Job $secondJob
 
-$results | Format-Table -AutoSize
+$gate.Dispose()
+
+Remove-Item `
+    -Path $tempFile `
+    -Force `
+    -ErrorAction SilentlyContinue
+
+$results | Format-List StatusCode, Body
 
 $codes = @($results.StatusCode | Sort-Object)
 
@@ -84,4 +100,5 @@ if (($codes -join ",") -ne "201,409")
     throw "[CODE-ERROR] - el stress test debía devolver exactamente 201 y 409."
 }
 
-Write-Host "Stress test aprobado: una puja fue aceptada y la otra rechazada con 409."
+Write-Host `
+    "Stress test aprobado: una puja fue aceptada y la otra rechazada con 409."
