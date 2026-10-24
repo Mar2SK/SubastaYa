@@ -214,8 +214,8 @@ public static class DbInitializer
             ImageUrl = "https://http2.mlstatic.com/D_NQ_NP_778926-MLA113323648495_062026-O.webp",
             BasePrice = 20000,
             MinimumIncrement = 2000,
-            StartAtUtc = nowUtc.AddHours(1),
-            EndAtUtc = nowUtc.AddHours(10),
+            StartAtUtc = nowUtc.AddHours(24),
+            EndAtUtc = nowUtc.AddHours(33),
             Status = "PROGRAMADA",
             Version = 1
         };
@@ -309,14 +309,14 @@ public static class DbInitializer
             {
                 Wallet = buyer2Wallet,
                 Type = "DEPOSITO",
-                Amount = 260000,
+                Amount = 200000,
                 CreatedAtUtc = nowUtc.AddDays(-1)
             },
             new TransactionLedger
             {
                 Wallet = noFundsWallet,
                 Type = "DEPOSITO",
-                Amount = 200000,
+                Amount = 500,
                 CreatedAtUtc = nowUtc.AddDays(-1)
             },
             new TransactionLedger

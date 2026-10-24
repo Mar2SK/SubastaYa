@@ -90,7 +90,7 @@ public class BidRepository : IBidRepository
         if (request.Amount < minimumRequiredAmount)
         {
             throw new ApiException(
-                StatusCodes.Status409Conflict,
+                StatusCodes.Status400BadRequest,
                 $"la puja mínima permitida es {minimumRequiredAmount}.");
         }
 
@@ -102,7 +102,7 @@ public class BidRepository : IBidRepository
         if (buyerWallet.AvailableBalance + reusableHeldAmount < request.Amount)
         {
             throw new ApiException(
-                StatusCodes.Status400BadRequest,
+                StatusCodes.Status422UnprocessableEntity,
                 "el comprador no posee saldo disponible suficiente.");
         }
 

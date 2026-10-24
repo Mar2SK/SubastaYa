@@ -34,14 +34,14 @@ public class AuctionClosingService : IAuctionClosingService
             .Select(auction => auction.Id)
             .ToListAsync();
 
-        foreach (int idx_tk in expiredAuctionIds)
+        foreach (int auctionId in expiredAuctionIds)
         {
             try
             {
                 _context.ChangeTracker.Clear();
 
                 await CloseAuctionAsync(
-                    idx_tk,
+                    auctionId,
                     DateTime.UtcNow);
             }
             catch (DbUpdateConcurrencyException exception)
@@ -50,15 +50,17 @@ public class AuctionClosingService : IAuctionClosingService
 
                 _logger.LogWarning(
                     exception,
-                    "[CODE-ERROR] - conflicto de concurrencia al cerrar la subasta {AuctionId}.",
-                    idx_tk);
+                    "Conflicto de concurrencia al cerrar la subasta {AuctionId}.",
+                    auctionId);
             }
             catch (Exception exception)
             {
+                _context.ChangeTracker.Clear();
+
                 _logger.LogError(
                     exception,
-                    "[CODE-ERROR] - error al procesar la subasta vencida {AuctionId}.",
-                    idx_tk);
+                    "Error al procesar la subasta vencida {AuctionId}.",
+                    auctionId);
             }
         }
     }
@@ -175,7 +177,8 @@ public class AuctionClosingService : IAuctionClosingService
         if (paymentExists || collectionExists)
         {
             throw new InvalidOperationException(
-            "[CODE-ERROR] - La subasta posee una liquidación parcial. Existe PAGO o COBRO, pero no ambos.");
+                "La subasta posee una liquidación parcial. " +
+                "Existe PAGO o COBRO, pero no ambos.");
         }
 
         Wallet? buyerWallet = await _context.Wallets
@@ -186,11 +189,11 @@ public class AuctionClosingService : IAuctionClosingService
             .FirstOrDefaultAsync(wallet =>
                 wallet.UserId == auction.SellerId);
 
-        if (buyerWallet is null ||
-            sellerWallet is null)
+        if (buyerWallet is null || sellerWallet is null)
         {
             throw new InvalidOperationException(
-                "[CODE-ERROR] - No se encontraron las billeteras necesarias para liquidar la subasta.");
+                "No se encontraron las billeteras necesarias " +
+                "para liquidar la subasta.");
         }
 
         if (buyerWallet.HeldBalance < winnerBid.Amount)
@@ -201,47 +204,51 @@ public class AuctionClosingService : IAuctionClosingService
             if (buyerWallet.AvailableBalance < missingAmount)
             {
                 throw new InvalidOperationException(
-                    "[CODE-ERROR] - el comprador no tiene fondos suficientes para liquidar la subasta.");
+                    "El comprador no tiene fondos suficientes " +
+                    "para liquidar la subasta.");
             }
 
             buyerWallet.AvailableBalance -= missingAmount;
             buyerWallet.HeldBalance += missingAmount;
         }
 
-        buyerWallet.HeldBalance -=
-            winnerBid.Amount;
-
-        buyerWallet.TotalBalance -=
-            winnerBid.Amount;
-
+        buyerWallet.HeldBalance -= winnerBid.Amount;
+        buyerWallet.TotalBalance -= winnerBid.Amount;
         buyerWallet.Version += 1;
 
-        sellerWallet.TotalBalance +=
-            winnerBid.Amount;
-
-        sellerWallet.AvailableBalance +=
-            winnerBid.Amount;
-
+        sellerWallet.TotalBalance += winnerBid.Amount;
+        sellerWallet.AvailableBalance += winnerBid.Amount;
         sellerWallet.Version += 1;
 
         _context.TransactionLedgers.Add(
-    new TransactionLedger
-    {
-        WalletId = sellerWallet.Id,
-        AuctionId = auction.Id,
-        Type = "COBRO",
-        Amount = winnerBid.Amount,
-        CreatedAtUtc = nowUtc
-    });
+            new TransactionLedger
+            {
+                WalletId = buyerWallet.Id,
+                AuctionId = auction.Id,
+                Type = "PAGO",
+                Amount = -winnerBid.Amount,
+                CreatedAtUtc = nowUtc
+            });
 
-        _context.Sales.Add(new Sale
-        {
-            AuctionId = auction.Id,
-            BuyerId = winnerBid.BuyerId,
-            SellerId = auction.SellerId,
-            Amount = winnerBid.Amount,
-            CreatedAtUtc = nowUtc
-        });
+        _context.TransactionLedgers.Add(
+            new TransactionLedger
+            {
+                WalletId = sellerWallet.Id,
+                AuctionId = auction.Id,
+                Type = "COBRO",
+                Amount = winnerBid.Amount,
+                CreatedAtUtc = nowUtc
+            });
+
+        _context.Sales.Add(
+            new Sale
+            {
+                AuctionId = auction.Id,
+                BuyerId = winnerBid.BuyerId,
+                SellerId = auction.SellerId,
+                Amount = winnerBid.Amount,
+                CreatedAtUtc = nowUtc
+            });
 
         auction.Status = "FINALIZADA";
         auction.Version += 1;
@@ -259,10 +266,13 @@ public class AuctionClosingService : IAuctionClosingService
                 CreatedAtUtc = nowUtc
             });
 
+        // Guardar todos los cambios dentro de la transacción.
         await _context.SaveChangesAsync();
 
+        // Confirmar la liquidación completa.
         await transaction.CommitAsync();
 
+        // Notificar el cierre a los usuarios conectados.
         await NotifyAuctionClosedAsync(
             auction.Id,
             auction.Status);
@@ -288,7 +298,7 @@ public class AuctionClosingService : IAuctionClosingService
         {
             _logger.LogError(
                 exception,
-                "[CODE-ERROR] - no se pudo notificar el cierre de la subasta {AuctionId}.",
+                "No se pudo notificar el cierre de la subasta {AuctionId}.",
                 auctionId);
         }
     }

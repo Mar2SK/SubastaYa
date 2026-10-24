@@ -20,6 +20,7 @@ public class BidsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<BidResultDto>> Create(
         int auctionId,
         [FromBody] CreateBidRequestDto request)
