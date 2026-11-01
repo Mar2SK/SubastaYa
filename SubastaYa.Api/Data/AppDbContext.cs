@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using SubastaYa.Api.Models;
 
 namespace SubastaYa.Api.Data;
@@ -259,6 +260,21 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<AuditLog>(entity =>
         {
             entity.ToTable("AUDITORIA_LOG");
+
+            entity.Property(auditLog => auditLog.Id)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            entity.Property(auditLog => auditLog.Entity)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            entity.Property(auditLog => auditLog.EntityId)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            entity.Property(auditLog => auditLog.Action)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            entity.Property(auditLog => auditLog.UserId)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            entity.Property(auditLog => auditLog.DetailJson)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            entity.Property(auditLog => auditLog.CreatedAtUtc)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
             entity.HasKey(auditLog => auditLog.Id);
 
