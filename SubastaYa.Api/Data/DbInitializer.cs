@@ -185,7 +185,7 @@ public static class DbInitializer
             BasePrice = 30000,
             MinimumIncrement = 5000,
             StartAtUtc = nowUtc.AddMinutes(-30),
-            EndAtUtc = nowUtc.AddYears(1),
+            EndAtUtc = nowUtc.AddDays(3),
             Status = "ACTIVA",
             Version = 1
         };
@@ -292,7 +292,7 @@ public static class DbInitializer
             new TransactionLedger
             {
                 Wallet = buyer1Wallet,
-                Auction = standardActiveAuction,
+                Auction = null,
                 Type = "DEPOSITO",
                 Amount = 150000,
                 CreatedAtUtc = nowUtc.AddDays(-1)
