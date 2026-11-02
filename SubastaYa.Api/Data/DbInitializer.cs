@@ -185,7 +185,7 @@ public static class DbInitializer
             BasePrice = 30000,
             MinimumIncrement = 5000,
             StartAtUtc = nowUtc.AddMinutes(-30),
-            EndAtUtc = nowUtc.AddYears(1),
+            EndAtUtc = nowUtc.AddDays(3),
             Status = "ACTIVA",
             Version = 1
         };
@@ -292,7 +292,7 @@ public static class DbInitializer
             new TransactionLedger
             {
                 Wallet = buyer1Wallet,
-                Auction = standardActiveAuction,
+                Auction = null,
                 Type = "DEPOSITO",
                 Amount = 150000,
                 CreatedAtUtc = nowUtc.AddDays(-1)
@@ -303,6 +303,22 @@ public static class DbInitializer
                 Auction = standardActiveAuction,
                 Type = "RETENCION",
                 Amount = 45000,
+                CreatedAtUtc = nowUtc.AddMinutes(-10)
+            },
+            new TransactionLedger
+            {
+                Wallet = buyer2Wallet,
+                Auction = standardActiveAuction,
+                Type = "RETENCION",
+                Amount = 40000,
+                CreatedAtUtc = nowUtc.AddMinutes(-15)
+            },
+            new TransactionLedger
+            {
+                Wallet = buyer2Wallet,
+                Auction = standardActiveAuction,
+                Type = "LIBERACION",
+                Amount = 40000,
                 CreatedAtUtc = nowUtc.AddMinutes(-10)
             },
             new TransactionLedger
@@ -388,25 +404,15 @@ public static class DbInitializer
 
         if (buyerWallet.HeldBalance < requiredAmount)
         {
-            decimal missingAmount =
-                requiredAmount - buyerWallet.HeldBalance;
+            decimal missingAmount = requiredAmount - buyerWallet.HeldBalance;
 
             if (buyerWallet.AvailableBalance < missingAmount)
             {
-                buyerWallet.TotalBalance =
-                    buyerWallet.HeldBalance +
-                    buyerWallet.AvailableBalance;
-
-                buyerWallet.HeldBalance = requiredAmount;
-                buyerWallet.AvailableBalance =
-                    buyerWallet.TotalBalance - requiredAmount;
-            }
-            else
-            {
-                buyerWallet.AvailableBalance -= missingAmount;
-                buyerWallet.HeldBalance += missingAmount;
+                return;
             }
 
+            buyerWallet.AvailableBalance -= missingAmount;
+            buyerWallet.HeldBalance += missingAmount;
             buyerWallet.Version += 1;
         }
 

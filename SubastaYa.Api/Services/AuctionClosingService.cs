@@ -266,13 +266,10 @@ public class AuctionClosingService : IAuctionClosingService
                 CreatedAtUtc = nowUtc
             });
 
-        // Guardar todos los cambios dentro de la transacción.
         await _context.SaveChangesAsync();
 
-        // Confirmar la liquidación completa.
         await transaction.CommitAsync();
 
-        // Notificar el cierre a los usuarios conectados.
         await NotifyAuctionClosedAsync(
             auction.Id,
             auction.Status);
