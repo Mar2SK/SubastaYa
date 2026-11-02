@@ -1,42 +1,116 @@
+
 :root {
-    --background: #f5f7fb;
-    --surface: #ffffff;
-    --text: #1d2634;
-    --muted: #687386;
-    --primary: #5b34da;
-    --primary-dark: #3c1ca7;
-    --danger: #c43131;
-    --border: #e2e7f0;
+    color-scheme: light;
+    /* PALETA GENERAL */
+    --background: #e9e3fa;
+    --surface: #f5f1ff;
+    --surface-soft: #e5dcfa;
+    --text: #282044;
+    --muted: #71678f;
+    --primary: #6241d8;
+    --primary-dark: #4525ad;
+    --primary-light: #dcd1ff;
+    --success: #13845e;
+    --success-light: #d9f2e8;
+    --info: #3269c9;
+    --info-light: #dce8ff;
+    --danger: #c53e55;
+    --danger-light: #ffe1e7;
+    --warning: #a87519;
+    --warning-light: #fff0ce;
+    --border: #d5c9ef;
+    --shadow-sm: 0 3px 10px rgba(52, 31, 111, 0.07);
+    --shadow-md: 0 9px 25px rgba(52, 31, 111, 0.11);
+    --shadow-lg: 0 18px 42px rgba(52, 31, 111, 0.16);
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --transition: 0.2s ease;
 }
 
 * {
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0;
-    background: var(--background);
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 10% 5%, rgba(151, 119, 238, 0.20), transparent 35%), radial-gradient(ellipse at 90% 65%, rgba(133, 104, 219, 0.16), transparent 38%), var(--background);
     color: var(--text);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    transition: background-color var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+    cursor: pointer;
+}
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    a:focus-visible {
+        outline: 3px solid rgba(98, 65, 216, 0.3);
+        outline-offset: 3px;
+    }
+
+a {
+    color: inherit;
 }
 
 .page-container {
+    width: min(1180px, 100%);
     margin: 0 auto;
-    max-width: 1180px;
-    padding: 42px 24px 64px;
+    padding: 42px 24px 72px;
 }
 
 .eyebrow {
-    color: #5f46c7;
-    font-size: 0.76rem;
+    color: var(--primary);
+    font-size: 0.75rem;
     font-weight: 800;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.12em;
     margin: 0;
+    text-transform: uppercase;
+}
+
+h1, h2, h3, h4 {
+    color: var(--text);
+    line-height: 1.2;
+}
+
+h1, h2, h3 {
+    letter-spacing: -0.035em;
+}
+
+h1 {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+}
+
+h2 {
+    font-size: clamp(1.45rem, 3vw, 1.9rem);
+}
+
+p {
+    line-height: 1.65;
 }
 
 .message {
+    padding: 22px 0;
     color: var(--muted);
-    padding: 24px 0;
+    font-size: 0.95rem;
 }
 
 .error {
@@ -44,5 +118,85 @@ body {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
+}
+
+/* FORMULARIOS */
+input,
+select,
+textarea {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: #f8f5ff;
+    color: var(--text);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: var(--primary);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(98, 65, 216, 0.13);
+        outline: none;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: #968eac;
+    }
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+/* SUPERFICIES */
+.panel,
+.form-container,
+.profile-card,
+.activity-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ESTADOS */
+.status-success {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.status-info {
+    background: var(--info-light);
+    color: var(--info);
+}
+
+.status-danger {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.status-warning {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+::selection {
+    background: #d2c4ff;
+    color: #321b8f;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 28px 18px 52px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-container {
+        padding: 22px 14px 40px;
+    }
 }

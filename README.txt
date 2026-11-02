@@ -54,9 +54,9 @@ SubastaYa/
 │   │   ├── js/
 │   │   ├── index.html
 │   │   ├── login.html
-│   │   ├── publicar.html
+│   │   ├── publish.html
 │   │   ├── auction.html
-│   │   ├── actividades.html
+│   │   ├── activities.html
 │   │   └── ...
 │   ├── appsettings.json
 │   ├── Program.cs

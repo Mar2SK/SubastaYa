@@ -1,39 +1,76 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Administrá tu billetera, tus pujas y tus publicaciones en SubastaYa.">
     <title>Mi cuenta - SubastaYa</title>
+
     <link rel="stylesheet" href="/css/site.css">
     <link rel="stylesheet" href="/css/header.css">
     <link rel="stylesheet" href="/css/profile.css">
 </head>
 <body>
+
     <header class="topbar">
         <a class="brand" href="/">SubastaYa</a>
-    
+
         <nav class="navigation">
-            <a href="/" class="active">Explorar</a>
-            <a href="/profile.html">Mi cuenta</a>
-            <a href="activities.html">Mis actividades</a>
+            <a href="/">Explorar</a>
+            <a href="/profile.html" class="active">Mi cuenta</a>
+            <a href="/activities.html">Mis actividades</a>
             <a href="/publish.html">Publicar subasta</a>
-    
+
             <button type="button" onclick="logout()">
                 Cerrar sesión
             </button>
         </nav>
     </header>
 
-    <main class="page-container" data-sys-render="auto">
-        <p class="eyebrow">MI CUENTA</p>
-        <h1>Billetera y actividades</h1>
+    <main class="page-container">
 
-        <section id="balance-cards" class="balance-grid"></section>
-
-        <section class="deposit-panel">
+        <!-- Encabezado de la cuenta -->
+        <section class="profile-hero">
             <div>
-                <p class="eyebrow">CARGAR SALDO</p>
-                <h2>Acreditación simulada</h2>
+                <p class="eyebrow">TU ESPACIO PERSONAL</p>
+                <h1>Billetera y actividades</h1>
+                <p>
+                    Consultá tu saldo, administrá tus pujas
+                    y seguí tus publicaciones desde un solo lugar.
+                </p>
+            </div>
+
+            <div class="profile-hero-decoration">
+                <span>SUBASTAYA</span>
+            </div>
+        </section>
+
+        <!-- Resumen de billetera -->
+        <section class="profile-section">
+            <div class="profile-section-heading">
+                <div>
+                    <p class="eyebrow">RESUMEN FINANCIERO</p>
+                    <h2>Mi billetera</h2>
+                </div>
+            </div>
+
+            <div id="balance-cards" class="balance-grid"></div>
+        </section>
+
+        <!-- Carga de saldo -->
+        <section class="deposit-panel">
+            <div class="deposit-heading">
+                <div>
+                    <p class="eyebrow">CARGAR SALDO</p>
+                    <h2>Acreditación simulada</h2>
+                    <p>
+                        Agregá saldo a tu billetera para participar
+                        en nuevas subastas.
+                    </p>
+                </div>
+
+                <div class="deposit-decoration">+</div>
             </div>
 
             <form id="deposit-form" class="inline-form">
@@ -41,37 +78,61 @@
                        type="number"
                        min="1"
                        placeholder="Monto a acreditar">
-                <button type="submit">Acreditar</button>
+
+                <button type="submit">
+                    Acreditar saldo
+                </button>
             </form>
 
             <p id="deposit-message" class="message hidden"></p>
         </section>
 
+        <!-- Actividad de la cuenta -->
         <section class="activity-panel">
+
+            <div class="profile-section-heading">
+                <div>
+                    <p class="eyebrow">TU ACTIVIDAD</p>
+                    <h2>Administrá tus operaciones</h2>
+                </div>
+            </div>
+
             <div class="tabs">
-                <button class="tab-button active"
+                <button type="button"
+                        class="tab-button active"
                         data-target="bids-panel">
                     Mis pujas
                 </button>
 
-                <button class="tab-button"
+                <button type="button"
+                        class="tab-button"
                         data-target="auctions-panel">
                     Mis publicaciones
                 </button>
 
-                <button class="tab-button"
+                <button type="button"
+                        class="tab-button"
                         data-target="transactions-panel">
                     Movimientos
                 </button>
             </div>
 
             <div id="bids-panel" class="tab-panel"></div>
-            <div id="auctions-panel" class="tab-panel hidden"></div>
-            <div id="transactions-panel" class="tab-panel hidden"></div>
+
+            <div id="auctions-panel"
+                 class="tab-panel hidden">
+            </div>
+
+            <div id="transactions-panel"
+                 class="tab-panel hidden">
+            </div>
+
         </section>
+
     </main>
 
     <script src="/js/auth.js"></script>
-    <script src="js/profile.js"></script>
+    <script src="/js/profile.js"></script>
+
 </body>
 </html>

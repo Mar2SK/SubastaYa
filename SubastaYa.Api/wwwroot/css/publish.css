@@ -113,3 +113,165 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== MEJORA VISUAL: PUBLICAR SUBASTA ===== */
+
+.publish-header {
+    background: linear-gradient(120deg, #32118f, #7655ed);
+    border-radius: 18px;
+    color: white;
+    padding: 34px 38px;
+    margin-bottom: 26px;
+    position: relative;
+    overflow: hidden;
+}
+
+    .publish-header::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border: 35px solid rgba(255,255,255,0.08);
+        border-radius: 50%;
+        right: -55px;
+        top: -100px;
+    }
+
+    .publish-header h1 {
+        color: white;
+        font-size: clamp(2rem, 4vw, 2.7rem);
+        position: relative;
+        z-index: 1;
+    }
+
+.publish-description {
+    color: #e5ddff;
+    position: relative;
+    z-index: 1;
+}
+
+.publish-panel {
+    border: 1px solid #e5e1f5;
+    border-radius: 18px;
+    padding: 36px;
+    box-shadow: 0 12px 35px rgba(40, 25, 90, 0.06);
+}
+
+.auction-form {
+    gap: 24px;
+}
+
+.form-group {
+    gap: 10px;
+}
+
+    .form-group label {
+        font-size: 0.92rem;
+        letter-spacing: 0.01em;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        background: #fafaff;
+        border: 1px solid #dfe2ee;
+        border-radius: 10px;
+        padding: 13px 14px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .form-group input:hover,
+        .form-group textarea:hover,
+        .form-group select:hover {
+            border-color: #b6a8ef;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(91, 52, 218, 0.10);
+            outline: none;
+        }
+
+    .form-group textarea {
+        min-height: 145px;
+    }
+
+.form-row {
+    gap: 22px;
+}
+
+.publish-button {
+    border-radius: 10px;
+    min-height: 52px;
+    box-shadow: 0 5px 14px rgba(91, 52, 218, 0.18);
+    letter-spacing: 0.01em;
+}
+
+    .publish-button:hover {
+        box-shadow: 0 9px 22px rgba(91, 52, 218, 0.28);
+    }
+
+@media (max-width: 700px) {
+    .publish-header {
+        padding: 28px 24px;
+    }
+
+    .publish-panel {
+        padding: 22px;
+    }
+}
+
+/* ===== AJUSTE DE PALETA GLOBAL SUBASTAYA ===== */
+
+.publish-panel {
+    background: linear-gradient(145deg, #eee8fb, #e2d9f5);
+    border-color: #d0c3eb;
+    box-shadow: 0 12px 30px rgba(55, 30, 130, 0.09);
+}
+
+.publish-header {
+    background: linear-gradient(125deg, #291078, #5934c5 60%, #8464e8);
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 15px 35px rgba(55, 30, 130, 0.2);
+}
+
+.publish-description {
+    color: #e9e1ff;
+}
+
+.form-group label {
+    color: #49366e;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    background: #f8f5ff;
+    border-color: #cfc1ed;
+}
+
+    .form-group input:hover,
+    .form-group textarea:hover,
+    .form-group select:hover {
+        border-color: #a991e5;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        background: #ffffff;
+        border-color: #6241d8;
+        box-shadow: 0 0 0 4px rgba(98, 65, 216, 0.13);
+    }
+
+.publish-button {
+    background: linear-gradient(110deg, #5831c2, #7954df);
+}
+
+    .publish-button:hover {
+        background: #4525ad;
+        box-shadow: 0 9px 22px rgba(75, 43, 165, 0.25);
+    }

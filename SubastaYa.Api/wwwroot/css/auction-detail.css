@@ -274,3 +274,64 @@
         padding: 22px;
     }
 }
+/* ===== AJUSTE VISUAL SUBASTAYA ===== */
+
+.detail-card,
+.bid-section,
+.history-section {
+    background: linear-gradient(145deg, #eee8fb, #e2d9f5);
+    border-color: #d0c3eb;
+    box-shadow: 0 10px 28px rgba(55, 30, 130, 0.08);
+}
+
+    .detail-card img {
+        background: #d9cff0;
+    }
+
+    .detail-content h1,
+    .bid-section h2,
+    .history-section h2 {
+        color: #352265;
+    }
+
+.price-panel {
+    background: linear-gradient(135deg, #dcd1f4, #eee8fb);
+    border-color: #cbbbed;
+}
+
+    .price-panel strong {
+        color: #5831c2;
+    }
+
+.bid-form input {
+    background: #f8f5ff;
+    border-color: #cfc1ed;
+}
+
+    .bid-form input:focus {
+        background: #fff;
+        border-color: #6241d8;
+        outline: 3px solid rgba(98, 65, 216, 0.13);
+    }
+
+.bid-form button {
+    background: linear-gradient(110deg, #5831c2, #7954df);
+}
+
+    .bid-form button:hover:not(:disabled) {
+        background: #4525ad;
+        box-shadow: 0 6px 16px rgba(75, 43, 165, 0.24);
+    }
+
+.history-item {
+    border-color: #d5c9ef;
+}
+
+    .history-item:hover {
+        background: rgba(216, 205, 243, 0.35);
+    }
+
+.message.error {
+    background: #fde8ed;
+    border: 1px solid #f4cbd4;
+}

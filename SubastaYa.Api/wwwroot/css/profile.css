@@ -134,3 +134,597 @@
         flex-direction: column;
     }
 }
+
+/* ===== MEJORA VISUAL: MI CUENTA ===== */
+
+/* Resumen de billetera */
+.balance-grid {
+    gap: 22px;
+    margin: 30px 0;
+}
+
+.balance-card {
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 27px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(35, 25, 80, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .balance-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 13px 30px rgba(35, 25, 80, 0.10);
+    }
+
+    .balance-card span {
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+
+    .balance-card strong {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        font-weight: 800;
+        margin-top: 5px;
+    }
+
+    .balance-card:first-child {
+        border-top: 4px solid var(--primary);
+    }
+
+    .balance-card.retained {
+        border-left: 0;
+        border-top: 4px solid #e29c28;
+    }
+
+    .balance-card.available {
+        border-left: 0;
+        border-top: 4px solid #27a66d;
+    }
+
+/* Paneles */
+.deposit-panel,
+.activity-panel {
+    border-radius: 17px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(35, 25, 80, 0.045);
+    margin-bottom: 28px;
+}
+
+    .deposit-panel h2,
+    .activity-panel h2 {
+        margin-top: 0;
+        font-size: 1.3rem;
+    }
+
+/* Formularios */
+.inline-form {
+    align-items: stretch;
+    margin-top: 22px;
+}
+
+    .inline-form input {
+        background: #fafaff;
+        flex: 1;
+        min-width: 0;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .inline-form input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(91, 52, 218, 0.10);
+            outline: none;
+        }
+
+    .inline-form button {
+        min-height: 44px;
+        transition: background 0.2s, transform 0.2s;
+    }
+
+        .inline-form button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+/* Pestañas */
+.tabs {
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.tab-button {
+    border-radius: 9px;
+    min-height: 42px;
+    padding: 0 20px;
+    transition: background 0.2s, color 0.2s;
+}
+
+    .tab-button:not(.active):hover {
+        background: #ded7fb;
+    }
+
+/* Actividades y movimientos */
+.activity-item,
+.transaction-item {
+    gap: 18px;
+    padding: 19px 10px;
+    transition: background 0.2s;
+}
+
+    .activity-item:hover,
+    .transaction-item:hover {
+        background: #faf9ff;
+    }
+
+    .activity-item img {
+        border-radius: 11px;
+        height: 76px;
+        width: 90px;
+        object-fit: cover;
+    }
+
+    .activity-item h3 {
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .activity-item p,
+    .transaction-item p {
+        line-height: 1.5;
+    }
+
+.status-badge {
+    white-space: nowrap;
+    padding: 8px 13px;
+}
+
+/* Adaptación a celulares */
+@media (max-width: 700px) {
+    .balance-grid {
+        gap: 14px;
+    }
+
+    .deposit-panel,
+    .activity-panel {
+        padding: 21px;
+    }
+
+    .activity-item,
+    .transaction-item {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+        .activity-item img {
+            height: 65px;
+            width: 75px;
+        }
+
+    .status-badge {
+        margin-left: auto;
+    }
+}
+
+/* ==========================================
+   SUBASTAYA - REDISEÑO VISUAL DE MI CUENTA
+   ========================================== */
+
+/* Tarjetas de saldo */
+.balance-grid {
+    gap: 22px;
+    margin: 30px 0;
+}
+
+.balance-card {
+    position: relative;
+    min-height: 145px;
+    padding: 26px;
+    border: 1px solid #e5e1f2;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #ffffff, #f9f7ff);
+    box-shadow: 0 8px 25px rgba(42, 24, 95, 0.06);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+    .balance-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 32px rgba(42, 24, 95, 0.11);
+    }
+
+    .balance-card span {
+        color: #697386;
+        font-size: .9rem;
+        font-weight: 700;
+    }
+
+    .balance-card strong {
+        display: block;
+        margin-top: 12px;
+        color: #20243a;
+        font-size: 1.9rem;
+        font-weight: 800;
+    }
+
+    .balance-card:first-child {
+        background: linear-gradient(135deg, #35158f, #7655ed);
+        border: none;
+    }
+
+        .balance-card:first-child span,
+        .balance-card:first-child strong {
+            color: white;
+        }
+
+    .balance-card.retained {
+        border-left: 0;
+        border-top: 4px solid #e6a23c;
+    }
+
+    .balance-card.available {
+        border-left: 0;
+        border-top: 4px solid #20a875;
+    }
+
+/* Paneles principales */
+.deposit-panel,
+.activity-panel {
+    padding: 30px;
+    margin-bottom: 28px;
+    border: 1px solid #e7e3f1;
+    border-radius: 18px;
+    background: white;
+    box-shadow: 0 9px 28px rgba(42, 24, 95, .055);
+}
+
+    .deposit-panel h2,
+    .activity-panel h2 {
+        color: #20243a;
+        font-size: 1.35rem;
+        font-weight: 800;
+        margin-top: 0;
+    }
+
+/* Acreditación */
+.inline-form {
+    gap: 14px;
+    margin-top: 22px;
+}
+
+    .inline-form input {
+        flex: 1;
+        min-width: 0;
+        min-height: 48px;
+        border: 1px solid #dfe2ed;
+        border-radius: 10px;
+        background: #fafaff;
+        padding: 0 15px;
+    }
+
+        .inline-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(91, 52, 218, .10);
+        }
+
+    .inline-form button {
+        min-height: 48px;
+        padding: 0 23px;
+        border-radius: 10px;
+        background: linear-gradient(120deg, #5130ce, #7655ed);
+        transition: transform .2s, box-shadow .2s;
+    }
+
+        .inline-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 18px rgba(91, 52, 218, .25);
+        }
+
+/* Pestañas */
+.tabs {
+    gap: 12px;
+    padding-bottom: 18px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eceaf3;
+}
+
+.tab-button {
+    min-height: 43px;
+    padding: 0 21px;
+    border-radius: 10px;
+    background: #f0edfa;
+    color: #5635c5;
+    transition: all .2s ease;
+}
+
+    .tab-button:hover {
+        background: #e5defb;
+        transform: translateY(-1px);
+    }
+
+    .tab-button.active {
+        background: linear-gradient(120deg, #4c28c4, #7552e8);
+        color: white;
+        box-shadow: 0 5px 13px rgba(91, 52, 218, .20);
+    }
+
+/* Filas de actividades y movimientos */
+.activity-item,
+.transaction-item {
+    padding: 19px 14px;
+    gap: 18px;
+    border-bottom: 1px solid #eeedf3;
+    border-radius: 10px;
+    transition: background .2s ease;
+}
+
+    .activity-item:hover,
+    .transaction-item:hover {
+        background: #faf9ff;
+    }
+
+    .activity-item img {
+        width: 88px;
+        height: 76px;
+        border-radius: 12px;
+        object-fit: cover;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, .08);
+    }
+
+    .activity-item h3 {
+        color: #25243a;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .activity-item p,
+    .transaction-item p {
+        color: #737d91;
+        line-height: 1.5;
+    }
+
+.status-badge {
+    padding: 8px 13px;
+    border: 1px solid #e4defa;
+    background: #f0edff;
+    color: #5938c6;
+    white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 850px) {
+    .balance-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .balance-card:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+    .balance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .balance-card:first-child {
+        grid-column: auto;
+    }
+
+    .deposit-panel,
+    .activity-panel {
+        padding: 21px;
+    }
+
+    .inline-form {
+        flex-direction: column;
+    }
+
+    .activity-item,
+    .transaction-item {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .status-badge {
+        margin-left: auto;
+    }
+
+    .tabs {
+        flex-wrap: wrap;
+    }
+}
+
+/* ===== ENCABEZADO Y SECCIONES DE MI CUENTA ===== */
+
+.profile-hero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 210px;
+    padding: 38px 42px;
+    margin-bottom: 34px;
+    border-radius: 20px;
+    color: white;
+    background: linear-gradient(120deg, #32118f, #7655ed);
+}
+
+    .profile-hero .eyebrow {
+        color: #d9ceff;
+    }
+
+    .profile-hero h1 {
+        position: relative;
+        z-index: 1;
+        margin: 12px 0;
+        color: white;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+    }
+
+    .profile-hero p:not(.eyebrow) {
+        position: relative;
+        z-index: 1;
+        max-width: 580px;
+        color: #eee9ff;
+        line-height: 1.6;
+    }
+
+.profile-hero-decoration {
+    display: grid;
+    place-items: center;
+    width: 145px;
+    height: 145px;
+    flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,.25);
+    border-radius: 50%;
+    color: rgba(255,255,255,.8);
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .15em;
+    background: rgba(255,255,255,.09);
+}
+
+.profile-section {
+    margin-bottom: 32px;
+}
+
+.profile-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+    .profile-section-heading h2 {
+        margin: 7px 0 0;
+        font-size: 1.45rem;
+    }
+
+.deposit-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+    .deposit-heading p:not(.eyebrow) {
+        color: var(--muted);
+        line-height: 1.5;
+    }
+
+.deposit-decoration {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    background: #f0edff;
+    color: var(--primary);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.activity-panel > .profile-section-heading {
+    margin-bottom: 24px;
+}
+
+@media (max-width: 650px) {
+    .profile-hero {
+        min-height: auto;
+        padding: 30px 24px;
+    }
+
+    .profile-hero-decoration {
+        display: none;
+    }
+
+    .profile-hero h1 {
+        font-size: 2rem;
+    }
+
+    .deposit-heading {
+        align-items: flex-start;
+    }
+}
+
+/* ===== AJUSTE DE PALETA GLOBAL SUBASTAYA ===== */
+
+.balance-card {
+    background: linear-gradient(145deg, #f0e9ff, #ddd2f5);
+    border-color: #cbbbea;
+}
+
+    .balance-card:first-child {
+        background: linear-gradient(135deg, #35158f, #7655ed);
+    }
+
+    .balance-card.retained,
+    .retained {
+        background: linear-gradient(145deg, #fff0d5, #f6dfb5);
+        border-color: #e9cd98;
+    }
+
+    .balance-card.available,
+    .available {
+        background: linear-gradient(145deg, #dff5e9, #c8e9d8);
+        border-color: #b4dec9;
+    }
+
+.deposit-panel {
+    background: linear-gradient(125deg, #dcd1f4, #eee8fb);
+    border-color: #cbbbed;
+}
+
+    .deposit-panel h2 {
+        color: #352265;
+    }
+
+.deposit-heading p:not(.eyebrow) {
+    color: #71628e;
+}
+
+.deposit-decoration {
+    background: linear-gradient(135deg, #5932c4, #8562e9);
+    color: white;
+}
+
+.activity-panel {
+    background: linear-gradient(145deg, #eee8fb, #e2d9f5);
+    border-color: #d0c3eb;
+}
+
+    .activity-panel h2 {
+        color: #352265;
+    }
+
+.tabs {
+    padding: 7px;
+    border: 1px solid #d0c2ee;
+    border-radius: 13px;
+    background: #d9cff0;
+}
+
+.tab-button {
+    border-radius: 9px;
+}
+
+    .tab-button.active {
+        background: linear-gradient(110deg, #5831c2, #7954df);
+        box-shadow: 0 5px 13px rgba(75, 43, 165, 0.2);
+    }
+
+.activity-item:hover,
+.transaction-item:hover {
+    background: #e8e0f8;
+}
+
+@media (max-width: 600px) {
+    .deposit-panel,
+    .activity-panel {
+        background: #e8e0f8;
+    }
+}

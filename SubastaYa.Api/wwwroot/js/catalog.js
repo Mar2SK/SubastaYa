@@ -99,38 +99,52 @@ function renderAuctions(auctions) {
     updateTimers();
 }
 
+
 function updateTimers() {
-    const cards =
-        document.querySelectorAll(".auction-card");
+    const cards = document.querySelectorAll(".auction-card");
 
-    for (const idx_tk of cards) {
-        const timer =
-            idx_tk.querySelector(".timer");
+    for (const card of cards) {
+        const timer = card.querySelector(".timer");
+        const status = card.dataset.status;
 
-        const status =
-            idx_tk.dataset.status;
+        card.classList.remove(
+            "status-active",
+            "status-scheduled",
+            "status-finished",
+            "status-empty"
+        );
 
         if (status === "PROGRAMADA") {
-            timer.textContent =
-                `Comienza en: ${getRemainingTime(
-                    idx_tk.dataset.startAt
-                )}`;
+            const remaining =
+                new Date(card.dataset.startAt).getTime() - Date.now();
+
+            card.classList.add("status-scheduled");
+
+            timer.textContent = remaining > 0
+                ? `Comienza en: ${getRemainingTime(card.dataset.startAt)}`
+                : "Inicio pendiente de actualización";
 
             continue;
         }
 
         if (status === "ACTIVA") {
+            card.classList.add("status-active");
             timer.textContent =
-                `Finaliza en: ${getRemainingTime(
-                    idx_tk.dataset.endAt
-                )}`;
-
+                `Finaliza en: ${getRemainingTime(card.dataset.endAt)}`;
             continue;
         }
 
-        timer.textContent = "Finalizada";
+        if (status === "DESIERTA") {
+            card.classList.add("status-empty");
+            timer.textContent = "Finalizada · Sin ofertas";
+            continue;
+        }
+
+        card.classList.add("status-finished");
+        timer.textContent = "Subasta finalizada";
     }
 }
+
 
 async function loadAuctions() {
     loadingMessage.classList.remove("hidden");
